@@ -1,16 +1,24 @@
-import http, { IncomingMessage, ServerResponse } from 'node:http';
+//import http, { IncomingMessage, ServerResponse } from 'node:http';
 import { Client } from 'pg'
-import { readCsv } from './utils/read-csv.ts';
+import { insertAlumnos } from './utils/insert-alumnos.ts';
+import dotenv from 'dotenv';
+import path from 'path';
 
-const hostname: string = '127.0.0.1';
-const port: number = 3000;
+dotenv.config({ path: './local-sets.env' });
 
-const server = http.createServer((req: IncomingMessage, res: ServerResponse) => { // EL create server recibe una callback function que se ejecuta cada vez que llega una request
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  res.end('Hello, World!\n');
+
+const clientDb = new Client({
+  user: process.env.PGUSER,
+  password: process.env.PGPASSWORD,
+  host: process.env.PGHOST,
+  port: Number(process.env.PGPORT) || 5432,
+  database: process.env.PGDATABASE,
 });
 
-server.listen(port, hostname, () => { // Server listen recibe los dos argumentos y una callback function que se ejecuta cuando se hace listen por primera vez
-  console.log(`Server running at http://${hostname}:${port}/`);
-});
+await clientDb.connect();
+
+const fileAlumnosPath = path.join(process.cwd(), 'resources', 'alumnos.csv');
+
+await insertAlumnos(clientDb, fileAlumnosPath);
+
+await clientDb.end();
