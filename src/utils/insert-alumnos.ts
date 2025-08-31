@@ -1,6 +1,7 @@
+import type { Client } from 'pg';
 import { readCsv } from './read-csv.ts';
 
-export async function insertAlumnos(client, fileAlumnosPath: string): Promise<void> {
+export async function insertAlumnos(client: Client, fileAlumnosPath: string): Promise<void> {
     const alumnos = await readCsv(fileAlumnosPath);  // ✅ usar el argumento
 
     for (const alumno of alumnos) {
