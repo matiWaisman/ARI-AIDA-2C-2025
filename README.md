@@ -6,7 +6,7 @@ de la _Facultad de Ciencias Exactas y Naturales_ de la _Universidad de Buenos Ai
 
 Integrantes: 
 
-- Matias Eliel Waisman L.U : 960/23
+- Matías Eliel Waisman L.U : 960/23
 - Valentin Aguilar Galeano L.U : 70/23
 - Martin Leon Cuadrado Bertollo L.U : 824/23
 - Segundo Sacchi L.U : 434/23
