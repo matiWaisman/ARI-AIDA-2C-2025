@@ -4,7 +4,14 @@ Este repositorio contiene el código producido durante el Taller de Integración
 de la materia _Almacenamiento y Recuperación de la Información_ de la _Carrera de Computación_
 de la _Facultad de Ciencias Exactas y Naturales_ de la _Universidad de Buenos Aires_.
 
-## objetivo del taller
+Integrantes: 
+
+- Matias Eliel Waisman L.U : 960/23
+- Valentin Aguilar Galeano L.U : 70/23
+- Martin Leon Cuadrado Bertollo L.U : 824/23
+- Segundo Sacchi L.U : 434/23
+
+## Objetivo del taller
 
 Manteniendo el foco en el aprendizaje integrador vamos a desarrollar un sistema de punta a punta,
 integrando la base de datos a un backend, un frontend
@@ -13,7 +20,7 @@ y las operaciones que permitan desplegarlo en una máquina de desarrollo o en un
 Trataremos de no perder de vista la mejores prácticas de desarrollo
 y los temas de seguridad informática.
 
-## descripción del sistema AIDA
+## Descripción del sistema AIDA
 
 > Una facultad quiere desarrollar un sistema que integre todos sus procesos
 empezando por los resultados académicos de los alumnos.
