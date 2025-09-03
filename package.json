@@ -3,6 +3,7 @@
     "@types/csv-parse": "^1.1.12",
     "@types/node": "^24.3.0",
     "@types/pg": "^8.15.5",
+    "http-server": "^14.1.1",
     "ts-node": "^10.9.2"
   },
   "dependencies": {
@@ -12,6 +13,8 @@
   },
   "type": "module",
   "scripts": {
-    "start": "node --loader ts-node/esm src/app.ts"
+    "start": "node --loader ts-node/esm src/app.ts",
+    "startDatabse": "psql -U aida_admin -d aida_db -f db/create-db.sql",
+    "database": "psql -U aida_admin -d aida_db"
   }
 }
