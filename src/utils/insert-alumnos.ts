@@ -1,25 +1,21 @@
 import type { Client } from 'pg';
 import { readCsv } from './read-csv.ts';
-import { deleteAlumnos } from './delete-alumnos.ts'
+import { deleteAlumnos } from './delete-alumnos.ts';
+
+const query: string = `
+  INSERT INTO aida.alumnos 
+    (lu, apellido, nombres, titulo, titulo_en_tramite, egreso) 
+  VALUES ($1, $2, $3, $4, $5, $6)
+`;
 
 export async function insertAlumnos(client: Client, fileAlumnosPath: string): Promise<void> {
-    
     await deleteAlumnos(client);
-    const alumnos = await readCsv(fileAlumnosPath);  // ✅ usar el argumento
+    const alumnos = await readCsv(fileAlumnosPath);  
     console.log("Datos leídos del CSV:");
-    console.log(alumnos);  // 🔹 Aquí imprimimos todo el array
+    console.log(alumnos);  
 
     for (const alumno of alumnos) {
-        let queryActual = "insert into aida.alumnos (lu, apellido, nombres, titulo, titulo_en_tramite, egreso) values(";
-        
-        for (let clave in alumno) {
-            queryActual += `'${alumno[clave]}',`;
-        }
-
-        queryActual = queryActual.slice(0, -1); // sacar coma final
-        queryActual += ");";
-
-        const res = await client.query(queryActual);
+        const res = await client.query(query, Object.values(alumno));
         console.log(res.command, res.rowCount);
     }
 }

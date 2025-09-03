@@ -1,23 +1,11 @@
 import type { Client } from 'pg';
+import type { Alumno, AlumnosDict } from '../types/alumno.ts';
 
-interface alumno {
-    lu: string;
-    apellido: string;
-    nombres: string;
-    titulo: string;
-    titulo_en_tramite: string;
-    egreso: string;
-}
+export async function getAlumnos(client: Client): Promise<AlumnosDict> {
+    const query = "SELECT * FROM aida.alumnos"
+    const listaAlumnos = await client.query<Alumno>(query);
 
-type alumnosDict = {
-  [key: string]: alumno;
-};
-
-export async function getAlumnos(client: Client): Promise<alumnosDict> {
-    let queryActual = "SELECT * FROM aida.alumnos"
-    const listaAlumnos = await client.query<alumno>(queryActual);
-
-    const dict: alumnosDict = {}; 
+    const dict: AlumnosDict = {}; 
 
     for(const row of listaAlumnos.rows){
         dict[row.lu] = row;
