@@ -1,6 +1,7 @@
 //import http, { IncomingMessage, ServerResponse } from 'node:http';
 import { Client } from 'pg'
 import { insertAlumnos } from './utils/insert-alumnos.ts';
+import { getAlumnos } from './utils/get-alumnos.ts'
 import dotenv from 'dotenv';
 import path from 'path';
 
@@ -20,5 +21,8 @@ await clientDb.connect();
 const fileAlumnosPath = path.join(process.cwd(), 'resources', 'alumnos.csv');
 
 await insertAlumnos(clientDb, fileAlumnosPath);
+
+const alumnosDict = await getAlumnos(clientDb);
+console.log(alumnosDict);
 
 await clientDb.end();
