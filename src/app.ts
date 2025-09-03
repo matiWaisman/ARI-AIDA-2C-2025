@@ -2,7 +2,7 @@
 import { Client } from 'pg'
 import { writeFileSync } from "fs";
 import { insertAlumnos } from './utils/insert-alumnos.ts';
-import { getPrimerAlumnoConCertificado, hayAlgunAlumnoConCertificado } from './utils/get-alumno-necesita-certificado.ts'
+import { getPrimerAlumnoConCertificado, hayAlgunAlumnoConCertificado, getCertificadoDeAlumnoConLU } from './utils/get-alumno-necesita-certificado.ts'
 import dotenv from 'dotenv';
 import path from 'path';
 import type { Alumno } from './types/alumno.ts';
@@ -35,5 +35,8 @@ if(await hayAlgunAlumnoConCertificado(clientDb)){
 else {
   console.log("No hay ningun alumno al que le podamos armar un certificado");
 }
+
+const res = await getCertificadoDeAlumnoConLU(clientDb, "960/23")
+console.log(res);
 
 await clientDb.end();
