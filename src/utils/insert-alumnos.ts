@@ -2,7 +2,7 @@ import type { Client } from 'pg';
 import { readCsv } from './read-csv.ts';
 
 export async function insertAlumnos(client: Client, fileAlumnosPath: string): Promise<void> {
-    const alumnos = await readCsv(fileAlumnosPath);  // ✅ usar el argumento
+    const alumnos = await readCsv(fileAlumnosPath);  
 
     for (const alumno of alumnos) {
         let queryActual = "insert into aida.alumnos (lu, apellido, nombres, titulo, titulo_en_tramite, egreso) values(";
