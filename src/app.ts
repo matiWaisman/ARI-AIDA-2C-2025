@@ -1,11 +1,12 @@
 //import http, { IncomingMessage, ServerResponse } from 'node:http';
 import { Client } from 'pg'
+import { writeFileSync } from "fs";
 import { insertAlumnos } from './utils/insert-alumnos.ts';
-import { getAlumnos } from './utils/get-alumnos.ts'
 import { getPrimerAlumnoConCertificado, hayAlgunAlumnoConCertificado } from './utils/get-alumno-necesita-certificado.ts'
 import dotenv from 'dotenv';
 import path from 'path';
 import type { Alumno } from './types/alumno.ts';
+import { generarCertificadoHtml } from './utils/generar-certificado.ts';
 
 dotenv.config({ path: './local-sets.env' });
 
@@ -26,8 +27,10 @@ await insertAlumnos(clientDb, fileAlumnosPath);
 
 if(await hayAlgunAlumnoConCertificado(clientDb)){
   console.log("Hay un alumno con certificado");
-  const alumno: Alumno | undefined = await getPrimerAlumnoConCertificado(clientDb);
-  console.log(alumno);
+  const alumno: Alumno = (await getPrimerAlumnoConCertificado(clientDb))!; // El ! indica que nunca va a ser indefinido
+  const certificadoHtml = generarCertificadoHtml(alumno);
+  
+  writeFileSync("certificado.html", certificadoHtml, "utf-8");
 }
 else {
   console.log("No hay ningun alumno al que le podamos armar un certificado");
