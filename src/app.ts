@@ -44,6 +44,7 @@ rl.question(`¿Qué modo querés usar? \n
   if ((match = input.match(regexArchivo))) {
     console.log("Modo carga");
     console.log("Ruta:", match[1]);
+    await insertAlumnos(clientDb, match[1]!);
   } else if ((match = input.match(regexFecha))) {
     console.log("Modo fecha");
     const fecha: String = match[1]!;

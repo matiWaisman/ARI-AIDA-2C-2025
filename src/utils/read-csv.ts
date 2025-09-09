@@ -13,4 +13,3 @@ export async function readCsv(filePath: string): Promise<any[]> {
     });
 }
 
-//readCsv('./resources/alumnos.csv').then(rows => console.log(rows));
