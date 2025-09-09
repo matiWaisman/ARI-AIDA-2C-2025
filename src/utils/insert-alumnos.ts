@@ -40,4 +40,3 @@ export async function insertAlumnos(client: Client, fileAlumnosPath: string): Pr
       console.log(res.command, res.rowCount);
     }
 }
-

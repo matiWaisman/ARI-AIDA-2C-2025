@@ -23,3 +23,16 @@ export async function hayAlgunAlumnoConCertificado(client: Client): Promise<Bool
     return (resDb.rows.length > 0);
 }
 
+export async function hayAlgunAlumnoConFechaDeseada(client: Client, fecha: String): Promise<Boolean> {
+    const query = `SELECT * FROM aida.alumnos WHERE titulo IS NOT NULL AND titulo_en_tramite IS NOT NULL AND egreso = '${fecha}' ORDER BY egreso LIMIT 1`;
+    const resDb = await client.query<Alumno>(query);
+    // Si hay respuesta es porque hay alguno, si no hay es porque no hay ninguno
+    return (resDb.rows.length > 0);
+}
+
+export async function getAlumnosConFechaDeseada(client: Client, fecha: Date): Promise<Alumno> {
+    const query = `SELECT * FROM aida.alumnos WHERE titulo IS NOT NULL AND titulo_en_tramite IS NOT NULL AND egreso = '${fecha}' ORDER BY egreso LIMIT 1`;
+    const resDb = await client.query<Alumno>(query);
+    const res: Alumno = resDb.rows[0]!; 
+    return res;
+}
