@@ -1,6 +1,32 @@
 import type { Client } from 'pg';
+import type { Alumno, AlumnosDict } from '../types/alumno.ts';
 import { readCsv } from './read-csv.ts';
-import { deleteAlumnos } from './delete-alumnos.ts';
+
+// ===== GET ALUMNOS FUNCTIONS =====
+
+export async function getAlumnos(client: Client): Promise<AlumnosDict> {
+    const query = "SELECT * FROM aida.alumnos"
+    const listaAlumnos = await client.query<Alumno>(query);
+
+    const dict: AlumnosDict = {}; 
+
+    for(const row of listaAlumnos.rows){
+        dict[row.lu] = row;
+    }
+    return dict;
+}
+
+// ===== DELETE ALUMNOS FUNCTIONS =====
+
+export async function deleteAlumnos(client: Client): Promise<void> {
+    console.log("Datos eliminados de la tabla alumnos");
+    let queryActual = "DELETE FROM aida.alumnos"
+
+    const res = await client.query(queryActual);
+    console.log(res.command, res.rowCount);
+}
+
+// ===== INSERT ALUMNOS FUNCTIONS =====
 
 const queryFiltrarAlumnosNuevos: string = `
   SELECT lu
