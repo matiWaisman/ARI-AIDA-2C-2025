@@ -1,4 +1,5 @@
 import express from "express";
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const app = express()
 const port = 3000
@@ -54,11 +55,12 @@ const HTML_LU=
         <button id="btnEnviar">Pedir Certificado</button>
         <script>
             window.onload = function() {
-                document.getElementById("btnEnviar").onclick = function() {
-                    var lu = document.getElementsByName("lu")[0].value;
-                    window.location.href = "../api/v0/lu/" + encodeURIComponent(lu);
-                }
-            }
+            document.getElementById("btnEnviar").onclick = function() {
+            var lu = document.getElementsByName("lu")[0].value;
+            console.log("Enviando solicitud a /api/v0/lu/" + encodeURIComponent(lu)); // Log para ver qué URL se está generando
+            window.location.href = "/api/v0/lu/" + encodeURIComponent(lu);
+    }
+}
         </script>
     </body>
 </html>
@@ -215,10 +217,13 @@ app.get('/app/archivo-json', (_, res) => {
 // API DEL BACKEND
 var NO_IMPLEMENTADO='<code>ERROR 404 </code> <h1> No implementado aún ⚒<h1>';
 
-app.get('/api/v0/lu/:lu', (req, res) => {
-    console.log(req.params, req.query, req.body);
-    res.status(404).send(NO_IMPLEMENTADO);
-})
+app.use('/api', createProxyMiddleware({
+    target: 'http://localhost:3001',
+    changeOrigin: true,
+    pathRewrite: {
+        '^/api': '', 
+    },
+}));
 
 app.get('/api/v0/fecha/:fecha', (req, res) => {
     console.log(req.params, req.query, req.body);
