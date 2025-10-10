@@ -2,13 +2,13 @@ import { Client } from 'pg';
 import dotenv from 'dotenv';
 import express from "express";
 import { getCertificadoDeAlumnoConLU } from './utils/get-alumno-necesita-certificado.ts';
-import { alumnoToJSON } from './types/alumno.ts';
+import { generarCertificadoHtml } from './utils/generar-certificado.ts';
 
 dotenv.config({ path: './local-sets.env' });
 
 async function main() {
   const app = express();
-   const port = 3000;
+  const port = 3000;
 
   app.get('/app/lu', async (req, res) => {
     console.log("Pidiendo certificado por LU:", req.query.LU);
@@ -22,10 +22,20 @@ async function main() {
     await clientDb.connect();
     try {
       const alumno = await getCertificadoDeAlumnoConLU(clientDb, req.query.LU as string);
-      res.json(alumnoToJSON(alumno));
+      const certificadoHtml = await generarCertificadoHtml(alumno);
+      res.setHeader('Content-Type', 'text/html');
+      res.send(certificadoHtml);
     } catch (error) {
-      console.error(`Error al listar alumnos:`, error);
-      res.status(500).json({ error: 'Error al listar los datos' });
+      console.error(`Error al generar certificado:`, error);
+      res.status(500).send(`
+        <html>
+          <body>
+            <h1>Error</h1>
+            <p>No se pudo generar el certificado para el LU: ${req.query.LU}</p>
+            <p>Error: ${error instanceof Error ? error.message : String(error)}</p>
+          </body>
+        </html>
+      `);
     } finally {
       await clientDb.end();
     }
