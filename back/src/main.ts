@@ -3,7 +3,7 @@ import { Client } from 'pg';
 import { readFile } from 'node:fs/promises';
 
 const app = express();
-const port = 3000;
+const port = 3001;
 
 app.get('/certificado/:id', async (req, res) => {
     const clientDb = new Client();

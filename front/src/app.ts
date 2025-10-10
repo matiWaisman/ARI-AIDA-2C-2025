@@ -56,7 +56,7 @@ const HTML_LU=
             window.onload = function() {
                 document.getElementById("btnEnviar").onclick = function() {
                     var lu = document.getElementsByName("lu")[0].value;
-                    window.location.href = "../api/v0/lu/" + encodeURIComponent(lu);
+                    window.location.href = "http://localhost:3000/app/lu?LU=" + encodeURIComponent(lu);
                 }
             }
         </script>
@@ -213,22 +213,16 @@ app.get('/app/archivo-json', (_, res) => {
 
 
 // API DEL BACKEND
-var NO_IMPLEMENTADO='<code>ERROR 404 </code> <h1> No implementado aún ⚒<h1>';
-
-app.get('/api/v0/lu/:lu', (req, res) => {
-    console.log(req.params, req.query, req.body);
-    res.status(404).send(NO_IMPLEMENTADO);
-})
-
-app.get('/api/v0/fecha/:fecha', (req, res) => {
-    console.log(req.params, req.query, req.body);
-    res.status(404).send(NO_IMPLEMENTADO);
-})
-
-app.patch('/api/v0/alumnos', (req, res) => {
-    console.log(req.params, req.query, req.body);
-    res.status(404).send(NO_IMPLEMENTADO);
-})
+app.get('/api/v0/lu/:lu', async (req, res) => {
+    try {
+        const response = await fetch(`http://localhost:3001/app/lu?LU=960/23`);
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        console.error('Error al consultar backend:', error);
+        res.status(500).json({ error: 'Error al consultar el backend' });
+    }
+});
 
 app.listen(port, () => {
     console.log(`Example app listening on port http://localhost:${port}/app/menu`)
