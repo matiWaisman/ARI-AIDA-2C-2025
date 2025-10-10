@@ -1,7 +1,7 @@
 import express from "express";
 
 const app = express()
-const port = 3000
+const port = 3001
 
 app.use(express.json({ limit: '10mb' })); // para poder leer el body
 app.use(express.urlencoded({ extended: true, limit: '10mb'  })); // para poder leer el body
@@ -56,7 +56,7 @@ const HTML_LU=
             window.onload = function() {
                 document.getElementById("btnEnviar").onclick = function() {
                     var lu = document.getElementsByName("lu")[0].value;
-                    window.location.href = "http://localhost:3000/app/lu?LU=" + encodeURIComponent(lu);
+                    window.location.href = "/api/v0/lu/" + encodeURIComponent(lu);
                 }
             }
         </script>
@@ -215,7 +215,7 @@ app.get('/app/archivo-json', (_, res) => {
 // API DEL BACKEND
 app.get('/api/v0/lu/:lu', async (req, res) => {
     try {
-        const response = await fetch(`http://localhost:3001/app/lu?LU=960/23`);
+        const response = await fetch(`http://localhost:3000/app/lu?LU=${req.params.lu}`);
         const data = await response.json();
         res.json(data);
     } catch (error) {
@@ -225,5 +225,5 @@ app.get('/api/v0/lu/:lu', async (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`Example app listening on port http://localhost:${port}/app/menu`)
+    console.log(`🌐 Frontend corriendo en http://localhost:${port}/app/menu`)
 })

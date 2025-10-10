@@ -8,7 +8,7 @@ dotenv.config({ path: './local-sets.env' });
 
 async function main() {
   const app = express();
-  const port = 3001;
+   const port = 3000;
 
   app.get('/app/lu', async (req, res) => {
     console.log("Pidiendo certificado por LU:", req.query.LU);
@@ -31,9 +31,9 @@ async function main() {
     }
   });
 
-  app.listen(port, () => {
-    console.log(`Servidor Express escuchando en http://localhost:${port}/app/lu`);
-  });
+   app.listen(port, () => {
+     console.log(`🚀 Backend corriendo en http://localhost:${port}/app/lu`);
+   });
 }
 
 main().catch(console.error);
