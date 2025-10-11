@@ -1,7 +1,7 @@
 import type { Client } from "pg";
 import fs from "fs";
 import readline from "readline";
-import { modoCargaHandler, modoFechaHandler, modoLuHandler, type CommandHandler } from "../modos/handlers.ts";
+import { modoCargaHandler, modoFechaHandler, modoLuHandler, type CommandHandler } from "../../src/presenters/handlers/handlers.ts";
 
 /**
  * Mapea el tipo de comando en el CSV a su handler correspondiente

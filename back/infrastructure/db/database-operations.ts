@@ -1,6 +1,6 @@
 import type { Client } from 'pg';
-import type { Alumno, AlumnosDict } from '../types/alumno.ts';
-import { readCsv } from './read-csv.ts';
+import type { Alumno, AlumnosDict } from '../../domain/entity/alumno.ts';
+import { readCsv } from '../files/read-csv.ts';
 
 // ===== GET ALUMNOS FUNCTIONS =====
 

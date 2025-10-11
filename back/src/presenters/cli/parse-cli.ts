@@ -1,7 +1,7 @@
 import type { Client } from "pg";
 import readline from 'readline';
-import { modoCargaHandler, modoFechaHandler, modoLuHandler } from "../modos/handlers.ts";
-import type { CommandHandler } from "../modos/handlers.ts";
+import { modoCargaHandler, modoFechaHandler, modoLuHandler } from "../handlers/handlers.ts";
+import type { CommandHandler} from "../handlers/handlers.ts";
 
 const commands: { regex: RegExp; handler: CommandHandler }[] = [
   { regex: /^--archivo\s+(.+)$/, handler: modoCargaHandler },
