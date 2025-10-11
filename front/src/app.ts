@@ -1,7 +1,7 @@
 import express from "express";
 import { getMenu } from './getters/menu';
 import { getCertificadoPorLU, getCertificadoPorFecha, getSubirCSV, getSubirCSVJSON } from './getters/modos';
-import { getCertificadoLUFromBackend } from './getters/backend-api';
+import { getCertificadoLUFromBackend } from './getters/api-calls';
 import { getTestEndpoint } from './getters/test';
 
 const app = express()
@@ -18,6 +18,7 @@ app.get('/app/lu', getCertificadoPorLU);
 app.get('/app/fecha', getCertificadoPorFecha);
 app.get('/app/archivo', getSubirCSV);
 app.get('/app/archivo-json', getSubirCSVJSON);
+// Rutas con parametros
 app.get('/app/lu/:lu', getCertificadoLUFromBackend);
 
 app.listen(port, () => {
