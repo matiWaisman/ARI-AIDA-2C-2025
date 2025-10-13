@@ -17,5 +17,8 @@
   "workspaces": [
     "back",
     "front"
-  ]
+  ],
+  "dependencies": {
+    "dotenv": "^17.2.3"
+  }
 }

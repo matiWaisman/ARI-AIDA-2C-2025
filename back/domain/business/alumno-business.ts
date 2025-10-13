@@ -25,10 +25,16 @@ export class AlumnoBusiness {
   }
 
   async hayCertificadosPendientes(fecha: string) {
-    return this.repo.hayAlumnoConFechaDeseada(fecha);
+    return this.repo.getAlumnoConFechaDeseada(fecha);
   }
 
   async getAlumnoConLU(LU: string) {
     return this.repo.getAlumnoConLU(LU);
   }
+
+  async CargarDatosEnAlumnos(FilePath: string){
+    this.repo.cargarAlumnosFromCSV(FilePath);
+  }
+
+
 }
