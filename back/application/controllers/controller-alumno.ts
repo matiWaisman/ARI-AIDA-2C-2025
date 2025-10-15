@@ -34,19 +34,19 @@ export class AlumnoController {
 
   // getAlumnoPorFecha
   static async getAlumnoPorFecha(req: Request, res: Response) {
-    const Fecha = req.query.Fecha as string;
+    const fecha = req.query.fecha as string;
 
-    console.log("Pidiendo datos de alumno por Fecha:", Fecha);
+    console.log("Pidiendo datos de alumno por Fecha:", fecha);
 
     const client = createDbClient();
     await client.connect();
 
     try {
       const business = new AlumnoBusiness(client);
-      const alumno = await business.hayCertificadosPendientes(Fecha);
+      const alumno = await business.hayCertificadosPendientes(fecha);
 
       if (!alumno) {
-        return res.status(404).json({ error: "Alumno no encontrado", fecha: Fecha });
+        return res.status(404).json({ error: "Alumno no encontrado", fecha: fecha });
       }
 
       res.json(alumno);
@@ -54,7 +54,7 @@ export class AlumnoController {
       console.error("Error al obtener alumno:", error);
       res.status(500).json({
         error: "No se pudo obtener los datos del alumno",
-        fecha: Fecha,
+        fecha: fecha,
         message: error instanceof Error ? error.message : String(error),
       });
     } finally {

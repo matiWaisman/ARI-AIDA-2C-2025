@@ -2,32 +2,25 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Formulario from "@/components/formulario";
 
-export default function Fecha() {
-  const [archivo, setArchivo] = useState("");
+export default function Archivo() {
   const router = useRouter();
 
-  const handleClick = () => {
-    router.push(`/app/archivo/${encodeURIComponent(archivo)}`);
+  const handleSubmit = (file: File | null) => {
+    if (file) {
+      router.push(`/app/archivo/${encodeURIComponent(file.name)}`);
+    }
   };
 
   return (
-    <>
-      <div>Subir archivo CSV</div>
-      <div>
-        <label>
-          Subi tu archivo:{" "}
-          <input
-            type="file"
-            name="archivo"
-            value={archivo}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setArchivo(e.target.value)
-            }
-          />
-        </label>
-      </div>
-      <button onClick={handleClick}>Subir archivo</button>
-    </>
+    <Formulario
+      title="Subir archivo CSV"
+      nombreLabel="Subí tu archivo"
+      inputType="file"
+      nombreInput="archivo"
+      hrefCertificado="/app/archivo"
+      onFileSubmit={handleSubmit} 
+    />
   );
 }
