@@ -50,4 +50,87 @@ export class AlumnoController {
       await client.end();
     }
   }
+
+  static async getAlumnos(req: Request, res: Response) {
+    const client = createDbClient();
+    await client.connect();
+
+    try {
+      const business = new AlumnoBusiness(client);
+      const alummnos = await business.getAlumnos();
+      res.json(alummnos);
+    } catch (error) {
+      res.status(500).json({
+        error: "Error obteniendo alumnos",
+        message: error instanceof Error ? error.message : String(error),
+      });
+    } finally {
+      await client.end();
+    }
+  }
+
+
+  static async updateAlumno(req: Request, res: Response) {
+    const { lu, nombres, apellido } = req.body;
+    const client = createDbClient();
+    await client.connect();
+
+    try {
+      const business = new AlumnoBusiness(client);
+      const alumno = await business.updateAlumno(lu, nombres, apellido);
+      res.json(alumno);
+    } catch (error) {
+      res.status(500).json({
+        error: "Error obteniendo alumnos",
+        message: error instanceof Error ? error.message : String(error),
+      });
+    } finally {
+      await client.end();
+    }
+  }
+
+
+
+  static async deleteAlumno(req: Request, res: Response) {
+    const LU = req.query.LU as string;
+    const client = createDbClient();
+    await client.connect();
+
+    try {
+      const business = new AlumnoBusiness(client);
+      const alummno = await business.deleteAlumno(LU);
+      res.status(200).json({ message: "Alumno eliminado", lu: LU });
+      
+    } catch (error) {
+      res.status(500).json({
+        error: "Error eliminando alumno",
+        message: error instanceof Error ? error.message : String(error),
+      });
+    } finally {
+      await client.end();
+    }
+  
+  }
+
+  static async insertAlumno(req: Request, res: Response) {
+    const { lu, nombres, apellido } = req.body;
+    const client = createDbClient();
+    await client.connect();
+
+    try {
+      const business = new AlumnoBusiness(client);
+      const alummno = await business.insertAlumno(lu, nombres, apellido);
+      res.status(200).json({ message: "Alumno creado", lu: lu });
+      
+    } catch (error) {
+      res.status(500).json({
+        error: "Error creando alumno",
+        message: error instanceof Error ? error.message : String(error),
+      });
+    } finally {
+      await client.end();
+    }
+  
+  }
+
 }

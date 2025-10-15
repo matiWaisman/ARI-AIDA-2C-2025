@@ -1,7 +1,7 @@
 import express from "express";
 import { getMenu } from './getters/menu';
 import { getCertificadoPorLU, getCertificadoPorFecha, getSubirCSV, getSubirCSVJSON } from './getters/modos';
-import { getCertificadoLUFromBackend } from './getters/api-calls';
+import { getCertificadoLUFromBackend, getAlumnos, updateAlumno, insertAlumno, deleteAlumno } from './getters/api-calls';
 import { getTestEndpoint } from './getters/test';
 
 const app = express()
@@ -18,8 +18,13 @@ app.get('/app/lu', getCertificadoPorLU);
 app.get('/app/fecha', getCertificadoPorFecha);
 app.get('/app/archivo', getSubirCSV);
 app.get('/app/archivo-json', getSubirCSVJSON);
+app.get('/app/alumnos', getAlumnos);
 // Rutas con parametros
 app.get('/app/lu/:lu', getCertificadoLUFromBackend);
+app.get('/app/update/:lu/:nombre/:apellido', updateAlumno);
+app.get('/app/insert/:lu', insertAlumno);
+app.get('/app/delete/:lu/:nombre/:apellido', deleteAlumno);
+
 
 app.listen(port, () => {
     console.log(`🌐 Frontend corriendo en http://localhost:${port}/app/menu`)

@@ -39,4 +39,51 @@ export class AlumnoRepository {
     );
     return alumnos[0];
   }
+
+  async insertAlumno(LU: string, name: string, lastName: string): Promise<Alumno | undefined> {
+      const alumno = await this.existeAlumno("AND lu = $1", [LU]);
+      if (alumno) {
+        const res = await this.getAlumnoConLU(LU);
+        return res;
+      } else {
+        const queryInsertarAlumnoNuevo: string = `
+          INSERT INTO aida.alumnos 
+            (lu, apellido, nombres) 
+          VALUES ($1, $2, $3)
+          RETURNING *;
+        `;
+        const result = await this.client.query<Alumno>(queryInsertarAlumnoNuevo, [LU, lastName, name]);
+        const res = result.rows[0];
+        return res;
+      }
+    }
+
+  async updateAlumno(LU: string, name: string, lastName: string): Promise<Alumno | undefined> {
+      const alumno = await this.existeAlumno("AND lu = $1", [LU]);
+      if (!alumno) {
+        return undefined;
+      }
+      const queryUpdateAlumnoExistente: string = `
+        UPDATE aida.alumnos
+          SET apellido = $2, nombres = $3
+          WHERE lu = $1
+          RETURNING *;
+      `;
+      const result = await this.client.query<Alumno>(queryUpdateAlumnoExistente, [LU, lastName, name]);
+      const res = result.rows[0];
+      return res;
+    }
+
+  async deleteAlumno(LU: string): Promise<boolean> {
+      const alumno = await this.existeAlumno("AND lu = $1", [LU]);
+      if (!alumno) {
+        return false;
+      }
+      const queryDeleteAlumno: string = `
+        DELETE FROM aida.alumnos
+          WHERE lu = $1;
+      `;
+      const result =  await this.client.query(queryDeleteAlumno, [LU]);
+      return result? true: false;
+    }
 }
