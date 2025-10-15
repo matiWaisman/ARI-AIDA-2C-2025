@@ -7,26 +7,28 @@ export default function LU() {
   const [lu, setLu] = useState("");
   const router = useRouter();
   
-  const handleClick = () => {
-    const url = "http://localhost:3000/app/lu/"
-    const res = await fetch(url + lu);
-    router.push(`/app/lu/${encodeURIComponent(lu)}`);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (lu) {
+      router.push(`/lu/${encodeURIComponent(lu)}`);
+    }
   };
 
   return (
-    <>
+    <form onSubmit={handleSubmit}>
       <div>Obtener el certificado de título en trámite</div>
       <div>
         <label>
           Libreta Universitaria:{" "}
-          <input
-            name="lu"
-            value={lu}
+          <input 
+            name="lu" 
+            value={lu} 
             onChange={(e) => setLu(e.target.value)}
+            required
           />
         </label>
       </div>
-      <button onClick={handleClick}>Pedir Certificado</button>
-    </>
+      <button type="submit">Pedir Certificado</button>
+    </form>
   );
 }

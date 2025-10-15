@@ -4,7 +4,7 @@ import { AlumnoBusiness } from "../../domain/business/alumno-business.ts";
 
 export class AlumnoController {
   static async getAlumnoPorLU(req: Request, res: Response) {
-    const LU = req.query.LU as string;
+    const LU = decodeURIComponent(req.query.LU as string);
 
     console.log("Pidiendo datos de alumno por LU:", LU);
 
