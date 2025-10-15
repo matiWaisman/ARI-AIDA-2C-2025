@@ -2,6 +2,8 @@ import express from "express";
 import { getMenu } from './getters/menu';
 import { getCertificadoPorLU, getCertificadoPorFecha, getSubirCSV, getSubirCSVJSON } from './getters/modos';
 import { getCertificadoLUFromBackend, getAlumnos, updateAlumno, insertAlumno, deleteAlumno } from './getters/api-calls';
+import { getCertificadoFechaFromBackend } from './getters/api-calls';
+import { getCargarCSVFromBackend } from './getters/api-calls';
 import { getTestEndpoint } from './getters/test';
 
 const app = express()
@@ -25,7 +27,8 @@ app.get('/app/update/:lu/:nombre/:apellido', updateAlumno);
 app.get('/app/insert/:lu', insertAlumno);
 app.get('/app/delete/:lu/:nombre/:apellido', deleteAlumno);
 
-
+app.get('/app/fecha/:fecha', getCertificadoFechaFromBackend);
+app.post('/app/archivo/:filePath', getCargarCSVFromBackend);
 app.listen(port, () => {
     console.log(`🌐 Frontend corriendo en http://localhost:${port}/app/menu`)
 })

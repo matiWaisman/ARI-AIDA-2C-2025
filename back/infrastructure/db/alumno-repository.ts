@@ -1,5 +1,6 @@
-import type { Client } from "pg";
+import { Client } from "pg";
 import type { Alumno } from "../../domain/entity/alumno.ts";
+import { insertAlumnos } from "./database-operations.ts";
 
 export class AlumnoRepository {
   constructor(private client: Client) {}
@@ -86,4 +87,11 @@ export class AlumnoRepository {
       const result =  await this.client.query(queryDeleteAlumno, [LU]);
       return result? true: false;
     }
+
+  async cargarAlumnosFromCSV( FilePath: string){
+    const client = new Client({ connectionString: process.env.DATABASE_URL });
+    await client.connect();
+    await insertAlumnos(client, FilePath);
+    await client.end();
+  };
 }

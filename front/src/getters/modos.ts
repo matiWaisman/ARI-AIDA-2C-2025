@@ -37,7 +37,7 @@ const HTML_FECHA = `<!doctype html>
             window.onload = function() {
                 document.getElementById("btnEnviar").onclick = function() {
                     var fecha = document.getElementsByName("fecha")[0].value;
-                    window.location.href = "../api/v0/fecha/" + encodeURIComponent(fecha);
+                    window.location.href = "/app/fecha/" + encodeURIComponent(fecha);
                 }
             }
         </script>
@@ -66,10 +66,11 @@ const HTML_ARCHIVO = `<!DOCTYPE html>
       }
 
       const text = await file.text();
+      const fileName = encodeURIComponent(file.name);
 
       try {
-        const response = await fetch('../api/v0/alumnos', {
-          method: 'PATCH',
+        const response = await fetch('/app/archivo/' + fileName, {
+          method: 'POST',
           headers: {
             'Content-Type': 'text/csv'
           },

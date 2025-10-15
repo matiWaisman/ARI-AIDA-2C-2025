@@ -32,6 +32,36 @@ export class AlumnoController {
     }
   }
 
+  // getAlumnoPorFecha
+  static async getAlumnoPorFecha(req: Request, res: Response) {
+    const Fecha = req.query.Fecha as string;
+
+    console.log("Pidiendo datos de alumno por Fecha:", Fecha);
+
+    const client = createDbClient();
+    await client.connect();
+
+    try {
+      const business = new AlumnoBusiness(client);
+      const alumno = await business.hayCertificadosPendientes(Fecha);
+
+      if (!alumno) {
+        return res.status(404).json({ error: "Alumno no encontrado", fecha: Fecha });
+      }
+
+      res.json(alumno);
+    } catch (error) {
+      console.error("Error al obtener alumno:", error);
+      res.status(500).json({
+        error: "No se pudo obtener los datos del alumno",
+        fecha: Fecha,
+        message: error instanceof Error ? error.message : String(error),
+      });
+    } finally {
+      await client.end();
+    }
+  }
+
   static async generarCertificado(req: Request, res: Response) {
     const LU = req.query.LU as string;
     const client = createDbClient();
@@ -50,6 +80,36 @@ export class AlumnoController {
       await client.end();
     }
   }
+
+
+  static async cargarDatosEnAlumnos(req: Request, res: Response) {
+    const FilePath = req.query.FilePath as string;
+
+    console.log("Pidiendo file path:", FilePath);
+
+    const client = createDbClient();
+    await client.connect();
+
+    try {
+      const business = new AlumnoBusiness(client);
+      await business.CargarDatosEnAlumnos(FilePath);
+
+    } catch (error) {
+      console.error("Error al obtener alumno:", error);
+      res.status(500).json({
+        error: "No se pudo obtener los datos del alumno",
+        filePath: FilePath,
+        message: error instanceof Error ? error.message : String(error),
+      });
+    } finally {
+      await client.end();
+    }
+  }
+
+
+
+
+
 
   static async getAlumnos(req: Request, res: Response) {
     const client = createDbClient();
