@@ -1,6 +1,8 @@
 import type { Request, Response } from "express";
 import { createDbClient } from "../../infrastructure/db/db-client.js";
 import { AlumnoBusiness } from "../../domain/business/alumno-business.ts";
+import fs from "fs";
+import path from "path";
 
 export class AlumnoController {
   static async getAlumnoPorLU(req: Request, res: Response) {
@@ -83,26 +85,36 @@ export class AlumnoController {
 
 
   static async cargarDatosEnAlumnos(req: Request, res: Response) {
-    const FilePath = req.query.FilePath as string;
+    const file = req.file;
 
-    console.log("Pidiendo file path:", FilePath);
+    if (!file) {
+      return res.status(400).json({ error: "No se envió ningún archivo CSV." });
+    }
+
+    const absolutePath = path.isAbsolute(file.path) ? file.path : path.resolve(process.cwd(), file.path);
+    console.log("Archivo recibido:", file.originalname, "guardado en:", absolutePath);
 
     const client = createDbClient();
     await client.connect();
 
     try {
       const business = new AlumnoBusiness(client);
-      await business.CargarDatosEnAlumnos(FilePath);
+      await business.CargarDatosEnAlumnos(absolutePath); 
 
+      res.status(200).json({ message: "Archivo cargado correctamente." });
     } catch (error) {
-      console.error("Error al obtener alumno:", error);
+      console.error("Error al cargar datos en alumnos:", error);
       res.status(500).json({
-        error: "No se pudo obtener los datos del alumno",
-        filePath: FilePath,
+        error: "No se pudo cargar el archivo CSV.",
         message: error instanceof Error ? error.message : String(error),
       });
     } finally {
       await client.end();
+      try {
+        fs.unlinkSync(absolutePath);
+      } catch (unlinkError) {
+        console.warn("No se pudo eliminar archivo temporal:", unlinkError);
+      }
     }
   }
 

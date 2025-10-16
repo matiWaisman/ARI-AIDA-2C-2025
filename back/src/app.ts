@@ -20,5 +20,5 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/app", alumnoRouter);
 
 app.listen(port, () => {
-  console.log(`🚀 Backend corriendo en http://localhost:${port}/app/lu/:lu`);
+  console.log(`🚀 Backend corriendo en http://localhost:${port}/app/`);
 });

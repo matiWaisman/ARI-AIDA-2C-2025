@@ -33,7 +33,7 @@ export class AlumnoBusiness {
   }
 
   async CargarDatosEnAlumnos(FilePath: string){
-    this.repo.cargarAlumnosFromCSV(FilePath);
+    await this.repo.cargarAlumnosFromCSV(FilePath);
   }
 
 
