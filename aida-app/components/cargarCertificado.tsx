@@ -2,16 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { apiFetch } from "@/utils/api";
 import { Alumno } from "@/types/alumno";
 import Certificado from "@/components/certificado";
 
 type CargarCertificadoProps = {
-  apiUrl: string;           
-  paramName: string;        
-  paramValue: string;       
+  endpointPath: string;      // e.g. "/lu" or "/fecha"
+  paramName: string;         // e.g. "LU" or "fecha"
+  paramValue: string;        // value for the query param
 };
 
-export default function CargarCertificado({ apiUrl, paramName, paramValue }: CargarCertificadoProps) {
+export default function CargarCertificado({ endpointPath, paramName, paramValue }: CargarCertificadoProps) {
   const [alumno, setAlumno] = useState<Alumno | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -23,9 +24,8 @@ export default function CargarCertificado({ apiUrl, paramName, paramValue }: Car
         setLoading(true);
         setError(null);
 
-        const url = `${apiUrl}?${encodeURIComponent(paramName)}=${encodeURIComponent(paramValue)}`;
-        console.log(url);
-        const res = await fetch(url);
+        const url = `${endpointPath}?${encodeURIComponent(paramName)}=${encodeURIComponent(paramValue)}`;
+        const res = await apiFetch(url);
 
         if (!res.ok) {
           throw new Error(`Error ${res.status}: ${res.statusText}`);
@@ -44,7 +44,7 @@ export default function CargarCertificado({ apiUrl, paramName, paramValue }: Car
     if (paramValue) {
       fetchAlumno();
     }
-  }, [apiUrl, paramName, paramValue]);
+  }, [endpointPath, paramName, paramValue]);
 
   if (loading) return <p>Cargando certificado...</p>;
 

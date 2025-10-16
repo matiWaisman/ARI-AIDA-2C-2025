@@ -9,7 +9,7 @@ type Props = {
 export default function CertificadoPage({ params }: Props) {
   return (
     <CargarCertificado
-      apiUrl="http://localhost:3000/app/lu"
+      endpointPath="/lu"
       paramName="LU"
       paramValue={params.lu}
     />

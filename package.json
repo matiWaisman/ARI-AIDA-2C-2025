@@ -5,18 +5,18 @@
   "scripts": {
     "start": "concurrently \"npm run start:back\" \"npm run start:front\"",
     "start:back": "cd back && npm start",
-    "start:front": "cd front && npm start",
-    "install:all": "npm install && cd back && npm install && cd ../front && npm install",
+    "start:front": "cd aida-app && npm start",
+    "install:all": "npm install && cd back && npm install && cd ../aida-app && npm install",
     "dev": "concurrently \"npm run dev:back\" \"npm run dev:front\"",
     "dev:back": "cd back && npm run dev",
-    "dev:front": "cd front && npm run dev"
+    "dev:front": "cd aida-app && npm run dev"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
   },
   "workspaces": [
     "back",
-    "front"
+    "aida-app"
   ],
   "dependencies": {
     "dotenv": "^17.2.3"

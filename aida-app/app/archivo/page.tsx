@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { apiFetch } from "@/utils/api";
 
 export default function Archivo() {
   const [file, setFile] = useState<File | null>(null);
@@ -15,7 +16,7 @@ export default function Archivo() {
       const formData = new FormData();
       formData.append("archivo", file);
       try {
-        const res = await fetch("http://localhost:3000/app/cargarCSV", {
+        const res = await apiFetch("/cargarCSV", {
           method: "POST",
           body: formData,
         });
@@ -40,32 +41,22 @@ export default function Archivo() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>Subir archivo CSV</div>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <h2 className="heading">Subir archivo CSV</h2>
       <div>
-        <label>
-          Subí tu archivo:{" "}
-          <input
-            type="file"
-            name="archivo"
-            onChange={(e) => setFile(e.target.files ? e.target.files[0] : null)}
-            required
-          />
-        </label>
+        <label className="label" htmlFor="archivo">Subí tu archivo</label>
+        <input
+          id="archivo"
+          className="input"
+          type="file"
+          name="archivo"
+          onChange={(e) => setFile(e.target.files ? e.target.files[0] : null)}
+          required
+        />
       </div>
-      <button type="submit">Subir archivo</button>
+      <button type="submit" className="btn-primary">Subir archivo</button>
       {status && (
-        <div
-          style={{
-            marginTop: "12px",
-            padding: "8px 12px",
-            color: status === "success" ? "#064e3b" : "#7f1d1d",
-            backgroundColor: status === "success" ? "#d1fae5" : "#fee2e2",
-            border: "1px solid",
-            borderColor: status === "success" ? "#10b981" : "#ef4444",
-            borderRadius: "4px",
-          }}
-        >
+        <div className={status === "success" ? "alert-success" : "alert-error"}>
           {message}
         </div>
       )}

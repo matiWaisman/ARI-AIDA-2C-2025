@@ -23,21 +23,23 @@ export default function Formulario({ title, nombreLabel, inputType, nombreInput,
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>{title}</div>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <h2 className="heading">{title}</h2>
       <div>
-        <label>
-          {nombreLabel}:{" "}
-          <input
-            type={inputType}
-            name={nombreInput}
-            value={inputType === "file" ? undefined : value}
-            onChange={(e) => setValue(e.target.value)}
-            required
-          />
+        <label className="label" htmlFor={nombreInput}>
+          {nombreLabel}
         </label>
+        <input
+          id={nombreInput}
+          className="input"
+          type={inputType}
+          name={nombreInput}
+          value={inputType === "file" ? undefined : value}
+          onChange={(e) => setValue(e.target.value)}
+          required
+        />
       </div>
-      <button type="submit">{inputType === "file" ? "Subir archivo" : "Pedir Certificado"}</button>
+      <button type="submit" className="btn-primary">Pedir Certificado</button>
     </form>
   );
 }
