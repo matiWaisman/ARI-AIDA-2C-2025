@@ -12,5 +12,13 @@ create table aida.alumnos (
     egreso date
 );
 
+CREATE TABLE aida.users (
+    id serial primary key 
+    username text not null unique,
+    password_hash text not null,
+    nombre text not null, 
+    email text not null unique
+);
+
 -- Le damos permiso a aida admin sobre los datos de la tabla sin poder borrar la tabla o agregar nuevas
 grant select, insert, update, delete on aida.alumnos to aida_admin;

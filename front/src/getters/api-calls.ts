@@ -8,7 +8,6 @@ import { generarCertificadoHtml } from '../utils/generar-certificado';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const uploadDir = path.join(__dirname, '../../uploads');
 
 // En este archivo estan todas las funciones que requieren una llamada al back
 export async function getCertificadoLUFromBackend(req: Request, res: Response): Promise<void> {

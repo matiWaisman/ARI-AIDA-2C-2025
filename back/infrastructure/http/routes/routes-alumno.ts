@@ -11,4 +11,3 @@ alumnoRouter.post("/update", AlumnoController.updateAlumno);
 alumnoRouter.post("/delete", AlumnoController.deleteAlumno);
 alumnoRouter.get("/all", AlumnoController.getAlumnos); 
 alumnoRouter.post("/insert", AlumnoController.insertAlumno);
-

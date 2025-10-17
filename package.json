@@ -12,6 +12,8 @@
     "dev:front": "cd front && npm run dev"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/express-session": "^1.18.2",
     "concurrently": "^8.2.2"
   },
   "workspaces": [
@@ -19,6 +21,8 @@
     "front"
   ],
   "dependencies": {
-    "dotenv": "^17.2.3"
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.3",
+    "express-session": "^1.18.2"
   }
 }
