@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node --loader ts-node/esm src/app.ts",
     "dev": "nodemon --watch src --ext ts --exec \"node --loader ts-node/esm src/app.ts\"",
-    "db:init": "psql -U aida_admin -d aida_db -f db/create-db.sql",
+    "db:init": "psql -U aida_admin -d aida_db -f db/create-db.sql && psql -U aida_admin -d aida_db -f db/create-schema.sql",
     "db:shell": "psql -U aida_admin -d aida_db"
   },
   "dependencies": {

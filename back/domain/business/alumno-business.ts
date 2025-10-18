@@ -32,6 +32,22 @@ export class AlumnoBusiness {
     return this.repo.getAlumnoConLU(LU);
   }
 
+  async updateAlumno(LU: string, name: string, lastName: string) {
+    return this.repo.updateAlumno(LU, name, lastName);
+  }
+
+  async insertAlumno(LU: string, name: string, lastName: string) {
+    return this.repo.insertAlumno(LU, name, lastName);
+  }
+
+  async deleteAlumno(LU: string) {
+    return this.repo.deleteAlumno(LU);
+  }
+
+  async getAlumnos() {
+    return this.repo.getAlumnos('', []);
+  } 
+
   async CargarDatosEnAlumnos(FilePath: string){
     await this.repo.cargarAlumnosFromCSV(FilePath);
   }
