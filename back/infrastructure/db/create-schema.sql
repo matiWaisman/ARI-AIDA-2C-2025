@@ -13,7 +13,7 @@ create table aida.alumnos (
 );
 
 CREATE TABLE aida.users (
-    id serial primary key 
+    id serial primary key,
     username text not null unique,
     password_hash text not null,
     nombre text not null, 
