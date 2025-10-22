@@ -17,7 +17,7 @@ export function LoginFeature() {
     setLoading(true);
 
     try {
-      await apiClient("/app/login", {
+      await apiClient("/login", {
         method: "POST",
         body: JSON.stringify({ username, password }),
       });

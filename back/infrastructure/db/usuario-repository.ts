@@ -66,13 +66,13 @@ async autenticarUsuario(
     }
 }
 
-  async crearUsuario(client: Client, username: string, password: string, nombre?: string,email?: string): Promise<Usuario | null> {
+  async crearUsuario(client: Client, username: string, password: string, nombre?: string,email?: string, esProfesor?: boolean, esAlumno?: boolean): Promise<Usuario | null> {
     try {
         const passwordHash = await this.hashPassword(password);
 
         const result = await client.query(
-            `INSERT INTO aida.usuarios (username, password_hash, nombre, email)
-             VALUES ($1, $2, $3, $4)
+            `INSERT INTO aida.usuarios (username, password_hash, nombre, email, esProfesor, esAlumno)
+             VALUES ($1, $2, $3, $4, $5, $6)
              RETURNING id, username, nombre, email, activo`,
             [username, passwordHash, nombre || null, email || null]
         );

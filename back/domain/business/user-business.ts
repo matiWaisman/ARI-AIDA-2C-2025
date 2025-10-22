@@ -30,9 +30,11 @@ export class UsuarioBusiness {
     username: string,
     password: string,
     nombre?: string,
-    email?: string
+    email?: string,
+    esProfesor?: boolean,
+    esAlumno?: boolean
   ): Promise<Usuario | null> {
-    return this.repo.crearUsuario(client, username, password, nombre, email);
+    return this.repo.crearUsuario(client, username, password, nombre, email, esProfesor, esAlumno);
   }
 
 
