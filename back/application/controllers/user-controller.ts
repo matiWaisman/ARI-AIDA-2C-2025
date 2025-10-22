@@ -24,7 +24,7 @@ export class UserController {
   static async createUser(username: string, password: string, nombre?: string, email?: string) {
     const client = createDbClient();
     await client.connect();
-
+    console.log("Alguien llamo");
     try {
       const business = new UsuarioBusiness(client);
       const nuevoUsuario = await business.crearUsuario(client, username, password, nombre, email);

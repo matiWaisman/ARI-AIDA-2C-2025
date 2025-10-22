@@ -19,7 +19,7 @@ export function useRegisterFeature() {
     setLoading(true);
 
     try {
-      await apiClient("/app/register", {
+      await apiClient("/register", {
         method: "POST",
         body: JSON.stringify({ username, password, nombre, email }),
       });
