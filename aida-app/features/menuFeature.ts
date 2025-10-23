@@ -12,7 +12,7 @@ export function menuFeature() {
   useEffect(() => {
     async function checkSession() {
       try {
-        const data = await apiClient("/app/session");
+        const data = await apiClient("/session");
         setUsuario(data.usuario);
       } catch (err) {
         // Si no está logueado (401), redirige al login

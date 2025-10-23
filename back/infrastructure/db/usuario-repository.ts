@@ -7,12 +7,6 @@ export class UserRepository {
   constructor(private client: Client) {}
   SALT_ROUNDS = 10;
 
-  async existeAlumno(where: string, params: any[] = []): Promise<boolean> {
-    const query = `SELECT 1 FROM aida.usuarios WHERE titulo IS NOT NULL ${where} LIMIT 1`;
-    const result = await this.client.query(query, params);
-    return result.rows.length > 0;
-  }  
-
   async hashPassword(password: string): Promise<string> {
     return await bcrypt.hash(password, this.SALT_ROUNDS);
   }
@@ -47,11 +41,6 @@ async autenticarUsuario(
         if (!passwordValida) {
             return null;
         }
-
-        await client.query(
-            'UPDATE aida.usuarios SET ultimo_acceso = CURRENT_TIMESTAMP WHERE id = $1',
-            [user.id]
-        );
 
         return {
             id: user.id,

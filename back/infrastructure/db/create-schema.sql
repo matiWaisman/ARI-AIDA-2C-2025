@@ -19,7 +19,8 @@ CREATE TABLE aida.usuarios (
     nombre text not null, 
     email text not null unique,
 	esProfesor bool not null,
-	esAlumno bool not null
+	esAlumno bool not null,
+    activo bool not null default true
 );
 
 -- Le damos permiso a aida admin sobre los datos de la tabla sin poder borrar la tabla o agregar nuevas
