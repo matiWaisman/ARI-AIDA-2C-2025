@@ -12,12 +12,14 @@ create table aida.alumnos (
     egreso date
 );
 
-CREATE TABLE aida.users (
+CREATE TABLE aida.usuarios (
     id serial primary key,
     username text not null unique,
     password_hash text not null,
     nombre text not null, 
-    email text not null unique
+    email text not null unique,
+	esProfesor bool not null,
+	esAlumno bool not null
 );
 
 -- Le damos permiso a aida admin sobre los datos de la tabla sin poder borrar la tabla o agregar nuevas

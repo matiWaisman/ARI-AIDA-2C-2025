@@ -16,11 +16,11 @@
       setError("");
       setLoading(true);
 
-      try {
-        await apiClient("/app/login", {
-          method: "POST",
-          body: JSON.stringify({ username, password }),
-        });
+    try {
+      await apiClient("/login", {
+        method: "POST",
+        body: JSON.stringify({ username, password }),
+      });
 
         router.push("/");
       } catch (err) {

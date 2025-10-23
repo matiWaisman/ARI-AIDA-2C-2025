@@ -74,10 +74,10 @@ app.get("/app/session", (req, res) => {
 });
 
 app.post("/app/register", async (req, res) => {
-  const { username, password, nombre, email } = req.body;
+  const { username, password, nombre, email, esProfesor, esAlumno } = req.body;
 
   try {
-    const user = await UserController.createUser(username, password, nombre, email);
+    const user = await UserController.createUser(username, password, nombre, email, esProfesor, esAlumno);
 
     if (!user) {
       return res.status(400).json({ message: "No se pudo crear el usuario" });
