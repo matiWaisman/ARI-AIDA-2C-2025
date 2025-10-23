@@ -74,7 +74,7 @@ async autenticarUsuario(
             `INSERT INTO aida.usuarios (username, password_hash, nombre, email, esProfesor, esAlumno)
              VALUES ($1, $2, $3, $4, $5, $6)
              RETURNING id, username, nombre, email, activo`,
-            [username, passwordHash, nombre || null, email || null]
+            [username, passwordHash, nombre || null, email || null, esProfesor, esAlumno]
         );
 
         return result.rows[0];

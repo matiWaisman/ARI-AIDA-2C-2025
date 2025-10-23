@@ -21,13 +21,13 @@ export class UserController {
     }
   }
 
-  static async createUser(username: string, password: string, nombre?: string, email?: string) {
+  static async createUser(username: string, password: string, nombre?: string, email?: string, esProfesor?: boolean, esAlumno?: boolean) {
     const client = createDbClient();
     await client.connect();
     console.log("Alguien llamo");
     try {
       const business = new UsuarioBusiness(client);
-      const nuevoUsuario = await business.crearUsuario(client, username, password, nombre, email);
+      const nuevoUsuario = await business.crearUsuario(client, username, password, nombre, email, esProfesor, esAlumno);
       return nuevoUsuario ?? null;
     } catch (error) {
       console.error("Error al crear usuario:", error);

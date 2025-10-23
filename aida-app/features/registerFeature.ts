@@ -9,6 +9,8 @@ export function useRegisterFeature() {
   const [password, setPassword] = useState("");
   const [nombre, setNombre] = useState("");
   const [email, setEmail] = useState("");
+  const [esAlumno, setEsAlumno] = useState(false);
+  const [esProfesor, setEsProfesor] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -18,10 +20,24 @@ export function useRegisterFeature() {
     setError("");
     setLoading(true);
 
+    
+    if (!esAlumno && !esProfesor) {
+      setError("Debes seleccionar al menos un rol (Alumno o Profesor)");
+      setLoading(false);
+      return;
+    }
+
     try {
       await apiClient("/register", {
         method: "POST",
-        body: JSON.stringify({ username, password, nombre, email }),
+        body: JSON.stringify({ 
+          username, 
+          password, 
+          nombre, 
+          email, 
+          esAlumno, 
+          esProfesor 
+        }),
       });
 
       router.push("/login");
@@ -38,10 +54,14 @@ export function useRegisterFeature() {
     password,
     nombre,
     email,
+    esAlumno,
+    esProfesor,
     setUsername,
     setPassword,
     setNombre,
     setEmail,
+    setEsAlumno,
+    setEsProfesor,
     handleRegister,
     loading,
     error,
