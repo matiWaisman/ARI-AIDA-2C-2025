@@ -3,7 +3,7 @@ import { apiFetch } from "@/utils/api";
 
 export async function apiClient(path: string, options: RequestInit = {}) {
   const res = await apiFetch(path, {
-    credentials: "include", // importante para sesiones
+    credentials: "include", 
     headers: {
       "Content-Type": "application/json",
       ...(options.headers || {}),
