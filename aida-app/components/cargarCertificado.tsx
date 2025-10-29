@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { apiFetch } from "@/utils/api";
 import { Alumno } from "@/types/alumno";
 import Certificado from "@/components/certificado";
 import { apiClient } from "@/apiClient/apiClient";
