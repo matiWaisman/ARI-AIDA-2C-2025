@@ -16,7 +16,7 @@ export function useLuFeature() {
     setAlumno(null);
 
     try {
-      const res = await apiClient(`/app/lu?LU=${encodeURIComponent(lu)}`, {
+      const res = await apiClient(`/lu?LU=${encodeURIComponent(lu)}`, {
         method: "GET",
       });
       setAlumno(res);

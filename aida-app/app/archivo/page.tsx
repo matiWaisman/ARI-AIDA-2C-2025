@@ -2,14 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { apiFetch } from "@/utils/api";
 import { apiClient } from "@/apiClient/apiClient";
 
 export default function Archivo() {
   const [file, setFile] = useState<File | null>(null);
   const [status, setStatus] = useState<"success" | "error" | null>(null);
   const [message, setMessage] = useState("");
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
