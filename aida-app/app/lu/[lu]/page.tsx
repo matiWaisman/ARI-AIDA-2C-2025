@@ -1,17 +1,22 @@
 "use client";
 
+import React from "react";
 import CargarCertificado from "@/components/cargarCertificado";
 
 type Props = {
-  params: { lu: string };
+  // Next puede pasar params como Promise en algunas versiones
+  params: Promise<{ lu: string }> | { lu: string };
 };
 
 export default function CertificadoPage({ params }: Props) {
+  // React.use unwrappea el Promise (Next recomienda esto)
+  const resolved = React.use(params as any) as { lu: string };
+
   return (
     <CargarCertificado
       endpointPath="/lu"
       paramName="LU"
-      paramValue={params.lu}
+      paramValue={resolved.lu}
     />
   );
 }

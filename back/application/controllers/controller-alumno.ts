@@ -15,7 +15,9 @@ export class AlumnoController {
 
     try {
       const business = new AlumnoBusiness(client);
+      console.log("Antes de llamar al business");
       const alumno = await business.getAlumnoConLU(LU);
+      console.log("Después del business:", alumno);
 
       if (!alumno) {
         return res.status(404).json({ error: "Alumno no encontrado", lu: LU });

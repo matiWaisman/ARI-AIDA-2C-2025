@@ -5,6 +5,8 @@ export function apiUrl(path: string): string {
 }
 
 export async function apiFetch(inputPath: string, init?: RequestInit): Promise<Response> {
+  debugger
+  console.log("apiUrl construida:", `http://localhost:3000/app/${inputPath.replace(/^\//, "")}`);
   const url = apiUrl(inputPath);
   return fetch(url, init);
 }

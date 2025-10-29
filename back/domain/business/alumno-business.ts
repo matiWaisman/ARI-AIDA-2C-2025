@@ -29,7 +29,9 @@ export class AlumnoBusiness {
   }
 
   async getAlumnoConLU(LU: string) {
-    return this.repo.getAlumnoConLU(LU);
+    const alumno = await this.repo.getAlumnoConLU(LU);
+    console.log("Business recibió del repo:", alumno);
+    return alumno;
   }
 
   async updateAlumno(LU: string, name: string, lastName: string) {

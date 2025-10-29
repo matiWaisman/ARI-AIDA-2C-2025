@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiFetch } from "@/utils/api";
+import { apiClient } from "@/apiClient/apiClient";
 
 export default function Archivo() {
   const [file, setFile] = useState<File | null>(null);
@@ -16,7 +17,7 @@ export default function Archivo() {
       const formData = new FormData();
       formData.append("archivo", file);
       try {
-        const res = await apiFetch("/cargarCSV", {
+        const res = await apiClient("/cargarCSV", {
           method: "POST",
           body: formData,
         });

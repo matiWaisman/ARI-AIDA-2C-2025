@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { apiFetch } from "@/utils/api";
 import { Alumno } from "@/types/alumno";
 import Certificado from "@/components/certificado";
+import { apiClient } from "@/apiClient/apiClient";
 
 type CargarCertificadoProps = {
   endpointPath: string;      // e.g. "/lu" or "/fecha"
@@ -23,15 +24,8 @@ export default function CargarCertificado({ endpointPath, paramName, paramValue 
       try {
         setLoading(true);
         setError(null);
-
         const url = `${endpointPath}?${encodeURIComponent(paramName)}=${encodeURIComponent(paramValue)}`;
-        const res = await apiFetch(url);
-
-        if (!res.ok) {
-          throw new Error(`Error ${res.status}: ${res.statusText}`);
-        }
-
-        const alumnoData: Alumno = await res.json();
+        const alumnoData: Alumno = await apiClient(url);
         setAlumno(alumnoData);
       } catch (err) {
         console.error("Error fetching alumno:", err);

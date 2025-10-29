@@ -29,8 +29,12 @@ export class AlumnoRepository {
   }
 
   async getAlumnoConLU(LU: string): Promise<Alumno | undefined> {
-    const alumnos = await this.getAlumnos("AND lu = $1", [LU]);
-    return alumnos[0];
+    console.log("estoy en el repo", LU);
+    const query = `SELECT * FROM aida.alumnos WHERE titulo IS NOT NULL AND lu = $1`;
+    console.log("Query que se va a ejecutar:", query);
+    const result = await this.client.query(query, [LU]);
+    console.log("Filas devueltas:", result.rows.length, result.rows);
+    return result.rows[0];
   }
 
   async getAlumnoConFechaDeseada(fecha: string): Promise<Alumno | undefined> {

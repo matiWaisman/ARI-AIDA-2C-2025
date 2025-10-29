@@ -42,6 +42,7 @@ app.use(session({
 }));
 
 function requireLogin(req: Request, res: Response, next: NextFunction) {
+  debugger
   if (!req.session?.usuario) {
     return res.status(401).json({ message: "Usuario no autenticado" });
   }
@@ -57,6 +58,7 @@ app.post("/app/login", async (req, res) => {
   }
 
   req.session.usuario = { id: user.id, username: user.username };
+  console.log("Sesión creada:", req.session);
   res.json({ message: "Login exitoso", usuario: req.session.usuario });
 });
 
