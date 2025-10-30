@@ -1,6 +1,8 @@
 import { Client } from "pg";
-import type { Alumno } from "../../domain/entity/alumno.ts";
+import type { Alumno, AlumnosDict } from "../../domain/entity/alumno.ts";
 import { insertAlumnos } from "./database-operations.ts";
+import { readCsv } from '../files/read-csv.ts';
+
 
 export class AlumnoRepository {
   constructor(private client: Client) {}
@@ -98,4 +100,47 @@ export class AlumnoRepository {
     await insertAlumnos(client, FilePath);
     await client.end();
   };
+
+  async getAllAsDict(): Promise<AlumnosDict> {
+    const result = await this.client.query<Alumno>("SELECT * FROM aida.alumnos");
+    const dict: AlumnosDict = {};
+    for (const row of result.rows) {
+      dict[row.lu] = row;
+    }
+    return dict;
+  }
+
+  async deleteAll(): Promise<void> {
+    const result = await this.client.query("DELETE FROM aida.alumnos");
+    console.log(`Se eliminaron ${result.rowCount} alumnos`);
+  }
+
+  async bulkInsertOrUpdateFromCSV(filePath: string): Promise<void> {
+    const alumnos = await readCsv(filePath);
+    const listaDeLus = alumnos.map((a) => a.lu);
+
+    const queryFiltrarExistentes = `SELECT lu FROM aida.alumnos WHERE lu = ANY($1)`;
+    const existentes = await this.client.query<{ lu: string }>(queryFiltrarExistentes, [listaDeLus]);
+    const lusExistentes = existentes.rows.map((a) => a.lu);
+
+    const queryInsert = `
+      INSERT INTO aida.alumnos (lu, apellido, nombres, titulo, titulo_en_tramite, egreso)
+      VALUES ($1, $2, $3, $4, $5, $6)
+    `;
+    const queryUpdate = `
+      UPDATE aida.alumnos
+      SET apellido = $2, nombres = $3, titulo = $4, titulo_en_tramite = $5, egreso = $6
+      WHERE lu = $1
+    `;
+
+    for (const alumno of alumnos) {
+      const params = Object.values(alumno);
+      if (lusExistentes.includes(alumno.lu)) {
+        await this.client.query(queryUpdate, params);
+      } else {
+        await this.client.query(queryInsert, params);
+      }
+    }
+  }
+
 }
