@@ -13,24 +13,21 @@ export class AlumnoBusiness {
 
   async generarCertificadoSiAplica(LU: string) {
     const alumno = await this.repo.getAlumnoConLU(LU);
-    if (!alumno) {
-      throw new Error(`No se encontró alumno con LU ${LU}`);
+    if (!alumno || !alumno.titulo_en_tramite) {
+      throw new Error();
     }
-
-    if (!alumno.titulo_en_tramite) {
-      throw new Error(`El alumno ${alumno.lu} no tiene título en trámite`);
-    }
-
     return await this.generator.generarYGuardarCertificado(alumno);
   }
 
   async hayCertificadosPendientes(fecha: string) {
-    return this.repo.getAlumnoConFechaDeseada(fecha);
+    return await this.repo.getAlumnoConFechaDeseada(fecha);
   }
 
   async getAlumnoConLU(LU: string) {
     const alumno = await this.repo.getAlumnoConLU(LU);
-    console.log("Business recibió del repo:", alumno);
+    if (!alumno) {
+      throw new Error();
+    }
     return alumno;
   }
 
@@ -43,7 +40,12 @@ export class AlumnoBusiness {
   }
 
   async deleteAlumno(LU: string) {
-    return this.repo.deleteAlumno(LU);
+    const deleted = this.repo.deleteAlumno(LU);
+    if (deleted){
+      return deleted;
+    } else {
+      throw new Error();
+    }
   }
 
   async getAlumnos() {

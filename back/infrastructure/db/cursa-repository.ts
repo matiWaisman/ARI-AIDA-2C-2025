@@ -3,17 +3,19 @@ import { Client } from "pg";
 export class CursaRepository {
   constructor(private client: Client) {}
 
-  async existeMateria(where: string, params: any[] = []): Promise<boolean> {
-    const query = `SELECT 1 FROM aida.materias WHERE nombreMateria = $1 LIMIT 1`; 
-    const result = await this.client.query(query, params);
-    return result.rows.length > 0;
+  async crearCursa(idAlumno: number, idMateria: number, cuatrimestre: number): Promise<void> {
+    const query = `
+      INSERT INTO aida.cursas (id_alumno, id_materia, cuatrimestre)
+      VALUES ($1, $2, $3)
+    `;
+    const result = await this.client.query(query, [idAlumno, idMateria, cuatrimestre]);
+    return result.rows[0];
   }
 
-  async crearMateria(nombre: string, codigo: string): Promise<void> {
-    const query = `
-      INSERT INTO aida.materias (nombre, codigo)
-      VALUES ($1, $2)
-    `;
-    await this.client.query(query, [nombre, codigo]);
-  } 
+  async existeCursa(idAlumno: number, idMateria: number, cuatrimestre: number): Promise<boolean> {
+    const query = `SELECT 1 FROM aida.cursas WHERE id_alumno = $1 AND id_materia = $2 AND cuatrimestre = $3 LIMIT 1`; 
+    const result = await this.client.query(query, [idAlumno, idMateria, cuatrimestre]);
+    return result.rows.length > 0;
+  }
 }
+

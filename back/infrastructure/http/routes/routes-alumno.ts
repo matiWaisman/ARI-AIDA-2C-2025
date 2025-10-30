@@ -4,11 +4,9 @@ import fs from "fs";
 import path from "path";
 import { AlumnoController } from "../../../application/controllers/controller-alumno.ts";
 
-// Ensure uploads directory exists and use an absolute path
 const uploadsDir = path.resolve(process.cwd(), "uploads");
 fs.mkdirSync(uploadsDir, { recursive: true });
 
-// Configure diskStorage to preserve original extension
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => {
     cb(null, uploadsDir);
@@ -21,8 +19,7 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage }); // Guarda el archivo con extensión original
-
+const upload = multer({ storage }); 
 export const alumnoRouter = Router();
 
 
