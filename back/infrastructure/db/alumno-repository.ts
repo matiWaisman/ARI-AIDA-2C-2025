@@ -31,11 +31,8 @@ export class AlumnoRepository {
   }
 
   async getAlumnoConLU(LU: string): Promise<Alumno | undefined> {
-    console.log("estoy en el repo", LU);
     const query = `SELECT * FROM aida.alumnos WHERE titulo IS NOT NULL AND lu = $1`;
-    console.log("Query que se va a ejecutar:", query);
     const result = await this.client.query(query, [LU]);
-    console.log("Filas devueltas:", result.rows.length, result.rows);
     return result.rows[0];
   }
 
@@ -112,7 +109,6 @@ export class AlumnoRepository {
 
   async deleteAll(): Promise<void> {
     const result = await this.client.query("DELETE FROM aida.alumnos");
-    console.log(`Se eliminaron ${result.rowCount} alumnos`);
   }
 
   async bulkInsertOrUpdateFromCSV(filePath: string): Promise<void> {
