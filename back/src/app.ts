@@ -53,11 +53,6 @@ function requireLogin(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
-app.post("/app/login", UserController.login);
-app.post("/app/register", UserController.register);
-app.post("/app/logout", UserController.logout);
-app.get("/app/session", UserController.session);
-
 app.use("/app", userRouter); 
 app.use("/app", requireLogin, alumnoRouter);
 
