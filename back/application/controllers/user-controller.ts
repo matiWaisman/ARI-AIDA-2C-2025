@@ -12,7 +12,7 @@ export class UserController {
 
   static async login(req: Request, res: Response) {
     const { username, password } = req.body;
-    const { client, business } = await this._createDbClientAndInitializeBusiness();
+    const { client, business } = await UserController._createDbClientAndInitializeBusiness();
     const user = await business.autenticarUsuario(username, password);
     if (!user) {
       return res.status(401).json({ message: "Credenciales inválidas" });
@@ -24,7 +24,7 @@ export class UserController {
 
   static async register(req: Request, res: Response) {
     const { username, password, nombre, email, esProfesor, esAlumno } = req.body;
-    const { client, business } = await this._createDbClientAndInitializeBusiness();
+    const { client, business } = await UserController._createDbClientAndInitializeBusiness();
     const nuevoUsuario = await business.crearUsuario(username, password, nombre, email, esProfesor, esAlumno);
     if (!nuevoUsuario) {
       return res.status(400).json({ message: "No se pudo crear el usuario" });

@@ -15,7 +15,7 @@ export class AlumnoController {
 
   static async getAlumnoPorLU(req: Request, res: Response) {
     const LU = decodeURIComponent(req.query.LU as string);
-    const {client, business} = await this._createDbClientAndInitializeBusiness()
+    const {client, business} = await AlumnoController._createDbClientAndInitializeBusiness()
     const alumno = await business.getAlumnoConLU(LU);
     if (!alumno) {
       return res.status(404).json({ error: "No existe ese alumno con LU", lu: LU });
@@ -26,7 +26,7 @@ export class AlumnoController {
 
   static async getAlumnoPorFecha(req: Request, res: Response) {
     const fecha = req.query.fecha as string;
-    const {client, business} = await this._createDbClientAndInitializeBusiness()
+    const {client, business} = await AlumnoController._createDbClientAndInitializeBusiness()
     const alumno = await business.hayCertificadosPendientes(fecha);
     if (!alumno) {
       return res.status(404).json({ error: "No existe alumno por fecha", fecha: fecha });
@@ -37,7 +37,7 @@ export class AlumnoController {
 
   static async generarCertificado(req: Request, res: Response) {
     const LU = req.query.LU as string;
-    const {client, business} = await this._createDbClientAndInitializeBusiness()
+    const {client, business} = await AlumnoController._createDbClientAndInitializeBusiness()
     const ruta = await business.generarCertificadoSiAplica(LU);
     res.json({ message: "Certificado generado", path: ruta });
     await client.end();
@@ -50,7 +50,7 @@ export class AlumnoController {
       return res.status(400).json({ error: "No se envió ningún archivo CSV." });
     }
     const absolutePath = path.isAbsolute(file.path) ? file.path : path.resolve(process.cwd(), file.path);
-    const {client, business} = await this._createDbClientAndInitializeBusiness()
+    const {client, business} = await AlumnoController._createDbClientAndInitializeBusiness()
     await business.CargarDatosEnAlumnos(absolutePath); 
     res.status(200).json({ message: "Archivo cargado correctamente." });
     await client.end();
@@ -58,7 +58,7 @@ export class AlumnoController {
   }
 
   static async getAlumnos(req: Request, res: Response) {
-    const {client, business} = await this._createDbClientAndInitializeBusiness()
+    const {client, business} = await AlumnoController._createDbClientAndInitializeBusiness()
     const alummnos = await business.getAlumnos();
     res.json(alummnos);
     await client.end();
@@ -66,7 +66,7 @@ export class AlumnoController {
 
   static async updateAlumno(req: Request, res: Response) {
     const { lu, nombres, apellido } = req.body;
-    const {client, business} = await this._createDbClientAndInitializeBusiness()
+    const {client, business} = await AlumnoController._createDbClientAndInitializeBusiness()
     const alumno = await business.updateAlumno(lu, nombres, apellido);
     res.json(alumno);
     await client.end();
@@ -74,7 +74,7 @@ export class AlumnoController {
 
   static async deleteAlumno(req: Request, res: Response) {
     const LU = req.query.LU as string;
-    const {client, business} = await this._createDbClientAndInitializeBusiness()
+    const {client, business} = await AlumnoController._createDbClientAndInitializeBusiness()
     const alummno = await business.deleteAlumno(LU);
     res.status(200).json({ message: "Alumno eliminado", lu: LU });
     await client.end();
@@ -83,7 +83,7 @@ export class AlumnoController {
 
   static async insertAlumno(req: Request, res: Response) {
     const { lu, nombres, apellido } = req.body;
-    const {client, business} = await this._createDbClientAndInitializeBusiness()
+    const {client, business} = await AlumnoController._createDbClientAndInitializeBusiness()
     const alummno = await business.insertAlumno(lu, nombres, apellido);
     res.status(200).json({ message: "Alumno creado", lu: lu });
     await client.end();  
