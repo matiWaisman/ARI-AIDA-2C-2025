@@ -39,7 +39,8 @@ CREATE TABLE aida.dicta(
 CREATE TABLE aida.cursa(
     luAlumno VARCHAR foreign key, 
     codigoMateria VARCHAR foreign key,
-    cuatrimestre VARCHAR primary key 
+    cuatrimestre VARCHAR primary key,
+    nota number 
 )
 
 CREATE TABLE aida.encuestaAProfesor(

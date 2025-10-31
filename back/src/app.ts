@@ -3,8 +3,9 @@ import cors from "cors";
 import session from "express-session";
 import dotenv from "dotenv";
 import { alumnoRouter } from "../infrastructure/http/routes/routes-alumno.ts";
-import { UserController } from "../application/controllers/user-controller.ts";
+import { UserController } from "../application/controllers/controller-user.ts";
 import { userRouter } from "../infrastructure/http/routes/routes-user.ts";
+import { cursaRouter } from "../infrastructure/http/routes/routes-cursa.ts";
 
 dotenv.config({ path: "./local-sets.env" });
 
@@ -55,6 +56,8 @@ function requireLogin(req: Request, res: Response, next: NextFunction) {
 
 app.use("/app", userRouter); 
 app.use("/app", requireLogin, alumnoRouter);
+app.use("/app", requireLogin, cursaRouter);
+
 
 app.listen(port, () => {
   console.log(`💦🍆  Backend se esta corriendo 😲 ...en http://localhost:${port}/app/`);

@@ -11,13 +11,22 @@ export class CursaBusiness {
   async crearCursa(idAlumno: number, idMateria: number, cuatrimestre: number) {
     const existeCursa = await this.existeCursa(idAlumno, idMateria, cuatrimestre);
     if (existeCursa) {
-      throw new Error(`La cursada para el alumno ${idAlumno} en la materia ${idMateria} durante el cuatrimestre ${cuatrimestre} ya existe.`);
+      throw new Error();
     }
     return this.repo.crearCursa(idAlumno, idMateria, cuatrimestre);
   }
 
+  async getCursa(idAlumno: number, idMateria: number, cuatrimestre: number) {
+    const existeCursa = await this.existeCursa(idAlumno, idMateria, cuatrimestre);
+    if (existeCursa) {
+      throw new Error();
+    }
+    return this.repo.getCursa(idAlumno, idMateria, cuatrimestre);
+  }
+
   async existeCursa(idAlumno: number, idMateria: number, cuatrimestre: number) {
-    return this.repo.existeCursa(idAlumno, idMateria, cuatrimestre);
+    const alumno = this.repo.getCursa(idAlumno, idMateria, cuatrimestre);
+    return !!alumno;
   }
 
 }

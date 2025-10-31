@@ -13,13 +13,19 @@ export class MateriaBusiness {
   async crearMateria(nombreMateria: string, codigoMateria: string) {
     const existeMateria = await this.existeMateria(nombreMateria);
     if (existeMateria) {
-      throw new Error(`La materia con nombre ${nombreMateria} ya existe.`);
+      throw new Error();
     }
     return this.repo.crearMateria(nombreMateria, codigoMateria);
   }
 
+  async getAllMaterias() {
+    return this.repo.getAllMaterias();
+  }
+
+
   async existeMateria(nombreMateria: string) {
-    return this.repo.existeMateria(nombreMateria);
+    const materia = this.repo.getMateria(nombreMateria);
+    return !!materia;
   }
 
 }
