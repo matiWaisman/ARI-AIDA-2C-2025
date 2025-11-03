@@ -35,8 +35,8 @@ export class AlumnoBusiness {
     return this.repo.updateAlumno(LU, name, lastName);
   }
 
-  async insertAlumno(LU: string, name: string, lastName: string) {
-    return this.repo.insertAlumno(LU, name, lastName);
+  async insertAlumno(LU: string, name: string, lastName: string, titulo: string, titulo_en_tramite: string, egreso: string) {
+    return this.repo.insertAlumno(LU, name, lastName, titulo, titulo_en_tramite, egreso);
   }
 
   async deleteAlumno(LU: string) {

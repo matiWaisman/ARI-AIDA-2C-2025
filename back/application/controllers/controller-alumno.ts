@@ -82,9 +82,14 @@ export class AlumnoController {
   }
 
   static async insertAlumno(req: Request, res: Response) {
-    const { lu, nombres, apellido } = req.body;
+    const { lu, nombres, apellido, titulo, titulo_en_tramite, egreso } = req.body;
+    
+    if (!lu || !nombres || !apellido || !titulo || !titulo_en_tramite || !egreso) {
+      return res.status(400).json({ message: "Todos los campos son obligatorios" });
+    }
+    
     const {client, business} = await AlumnoController._createDbClientAndInitializeBusiness()
-    const alummno = await business.insertAlumno(lu, nombres, apellido);
+    const alummno = await business.insertAlumno(lu, nombres, apellido, titulo, titulo_en_tramite, egreso);
     res.status(200).json({ message: "Alumno creado", lu: lu });
     await client.end();  
   }
