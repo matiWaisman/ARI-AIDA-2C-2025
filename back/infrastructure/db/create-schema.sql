@@ -13,11 +13,13 @@ create table aida.alumnos (
 );
 
 -- Habria que hacer que el id sea el LU y que en el front ingreses eso
+-- Hay que volar el id y hacer que el LU sea la pk y a la m
 CREATE TABLE aida.usuarios (
     id serial primary key,
     username text not null unique,
     password_hash text not null,
     nombre text not null, 
+	lu VARCHAR,
     email text not null unique,
 	esProfesor bool not null,
 	esAlumno bool not null,
@@ -25,6 +27,14 @@ CREATE TABLE aida.usuarios (
 );
 
 -- Creacion tablas encuesta 
+CREATE TABLE aida.profesor(
+    id foreign key, 
+    lu VARCHAR primary key,
+    nombres text NOT NULL,
+    apellido text not null,
+    FOREIGN KEY (id) REFERENCES usuarios(id)
+)
+
 CREATE TABLE aida.materias (
     codigoMateria VARCHAR primary key, 
     nombreMateria VARCHAR not null

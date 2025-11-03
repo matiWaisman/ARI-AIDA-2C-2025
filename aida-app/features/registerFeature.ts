@@ -21,7 +21,7 @@ export function useRegisterFeature() {
     setError("");
     setLoading(true);
 
-    
+    // TODO: Validar que te pasen un LU y no te pasen cualquier cosa 
     if (!esAlumno && !esProfesor) {
       setError("Debes seleccionar al menos un rol (Alumno o Profesor)");
       setLoading(false);
