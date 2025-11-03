@@ -23,9 +23,9 @@ export class UserController {
   }
 
   static async register(req: Request, res: Response) {
-    const { username, password, nombre, email, esProfesor, esAlumno } = req.body;
+    const { username, password, nombre, LU: lu, email, esProfesor, esAlumno } = req.body;
     const { client, business } = await UserController._createDbClientAndInitializeBusiness();
-    const nuevoUsuario = await business.crearUsuario(username, password, nombre, email, esProfesor, esAlumno);
+    const nuevoUsuario = await business.crearUsuario(username, password, nombre, lu, email, esProfesor, esAlumno);
     if (!nuevoUsuario) {
       return res.status(400).json({ message: "No se pudo crear el usuario" });
     }

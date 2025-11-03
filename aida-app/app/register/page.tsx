@@ -7,6 +7,7 @@ export default function RegisterPage() {
     username,
     password,
     nombre,
+    lu,
     email,
     esAlumno,
     esProfesor,
@@ -14,6 +15,7 @@ export default function RegisterPage() {
     setPassword,
     setNombre,
     setEmail,
+    setLu,
     setEsAlumno,
     setEsProfesor,
     handleRegister,
@@ -59,6 +61,18 @@ export default function RegisterPage() {
             />
           </div>
           
+           
+          <div>
+            <input
+              type="text"
+              placeholder="LU, ej 960/23"
+              value={lu}
+              onChange={(e) => setLu(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              required
+            />
+          </div>
+
           <div>
             <input
               type="email"

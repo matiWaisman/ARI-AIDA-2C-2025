@@ -8,6 +8,7 @@ export function useRegisterFeature() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [nombre, setNombre] = useState("");
+  const [lu, setLu] = useState("");
   const [email, setEmail] = useState("");
   const [esAlumno, setEsAlumno] = useState(false);
   const [esProfesor, setEsProfesor] = useState(false);
@@ -34,6 +35,7 @@ export function useRegisterFeature() {
           username, 
           password, 
           nombre, 
+          lu,
           email, 
           esAlumno, 
           esProfesor 
@@ -53,12 +55,14 @@ export function useRegisterFeature() {
     username,
     password,
     nombre,
+    lu,
     email,
     esAlumno,
     esProfesor,
     setUsername,
     setPassword,
     setNombre,
+    setLu,
     setEmail,
     setEsAlumno,
     setEsProfesor,
