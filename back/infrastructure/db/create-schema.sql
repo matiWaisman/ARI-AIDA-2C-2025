@@ -1,113 +1,57 @@
 set role to aida_owner;
 create schema aida;
--- Le damos permiso de ver y usar los objetos dentro del esquema pero no permite modificarlos ni crear nuevos.
 grant usage on schema aida to aida_admin;
 
-create table aida.alumnos (
-    lu text primary key,
-    apellido text not null,
-    nombres text not null,
+-- Create base entity first
+CREATE TABLE aida.entidadUniversitaria (
+    lu TEXT PRIMARY KEY,
+    apellido TEXT NOT NULL,
+    nombres TEXT NOT NULL
+);
+
+-- Then create dependent tables
+CREATE TABLE aida.alumnos (
+    lu TEXT PRIMARY KEY REFERENCES aida.entidadUniversitaria(lu),
     titulo text,
     titulo_en_tramite date,
     egreso date
 );
 
--- Habria que hacer que el id sea el LU y que en el front ingreses eso
--- Hay que volar el id y hacer que el LU sea la pk y a la m
 CREATE TABLE aida.usuarios (
     id serial primary key,
     username text not null unique,
     password_hash text not null,
     nombre text not null, 
-	lu VARCHAR,
     email text not null unique,
-	esProfesor bool not null,
-	esAlumno bool not null,
-    activo bool not null default true
+    activo bool not null default true,
+    lu TEXT REFERENCES aida.entidadUniversitaria(lu)
 );
 
--- Creacion tablas encuesta 
-CREATE TABLE aida.profesor(
-    id foreign key, 
-    lu VARCHAR primary key,
+CREATE TABLE aida.profesor (
+    lu TEXT PRIMARY KEY REFERENCES aida.entidadUniversitaria(lu),
     nombres text NOT NULL,
     apellido text not null,
-    FOREIGN KEY (id) REFERENCES usuarios(id)
-)
+    id INTEGER REFERENCES aida.usuarios(id)
+);
 
 CREATE TABLE aida.materias (
-    codigoMateria VARCHAR primary key, 
-    nombreMateria VARCHAR not null
-)
+    codigoMateria VARCHAR PRIMARY KEY, 
+    nombreMateria VARCHAR NOT NULL
+);
 
-CREATE TABLE aida.dicta(
-    luProfesor VARCHAR foreign key, 
-    codigoMateria VARCHAR foreign key,
-    cuatrimestre VARCHAR primary key 
-)
+CREATE TABLE aida.dicta (
+    luProfesor TEXT REFERENCES aida.profesor(lu), 
+    codigoMateria VARCHAR REFERENCES aida.materias(codigoMateria),
+    cuatrimestre VARCHAR,
+    PRIMARY KEY (luProfesor, codigoMateria, cuatrimestre)
+);
 
-CREATE TABLE aida.cursa(
-    luAlumno VARCHAR foreign key, 
-    codigoMateria VARCHAR foreign key,
-    cuatrimestre VARCHAR primary key,
-    nota number 
-)
+CREATE TABLE aida.cursa (
+    luAlumno TEXT REFERENCES aida.alumnos(lu), 
+    codigoMateria VARCHAR REFERENCES aida.materias(codigoMateria),
+    cuatrimestre VARCHAR,
+    nota NUMERIC,
+    PRIMARY KEY (luAlumno, codigoMateria, cuatrimestre)
+);
 
-CREATE TABLE aida.encuestaAProfesor(
-    luEncuestado VARCHAR foreign key, 
-    luEvaluado VARCHAR foreign key, 
-    codigoMateria VARCHAR foreign key, 
-    cuatrimestre VARCHAR primary key, 
-    respuesta1 number,
-    respuesta2 number,
-    respuesta3 number,
-    respuesta4 number,
-    respuesta5 number,
-    respuesta6 number,
-    respuesta7 number,
-    respuesta8 number,
-    respuesta9 number,
-    respuesta10 number,
-    respuesta11 number,
-    respuesta12 number,
-    comentario VARCHAR
-)
-
-CREATE TABLE aida.encuestaAMateria(
-    luEncuestado VARCHAR foreign key,
-    codigoMateria VARCHAR foreign key,
-    cuatrimestre VARCHAR primary key,
-    respuesta1 number,
-    respuesta2 number,
-    respuesta3 number,
-    respuesta4 number,
-    respuesta5 number,
-    respuesta6 number,
-    respuesta7 number,
-    respuesta8 number,
-    respuesta9 number,
-    respuesta10 number,
-    respuesta11 number,
-    respuesta12 number,
-    respuesta13 number,
-    respuesta14 number,
-    respuesta15 number,
-    respuesta16 number,
-    comentario VARCHAR
-)
-
-CREATE TABLE aida.encuestaAAlumno(
-    luEncuestado VARCHAR foreign key, 
-    luEvaluado VARCHAR foreign key, 
-    codigoMateria VARCHAR foreign key, 
-    cuatrimestre VARCHAR primary key, 
-    respuesta1 number,
-    respuesta2 number,
-    respuesta3 number,
-    respuesta4 number,
-    respuesta5 number,
-    comentario VARCHAR
-)
-
--- Le damos permiso a aida admin sobre los datos de la tabla sin poder borrar la tabla o agregar nuevas
-grant select, insert, update, delete on aida.alumnos to aida_admin;
+grant select, insert, update, delete on all tables in schema aida to aida_admin;
