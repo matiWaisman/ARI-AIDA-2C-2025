@@ -40,10 +40,21 @@ export class UserController {
   }
 
   static async session(req: Request, res: Response) {
+    const REQUIRE_LOGIN = process.env.REQUIRE_LOGIN === "true" || process.env.REQUIRE_LOGIN === "1";
+    
     if (req.session.usuario) {
-      res.json({ autenticado: true, usuario: req.session.usuario });
+      res.json({ 
+        autenticado: true, 
+        usuario: req.session.usuario,
+        requireLogin: REQUIRE_LOGIN
+      });
     } else {
-      res.status(401).json({ autenticado: false });
+      // Si el login es requerido y no hay sesión, retornar 401
+      if (REQUIRE_LOGIN) {
+        res.status(401).json({ autenticado: false, requireLogin: true });
+      } else {
+        res.json({ autenticado: false, requireLogin: false });
+      }
     }
   }
 }

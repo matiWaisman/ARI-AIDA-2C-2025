@@ -9,6 +9,9 @@ import { cursaRouter } from "../infrastructure/http/routes/routes-cursa.ts";
 
 dotenv.config({ path: "./local-sets.env" });
 
+// Variable de entorno para controlar si el login es obligatorio
+const REQUIRE_LOGIN = process.env.REQUIRE_LOGIN === "true" || process.env.REQUIRE_LOGIN === "1";
+
 const app = express();
 const port = 3000;
 
