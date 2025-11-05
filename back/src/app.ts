@@ -6,6 +6,7 @@ import { alumnoRouter } from "../infrastructure/http/routes/routes-alumno.ts";
 import { UserController } from "../application/controllers/controller-user.ts";
 import { userRouter } from "../infrastructure/http/routes/routes-user.ts";
 import { cursaRouter } from "../infrastructure/http/routes/routes-cursa.ts";
+import { materiaRouter } from "../infrastructure/http/routes/routes-materia.ts";
 
 dotenv.config({ path: "./local-sets.env" });
 
@@ -51,13 +52,14 @@ app.use(
 );
 
 function requireLogin(req: Request, res: Response, next: NextFunction) {
-  if (!req.session?.usuario) {
+  if (!req.session?.usuario && REQUIRE_LOGIN) {
     return res.status(401).json({ message: "Usuario no autenticado" });
   }
   next();
 }
 
 app.use("/app", userRouter); 
+app.use("/app", materiaRouter)
 app.use("/app", requireLogin, alumnoRouter);
 app.use("/app", requireLogin, cursaRouter);
 

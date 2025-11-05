@@ -3,8 +3,7 @@ import MenuOption from "./menu_option";
 export default function Menu() {
   const options: Map<string, [string, string]> = new Map([
     ["alumnos", ["/alumnos", "Ver, modificar, eliminar y agregar alumnos"]],
-    ["inscripciones", ["/inscripciones", "Inscribirse a materias (Alumno)"]],
-    ["dictar", ["/dictar", "Anotate a materias para dictar (Profesor)"]],
+    ["inscripciones", ["/inscripciones", "Inscripciones"]],
     ["lu", ["/lu", "Imprimir certificado por LU"]],
     ["fecha", ["/fecha", "Imprimir certificado por fecha de trámite"]],
     ["archivo", ["/archivo", "Subir CSV con novedades de alumnos"]],

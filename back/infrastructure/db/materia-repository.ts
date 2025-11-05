@@ -18,8 +18,13 @@ export class MateriaRepository {
   }
   
   async getAllMaterias(): Promise<any[]> {
-    const query = `SELECT * FROM aida.materias`;
+    const query = `
+      SELECT m.nombreMateria, m.codigoMateria, p.nombres, p.apellido, d.cuatrimestre
+        FROM aida.materias m 
+        INNER JOIN aida.dicta d ON m.codigoMateria = d.codigoMateria 
+        INNER JOIN aida.profesor p ON d.luProfesor = p.lu`;
     const result = await this.client.query(query);
+    console.log(result.rows);
     return result.rows;
   }
 }
