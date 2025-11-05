@@ -45,14 +45,14 @@ async autenticarUsuario(username: string,password: string): Promise<Usuario | nu
         activo: user.activo
     };}
 
-  async crearUsuario(username: string, password: string, lu:string, nombre: string,email: string, esProfesor: boolean, esAlumno: boolean): Promise<Usuario | null> {
+  async crearUsuario(username: string, password: string, lu:string, nombre: string,email: string): Promise<Usuario | null> {
     const passwordHash = await this.hashPassword(password);
 
     const result = await this.client.query(
-        `INSERT INTO aida.usuarios (username, password_hash, nombre, email, esProfesor, esAlumno)
-            VALUES ($1, $2, $3, $4, $5, $6, $7)
+        `INSERT INTO aida.usuarios (username, password_hash, nombre, email)
+            VALUES ($1, $2, $3, $4, $5)
             RETURNING id, username, nombre, LU, email, activo`,
-        [username, passwordHash, nombre, lu, email, esProfesor, esAlumno]
+        [username, passwordHash, nombre, lu, email]
     );
     return result.rows[0];
 }   

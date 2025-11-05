@@ -44,7 +44,7 @@ export class AlumnoRepository {
     return alumnos[0];
   }
 
-  async insertAlumno(LU: string, name: string, lastName: string, titulo: string, titulo_en_tramite: string, egreso: string): Promise<Alumno | undefined> {
+  async crearAlumno(LU: string): Promise<Alumno | undefined> {
     const alumno = await this.existeAlumno("AND lu = $1", [LU]);
       if (alumno) {
         const res = await this.getAlumnoConLU(LU);
@@ -52,24 +52,19 @@ export class AlumnoRepository {
       } else {
         const queryInsertarAlumnoNuevo: string = `
           INSERT INTO aida.alumnos 
-            (lu, apellido, nombres, titulo, titulo_en_tramite, egreso) 
-          VALUES ($1, $2, $3, $4, $5, $6)
+            (lu) 
+          VALUES ($1)
           RETURNING *;
         `;
         const result = await this.client.query<Alumno>(queryInsertarAlumnoNuevo, [
-          LU, 
-          lastName, 
-          name, 
-          titulo, 
-          titulo_en_tramite, 
-          egreso
+          LU
         ]);
         const res = result.rows[0];
         return res;
       }
     }
 
-  async updateAlumno(LU: string, name: string, lastName: string): Promise<Alumno | undefined> {
+    async updateAlumno(LU: string, name: string, lastName: string): Promise<Alumno | undefined> {
       const alumno = await this.existeAlumno("AND lu = $1", [LU]);
       if (!alumno) {
         return undefined;

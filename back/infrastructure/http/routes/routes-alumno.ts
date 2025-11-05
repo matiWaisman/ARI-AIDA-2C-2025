@@ -22,7 +22,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage }); 
 export const alumnoRouter = Router();
 
-
 alumnoRouter.get("/lu", AlumnoController.getAlumnoPorLU);
 alumnoRouter.get("/fecha", AlumnoController.getAlumnoPorFecha);
 alumnoRouter.post("/generar", AlumnoController.generarCertificado);

@@ -31,12 +31,16 @@ export class AlumnoBusiness {
     return alumno;
   }
 
-  async updateAlumno(LU: string, name: string, lastName: string) {
-    return this.repo.updateAlumno(LU, name, lastName);
+  async crearAlumno(LU: string) {
+    const existeAlumno = await this.repo.getAlumnoConLU(LU);
+    if (existeAlumno) {
+      throw new Error();
+    }
+    return this.repo.crearAlumno(LU);
   }
 
-  async insertAlumno(LU: string, name: string, lastName: string, titulo: string, titulo_en_tramite: string, egreso: string) {
-    return this.repo.insertAlumno(LU, name, lastName, titulo, titulo_en_tramite, egreso);
+  async updateAlumno(LU: string, name: string, lastName: string) {
+    return this.repo.updateAlumno(LU, name, lastName);
   }
 
   async deleteAlumno(LU: string) {
