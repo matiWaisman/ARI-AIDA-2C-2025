@@ -4,12 +4,12 @@ import type { EntidadUniversitaria } from "../../domain/entity/entidadUniversita
 export class EntidadUniversitariaRepository {
   constructor(private client: Client) {}
 
-  async crearEntidadUniversitaria(lu: string, nombre: string): Promise<EntidadUniversitaria | undefined> {
+  async crearEntidadUniversitaria(lu: string, nombres: string): Promise<EntidadUniversitaria | undefined> {
     const query = `
-      INSERT INTO aida.entidades_universitarias (lu, nombre)
+      INSERT INTO aida.entidadUniversitaria (lu, nombres)
       VALUES ($1, $2)
     `;
-    const entidadUniversitaria = await this.client.query<EntidadUniversitaria>(query, [lu]);
+    const entidadUniversitaria = await this.client.query<EntidadUniversitaria>(query, [lu, nombres]);
     return entidadUniversitaria.rows[0];    
   }
 }

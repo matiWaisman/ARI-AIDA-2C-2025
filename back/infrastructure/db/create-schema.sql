@@ -8,6 +8,8 @@ CREATE TABLE aida.entidadUniversitaria (
     apellido TEXT NOT NULL,
     nombres TEXT NOT NULL
 );
+INSERT INTO aida.entidadUniversitaria VALUES ('25/18', 'Bocaccio', 'Sebastian');
+
 
 -- Then create dependent tables
 CREATE TABLE aida.alumnos (
@@ -27,6 +29,7 @@ CREATE TABLE aida.usuarios (
     lu TEXT REFERENCES aida.entidadUniversitaria(lu)
 );
 
+
 CREATE TABLE aida.profesor (
     lu TEXT PRIMARY KEY REFERENCES aida.entidadUniversitaria(lu),
     nombres text NOT NULL,
@@ -34,10 +37,14 @@ CREATE TABLE aida.profesor (
     id INTEGER REFERENCES aida.usuarios(id)
 );
 
+INSERT INTO aida.profesor VALUES('25/18', 'Sebastian', 'Bocaccio', )
+
 CREATE TABLE aida.materias (
     codigoMateria VARCHAR PRIMARY KEY, 
     nombreMateria VARCHAR NOT NULL
 );
+
+
 
 CREATE TABLE aida.dicta (
     luProfesor TEXT REFERENCES aida.profesor(lu), 
@@ -55,3 +62,40 @@ CREATE TABLE aida.cursa (
 );
 
 grant select, insert, update, delete on all tables in schema aida to aida_admin;
+
+-- 1️⃣ Entidad base
+INSERT INTO aida.entidadUniversitaria (lu, apellido, nombres)
+VALUES ('25/18', 'Bocaccio', 'Sebastian');
+
+-- 2️⃣ Usuario vinculado al profesor
+INSERT INTO aida.usuarios (username, password_hash, nombre, email, lu)
+VALUES ('sbocaccio', 'hash123', 'Sebastian Bocaccio', 'sebastian@uni.edu', '25/18');
+
+-- 3️⃣ Profesor (vinculado a la entidad y al usuario)
+INSERT INTO aida.profesor (lu, nombres, apellido, id)
+SELECT '25/18', 'Sebastian', 'Bocaccio', id
+FROM aida.usuarios
+WHERE username = 'sbocaccio';
+
+-- 4️⃣ Materia
+INSERT INTO aida.materias (codigoMateria, nombreMateria)
+VALUES ('BD101', 'Bases de Datos');
+
+-- 5️⃣ Relación: Sebastián dicta Bases de Datos en 2° cuatrimestre 2025
+INSERT INTO aida.dicta (luProfesor, codigoMateria, cuatrimestre)
+VALUES ('25/18', 'BD101', '2C-2025');
+
+INSERT INTO aida.entidadUniversitaria (lu, apellido, nombres)
+VALUES ('30/22', 'García', 'Lucía');
+
+INSERT INTO aida.alumnos (lu, titulo, titulo_en_tramite, egreso)
+VALUES ('30/22', NULL, NULL, NULL);
+
+INSERT INTO aida.cursa (luAlumno, codigoMateria, cuatrimestre, nota)
+VALUES ('30/22', 'BD101', '2C-2025', NULL);
+
+SELECT m.nombreMateria, m.codigoMateria, p.nombres, p.apellido, d.cuatrimestre
+	FROM aida.materias m 
+	INNER JOIN aida.dicta d ON m.codigoMateria = d.codigoMateria 
+	INNER JOIN aida.profesor p ON d.luProfesor = p.lu
+
