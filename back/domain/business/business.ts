@@ -18,14 +18,14 @@ export class Business {
         this.profesorRepo = new ProfesorRepository(client);
     }
 
-    async crearUsuario(username: string, password: string, nombre: string, lu: string, email: string, esProfesor: boolean, esAlumno: boolean): Promise<Usuario | null> {
-        const entidadUniversitaria = await this.entidadUniversitariaRepo.crearEntidadUniversitaria(lu, nombre);
+    async crearUsuario(username: string, password: string, nombre: string, apellido: string, lu: string, email: string, esProfesor: boolean, esAlumno: boolean): Promise<Usuario | null> {
+        const entidadUniversitaria = await this.entidadUniversitariaRepo.crearEntidadUniversitaria(lu, nombre, apellido);
         if (esProfesor) {
             await this.profesorRepo.crearProfesor(lu);
         }
         if (esAlumno) {
             await this.alumnoRepo.crearAlumno(lu);
         }
-        return await this.userRepo.crearUsuario(username, password, nombre, lu, email);
+        return await this.userRepo.crearUsuario(username, password, nombre, apellido, lu, email);
     }
 }

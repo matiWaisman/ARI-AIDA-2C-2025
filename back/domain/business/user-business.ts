@@ -21,8 +21,8 @@ export class UsuarioBusiness {
     return this.repo.autenticarUsuario(username, password);
   }
 
-  async crearUsuario(username: string, password: string, nombre: string, lu: string, email: string): Promise<Usuario | null> {
-    return this.repo.crearUsuario(username, password, nombre, lu, email);
+  async crearUsuario(username: string, password: string, nombre: string, apellido:string, lu: string, email: string): Promise<Usuario | null> {
+    return this.repo.crearUsuario(username, password, nombre, apellido, lu, email);
   }
 
 

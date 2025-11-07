@@ -8,6 +8,7 @@ export function useRegisterFeature() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [nombre, setNombre] = useState("");
+  const [apellido, setApellido] = useState("");
   const [lu, setLu] = useState("");
   const [email, setEmail] = useState("");
   const [esAlumno, setEsAlumno] = useState(false);
@@ -34,7 +35,8 @@ export function useRegisterFeature() {
         body: JSON.stringify({ 
           username, 
           password, 
-          nombre, 
+          nombre,
+          apellido, 
           lu,
           email, 
           esAlumno, 
@@ -55,6 +57,7 @@ export function useRegisterFeature() {
     username,
     password,
     nombre,
+    apellido,
     lu,
     email,
     esAlumno,
@@ -62,6 +65,7 @@ export function useRegisterFeature() {
     setUsername,
     setPassword,
     setNombre,
+    setApellido,
     setLu,
     setEmail,
     setEsAlumno,

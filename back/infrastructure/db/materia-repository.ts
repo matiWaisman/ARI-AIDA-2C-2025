@@ -19,10 +19,11 @@ export class MateriaRepository {
   
   async getAllMaterias(): Promise<any[]> {
     const query = `
-      SELECT m.nombreMateria, m.codigoMateria, p.nombres, p.apellido, d.cuatrimestre
-        FROM aida.materias m 
-        INNER JOIN aida.dicta d ON m.codigoMateria = d.codigoMateria 
-        INNER JOIN aida.profesor p ON d.luProfesor = p.lu`;
+      SELECT m.nombreMateria, m.codigoMateria, e.nombres, e.apellido, d.cuatrimestre
+	      FROM aida.materias m 
+	      INNER JOIN aida.dicta d ON m.codigoMateria = d.codigoMateria 
+	      INNER JOIN aida.profesor p ON d.luProfesor = p.lu
+	      INNER JOIN aida.entidadUniversitaria e ON p.lu = e.lu`;
     const result = await this.client.query(query);
     console.log(result.rows);
     return result.rows;

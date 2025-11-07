@@ -7,6 +7,7 @@ export default function RegisterPage() {
     username,
     password,
     nombre,
+    apellido,
     lu,
     email,
     esAlumno,
@@ -14,6 +15,7 @@ export default function RegisterPage() {
     setUsername,
     setPassword,
     setNombre,
+    setApellido,
     setEmail,
     setLu,
     setEsAlumno,
@@ -54,9 +56,18 @@ export default function RegisterPage() {
           <div>
             <input
               type="text"
-              placeholder="Nombre completo"
+              placeholder="Nombre"
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <div>
+            <input
+              type="text"
+              placeholder="Apellido"
+              value={apellido}
+              onChange={(e) => setApellido(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>

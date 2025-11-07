@@ -17,7 +17,7 @@ export class UserRepository {
 
 async autenticarUsuario(username: string,password: string): Promise<Usuario | null> {
     const result = await this.client.query(
-        'SELECT id, username, password_hash, nombre, email, activo FROM aida.usuarios WHERE username = $1',
+        'SELECT id, username, password_hash, apellido, nombres, email, activo FROM aida.usuarios WHERE username = $1',
         [username]
     );
 
@@ -45,14 +45,13 @@ async autenticarUsuario(username: string,password: string): Promise<Usuario | nu
         activo: user.activo
     };}
 
-  async crearUsuario(username: string, password: string, lu:string, nombre: string,email: string): Promise<Usuario | null> {
+  async crearUsuario(username: string, password: string, lu:string, nombres: string, apellido: string, email: string): Promise<Usuario | null> {
     const passwordHash = await this.hashPassword(password);
-
     const result = await this.client.query(
-        `INSERT INTO aida.usuarios (username, password_hash, nombre, email)
+        `INSERT INTO aida.usuarios (username, password_hash, apellido, nombres, email)
             VALUES ($1, $2, $3, $4, $5)
-            RETURNING id, username, nombre, LU, email, activo`,
-        [username, passwordHash, nombre, lu, email]
+            RETURNING id, username, nombres, apellido, LU, email, activo`,
+        [username, passwordHash, apellido, nombres, lu, email]
     );
     return result.rows[0];
 }   
