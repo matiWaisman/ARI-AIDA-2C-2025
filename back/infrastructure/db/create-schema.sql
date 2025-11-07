@@ -8,8 +8,6 @@ CREATE TABLE aida.entidadUniversitaria (
     apellido TEXT NOT NULL,
     nombres TEXT NOT NULL
 );
-INSERT INTO aida.entidadUniversitaria VALUES ('25/18', 'Bocaccio', 'Sebastian');
-
 
 -- Then create dependent tables
 CREATE TABLE aida.alumnos (
@@ -23,7 +21,8 @@ CREATE TABLE aida.usuarios (
     id serial primary key,
     username text not null unique,
     password_hash text not null,
-    nombre text not null, 
+    apellido text not null,
+    nombres text not null, 
     email text not null unique,
     activo bool not null default true,
     lu TEXT REFERENCES aida.entidadUniversitaria(lu)
@@ -32,19 +31,13 @@ CREATE TABLE aida.usuarios (
 
 CREATE TABLE aida.profesor (
     lu TEXT PRIMARY KEY REFERENCES aida.entidadUniversitaria(lu),
-    nombres text NOT NULL,
-    apellido text not null,
     id INTEGER REFERENCES aida.usuarios(id)
 );
-
-INSERT INTO aida.profesor VALUES('25/18', 'Sebastian', 'Bocaccio', )
 
 CREATE TABLE aida.materias (
     codigoMateria VARCHAR PRIMARY KEY, 
     nombreMateria VARCHAR NOT NULL
 );
-
-
 
 CREATE TABLE aida.dicta (
     luProfesor TEXT REFERENCES aida.profesor(lu), 
@@ -68,12 +61,12 @@ INSERT INTO aida.entidadUniversitaria (lu, apellido, nombres)
 VALUES ('25/18', 'Bocaccio', 'Sebastian');
 
 -- 2️⃣ Usuario vinculado al profesor
-INSERT INTO aida.usuarios (username, password_hash, nombre, email, lu)
-VALUES ('sbocaccio', 'hash123', 'Sebastian Bocaccio', 'sebastian@uni.edu', '25/18');
+INSERT INTO aida.usuarios (username, password_hash, apellido, nombres, email, lu)
+VALUES ('sbocaccio', 'hash123', 'Bocaccio', 'Sebastian', 'sebastian@uni.edu', '25/18');
 
 -- 3️⃣ Profesor (vinculado a la entidad y al usuario)
-INSERT INTO aida.profesor (lu, nombres, apellido, id)
-SELECT '25/18', 'Sebastian', 'Bocaccio', id
+INSERT INTO aida.profesor (lu, id)
+SELECT '25/18', id
 FROM aida.usuarios
 WHERE username = 'sbocaccio';
 
@@ -94,8 +87,9 @@ VALUES ('30/22', NULL, NULL, NULL);
 INSERT INTO aida.cursa (luAlumno, codigoMateria, cuatrimestre, nota)
 VALUES ('30/22', 'BD101', '2C-2025', NULL);
 
-SELECT m.nombreMateria, m.codigoMateria, p.nombres, p.apellido, d.cuatrimestre
+SELECT m.nombreMateria, m.codigoMateria, e.nombres, e.apellido, d.cuatrimestre
 	FROM aida.materias m 
 	INNER JOIN aida.dicta d ON m.codigoMateria = d.codigoMateria 
 	INNER JOIN aida.profesor p ON d.luProfesor = p.lu
-
+	INNER JOIN aida.entidadUniversitaria e ON p.lu = e.lu
+	
