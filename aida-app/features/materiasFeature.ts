@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { apiClient } from "@/apiClient/apiClient";
 import { Materia } from "@/types/materia";
 
-export function useAlumnosFeature() {
+export function useMateriasFeature() {
   const [materias, setMaterias] = useState<Materia[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);

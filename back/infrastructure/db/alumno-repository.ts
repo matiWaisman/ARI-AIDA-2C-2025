@@ -34,9 +34,13 @@ export class AlumnoRepository {
     return result.rows;
   }
 
-  async getAlumnoConLU(LU: string): Promise<Alumno | undefined> {
-    const query = `SELECT * FROM aida.alumnos WHERE titulo IS NOT NULL AND lu = $1`;
-    const result = await this.client.query(query, [LU]);
+  async getAlumnoConLU(lu: string): Promise<Alumno | undefined> {
+    const query = 
+    `SELECT a.lu, eu.nombres, eu.apellido
+      FROM aida.alumnos a
+      INNER JOIN aida.entidadUniversitaria eu ON a.lu = eu.lu
+      WHERE a.titulo IS NOT NULL AND a.lu = $1`;
+    const result = await this.client.query(query, [lu]);
     return result.rows[0];
   }
 

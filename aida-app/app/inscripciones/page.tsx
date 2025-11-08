@@ -1,10 +1,11 @@
 "use client";
 import { TablaInscripciones} from "@/components/tablaInscripciones";
-import { useAlumnosFeature } from "@/features/materiasFeature";
+import { useMateriasFeature } from "@/features/materiasFeature";
 
 
 export default function Inscripciones() {
-  const { materias, error, loading } = useAlumnosFeature();   
+  const { materias, error, loading } = useMateriasFeature();
+  console.log("Materias recibidas:", materias);
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
@@ -32,6 +33,7 @@ export default function Inscripciones() {
         onInscripcion={(codigoMateria: string) => {
           console.log(`Inscripto en la materia con código: ${codigoMateria}`);
         }}
+        tipo="alumno"
       />
       <h1 className="mb-8 text-3xl font-bold text-center"> Dictar materias</h1>
       <TablaInscripciones
@@ -39,6 +41,7 @@ export default function Inscripciones() {
         onInscripcion={(codigoMateria: string) => {
           console.log(`Inscripto en la materia con código: ${codigoMateria}`);
         }}
+        tipo="profesor"
       />
     </>
     

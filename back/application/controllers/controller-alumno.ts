@@ -60,7 +60,6 @@ export class AlumnoController {
   static async getAlumnos(req: Request, res: Response) {
     const {client, business} = await AlumnoController._createDbClientAndInitializeBusiness()
     const alumnos = await business.getAlumnos();
-    console.log(alumnos);
     res.json(alumnos);
     await client.end();
   }

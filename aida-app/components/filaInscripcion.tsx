@@ -14,8 +14,8 @@ export function FilaInscripcion({
   nombreMateria,
   cuatrimestre,
   profesor,
-  onInscripcion,
   inscripto = false,
+  onInscripcion,
 }: filaInscripcionProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-0 md:items-center md:px-2 py-3 rounded-lg hover:bg-muted/50 transition-colors">

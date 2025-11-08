@@ -25,7 +25,6 @@ export class MateriaRepository {
 	      INNER JOIN aida.profesor p ON d.luProfesor = p.lu
 	      INNER JOIN aida.entidadUniversitaria e ON p.lu = e.lu`;
     const result = await this.client.query(query);
-    console.log(result.rows);
     return result.rows;
   }
 }

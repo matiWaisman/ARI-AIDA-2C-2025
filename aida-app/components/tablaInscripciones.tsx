@@ -5,11 +5,13 @@ import { Materia } from "@/types/materia";
 interface TablaInscripcionesProps {
   Materias: Materia[];
   onInscripcion: (codigoMateria: string) => void;
+  tipo: "alumno" | "profesor";
 }
 
 export function TablaInscripciones({
   Materias,
   onInscripcion,
+  tipo
 }: TablaInscripcionesProps) {
   return (
     <div className="w-full space-y-3">
@@ -22,7 +24,7 @@ export function TablaInscripciones({
 
       {Materias.map((Materia) => (
         <FilaInscripcion
-          key={Materia.id}
+          key={`${tipo}-${Materia.id}`}
           codigoMateria={Materia.id}
           nombreMateria={Materia.name}
           cuatrimestre={Materia.cuatrimestre}

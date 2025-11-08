@@ -14,7 +14,7 @@ export class AlumnoBusiness {
   async generarCertificadoSiAplica(LU: string) {
     const alumno = await this.repo.getAlumnoConLU(LU);
     if (!alumno || !alumno.titulo_en_tramite) {
-      throw new Error();
+      throw new Error(`El alumno con LU: ${LU} no esta recibido`);
     }
     return await this.generator.generarYGuardarCertificado(alumno);
   }
