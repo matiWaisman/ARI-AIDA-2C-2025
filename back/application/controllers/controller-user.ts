@@ -15,7 +15,6 @@ export class UserController {
   static async login(req: Request, res: Response) {
     const { username, password } = req.body;
     const { client, business, userBusiness } = await UserController._createDbClientAndInitializeBusiness();
-    console.log(username, password);
     const user = await userBusiness.autenticarUsuario(username, password);
     if (!user) {
       return res.status(401).json({ message: "Credenciales inválidas" });

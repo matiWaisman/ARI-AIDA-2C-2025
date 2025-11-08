@@ -56,25 +56,20 @@ CREATE TABLE aida.cursa (
 
 grant select, insert, update, delete on all tables in schema aida to aida_admin;
 
--- 1️⃣ Entidad base
 INSERT INTO aida.entidadUniversitaria (lu, apellido, nombres)
 VALUES ('25/18', 'Bocaccio', 'Sebastian');
 
--- 2️⃣ Usuario vinculado al profesor
 INSERT INTO aida.usuarios (username, password_hash, apellido, nombres, email, lu)
 VALUES ('sbocaccio', 'hash123', 'Bocaccio', 'Sebastian', 'sebastian@uni.edu', '25/18');
 
--- 3️⃣ Profesor (vinculado a la entidad y al usuario)
 INSERT INTO aida.profesor (lu, id)
 SELECT '25/18', id
 FROM aida.usuarios
 WHERE username = 'sbocaccio';
 
--- 4️⃣ Materia
 INSERT INTO aida.materias (codigoMateria, nombreMateria)
 VALUES ('BD101', 'Bases de Datos');
 
--- 5️⃣ Relación: Sebastián dicta Bases de Datos en 2° cuatrimestre 2025
 INSERT INTO aida.dicta (luProfesor, codigoMateria, cuatrimestre)
 VALUES ('25/18', 'BD101', '2C-2025');
 
