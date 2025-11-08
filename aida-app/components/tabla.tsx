@@ -17,10 +17,10 @@ export default function Tabla({alumnos, onEliminar, onInsertar, onActualizar}: T
           <col className="w-[6%]" />
           <col className="w-[14%]" />
           <col className="w-[14%]" />
-          <col className="w-[28%]" />
+          <col className="w-[22%]" />
           <col className="w-[12%]" />
           <col className="w-[10%]" />
-          <col className="w-[6%]" />
+          <col className="w-[12%]" />
         </colgroup>
         <thead className="bg-gray-100">
           <tr>
