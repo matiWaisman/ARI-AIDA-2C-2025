@@ -1,9 +1,17 @@
 "use client";
+
 import { FilaInscripcion } from "./filaInscripcion";
-import { Materia } from "@/types/materia";
+
+interface MateriaApi {
+  nombremateria: string;
+  codigomateria: string;
+  nombres: string;
+  apellido: string;
+  cuatrimestre: string;
+}
 
 interface TablaInscripcionesProps {
-  Materias: Materia[];
+  Materias: MateriaApi[];
   onInscripcion: (codigoMateria: string) => void;
   tipo: "alumno" | "profesor";
 }
@@ -22,17 +30,21 @@ export function TablaInscripciones({
         <div className="col-span-2 text-right">Acción</div>
       </div>
 
-      {Materias.map((Materia) => (
-        <FilaInscripcion
-          key={`${tipo}-${Materia.id}`}
-          codigoMateria={Materia.id}
-          nombreMateria={Materia.name}
-          cuatrimestre={Materia.cuatrimestre}
-          profesor={Materia.profesor}
-          inscripto={Materia.inscripto}
-          onInscripcion={onInscripcion}
-        />
-      ))}
+      {Materias.map((m) => {
+        const profesor = `${m.nombres} ${m.apellido}`;
+
+        return (
+          <FilaInscripcion
+            key={`${tipo}-${m.codigomateria}`}
+            codigoMateria={m.codigomateria}
+            nombreMateria={m.nombremateria}
+            cuatrimestre={m.cuatrimestre}
+            profesor={profesor}
+            inscripto={false} // si todavía no lo definiste
+            onInscripcion={onInscripcion}
+          />
+        );
+      })}
     </div>
   );
 }
