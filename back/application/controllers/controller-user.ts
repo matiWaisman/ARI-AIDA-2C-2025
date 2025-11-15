@@ -20,7 +20,9 @@ export class UserController {
       return res.status(401).json({ message: "Credenciales inválidas" });
     }
     req.session.usuario = { id: user.id, username: user.username };
+    req.session.save(() => {
     res.json({ message: "Login exitoso", usuario: req.session.usuario });
+    });
     await client.end();
   }
 

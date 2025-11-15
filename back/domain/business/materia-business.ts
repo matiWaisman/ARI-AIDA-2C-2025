@@ -28,4 +28,13 @@ export class MateriaBusiness {
     return !!materia;
   }
 
+  async inscribirAlumnoConIdDeUsuario(codigoMateria:string, id: number|undefined) {
+    return this.repo.inscribirConId(codigoMateria, id, "cursa", "Alumno");
+  }
+
+  async inscribirProfesorConIdDeUsuario(codigoMateria:string, id: number|undefined) {
+    return this.repo.inscribirConId(codigoMateria, id, "dicta", "Profesor");
+  }
+
+
 }

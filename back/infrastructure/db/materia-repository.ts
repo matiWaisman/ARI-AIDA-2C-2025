@@ -28,4 +28,16 @@ export class MateriaRepository {
     console.log("Materias en la base ", result.rows)
     return result.rows;
   }
+
+  async inscribirConId(codigoMateria: string, id:number|undefined, tabla: "cursa"|"dicta", condicion: "Profesor"|"Alumno"): Promise<void>{
+    const query = `
+    INSERT INTO aida.${tabla} (lu${condicion}, codigoMateria, cuatrimestre)
+      VALUES (
+        (SELECT lu FROM aida.usuarios WHERE id = $2),
+        $1,
+        '2C2025'
+    );`;
+    await this.client.query(query, [codigoMateria, id]);
+  }
+  
 }

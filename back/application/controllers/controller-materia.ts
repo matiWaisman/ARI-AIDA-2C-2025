@@ -27,5 +27,18 @@ export class MateriaController {
     await client.end();
   }
 
-  
+  static async inscribirACursar(req: Request, res: Response){
+    const codigoMateria = req.query.codigoMateria as string; 
+    const id = req.session.usuario?.id;
+    console.log("ID de usuario: ", id);
+    const {client, business} = await MateriaController._createDbClientAndInitializeBusiness()
+    const alumno = await business.inscribirAlumnoConIdDeUsuario(codigoMateria, id)
+  }
+
+  static async inscribirADictar(req: Request, res: Response){
+    const codigoMateria = req.query.codigoMateria as string; 
+    const id = req.session.usuario?.id
+    const {client, business} = await MateriaController._createDbClientAndInitializeBusiness();
+    const alumno = await business.inscribirProfesorConIdDeUsuario(codigoMateria, id);
+  }
 }
