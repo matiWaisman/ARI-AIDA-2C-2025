@@ -8,9 +8,13 @@ import session from "express-session";
 
 export default function InscripcionesClient({
   materias,
+  esAlumno,
+  esProfesor,
   error,
 }: {
   materias: any[];
+  esAlumno: boolean;
+  esProfesor: boolean;
   error: string | null;
 }) {
   const [loading, setLoading] = useState(true);
@@ -40,23 +44,31 @@ export default function InscripcionesClient({
 
   return (
     <>
-      <h1 className="mb-8 text-3xl font-bold text-center">
-        Inscribirse a materias
-      </h1>
+      {esAlumno && 
+        <>
+          <h1 className="mb-8 text-3xl font-bold text-center">
+            Inscribirse a materias
+          </h1>
 
-      <TablaInscripciones
-        Materias={materias}
-        tipo="alumno"
-        onInscripcion={(codigo) => inscribirseAMateria(codigo, "cursar")}
-      />
+          <TablaInscripciones
+            Materias={materias}
+            tipo="alumno"
+            onInscripcion={(codigo) => inscribirseAMateria(codigo, "cursar")}
+          />
+        </>
+      }
 
-      <h1 className="mb-8 text-3xl font-bold text-center">Dictar materias</h1>
+      {esProfesor &&
+        <>
+          <h1 className="mb-8 text-3xl font-bold text-center">Dictar materias</h1>
 
-      <TablaInscripciones
-        Materias={materias}
-        tipo="profesor"
-        onInscripcion={(codigo) => inscribirseAMateria(codigo, "dictar")}
-      />
+          <TablaInscripciones
+            Materias={materias}
+            tipo="profesor"
+            onInscripcion={(codigo) => inscribirseAMateria(codigo, "dictar")}
+          />
+        </>
+      }
     </>
   );
 }

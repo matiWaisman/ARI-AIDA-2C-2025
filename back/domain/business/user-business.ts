@@ -25,6 +25,14 @@ export class UsuarioBusiness {
     return this.repo.crearUsuario(username, password, nombre, apellido, lu, email);
   }
 
+  async esAlumno(id: number | undefined): Promise<boolean> {
+    return this.repo.esAlumno(id);
+  }
+
+  async esProfesor(id: number | undefined): Promise<boolean> {
+    return this.repo.esProfesor(id);
+  }
+
 
 }
 

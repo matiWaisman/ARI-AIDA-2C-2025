@@ -61,4 +61,17 @@ export class UserController {
       }
     }
   }
+
+  static async esAlumno(req: Request, res: Response) {
+    const { client, business, userBusiness } = await UserController._createDbClientAndInitializeBusiness();
+    const response = await userBusiness.esAlumno(req.session.usuario.id);
+    res.json(response);
+  }
+
+  static async esProfesor(req: Request, res: Response) {
+    const { client, business, userBusiness } = await UserController._createDbClientAndInitializeBusiness();
+    const response = await userBusiness.esProfesor(req.session.usuario.id);
+    res.json(response);
+  }
+
 }

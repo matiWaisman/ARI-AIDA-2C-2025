@@ -7,3 +7,5 @@ userRouter.post("/login", UserController.login);
 userRouter.post("/register", UserController.register);
 userRouter.post("/logout", UserController.logout);
 userRouter.get("/session", UserController.session);
+userRouter.get("/esAlumno", UserController.esAlumno);
+userRouter.get("/esProfesor", UserController.esProfesor);

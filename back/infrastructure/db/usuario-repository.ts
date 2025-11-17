@@ -64,4 +64,21 @@ async autenticarUsuario(username: string,password: string): Promise<Usuario | nu
     );
     return true;
     }
+
+    async esAlumno(id: number | undefined): Promise<boolean> {
+        const res = await this.client.query(
+            "SELECT EXISTS ( SELECT a.lu FROM aida.alumnos INNER JOIN aida.entidadUniversitaria e ON a.lu = e.lu WHERE id = $1 ) AS existe",
+            [id]
+        );
+        return res.rows[0].existe;
+    }
+
+    async esProfesor(id: number | undefined): Promise<boolean> {
+        const res = await this.client.query(
+            "SELECT EXISTS ( SELECT p.lu FROM aida.profesor p INNER JOIN aida.entidadUniversitaria e ON p.lu = e.lu WHERE id = $1 ) AS existe",
+            [id]
+        );
+        return res.rows[0].existe;
+    }
+
 }
