@@ -1,15 +1,18 @@
-import AlumnosClient from "./AlumnosClient";
+"use client";
+
+import { useEffect, useState } from "react";
 import { apiClient } from "@/apiClient/apiClient";
+import AlumnosClient from "./AlumnosClient";
 
-export default async function AlumnosPage() {
-  let alumnos = [];
-  let error = null;
+export default function AlumnosPage() {
+  const [alumnos, setAlumnos] = useState([]);
+  const [error, setError] = useState<string | null>(null);
 
-  try {
-    alumnos = await apiClient("/all", { method: "GET" });
-  } catch (e: any) {
-    error = e?.message ?? "Error desconocido";
-  }
+  useEffect(() => {
+    apiClient("/alumnos/all", { method: "GET" })
+      .then(setAlumnos)
+      .catch((e) => setError(e.message));
+  }, []);
 
   return <AlumnosClient alumnos={alumnos} error={error} />;
 }

@@ -10,7 +10,7 @@ export default function CertificadoPage({ params }: Props) {
   console.log(params.fecha)
   return (
     <CargarCertificado
-      endpointPath="/fecha"
+      endpointPath="/alumnos/fecha"
       paramName="fecha"
       paramValue={params.fecha}
     />

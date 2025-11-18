@@ -24,13 +24,12 @@ export class AlumnoRepository {
     );
   }
 
-  async getAlumnos(where: string, params: any[] = []): Promise<Alumno[]> {
+  async getAlumnos(): Promise<Alumno[]> {
     const query = `
       SELECT * 
         FROM aida.alumnos a
-        INNER JOIN aida.entidadUniversitaria eu ON a.lu = eu.lu
-        WHERE titulo IS NULL ${where}`; // si quiero los alumnos actuales quiero que el titulo sea NULL
-    const result = await this.client.query<Alumno>(query, params);
+        INNER JOIN aida.entidadUniversitaria eu ON a.lu = eu.lu`;
+    const result = await this.client.query<Alumno>(query);
     return result.rows;
   }
 
@@ -52,41 +51,58 @@ export class AlumnoRepository {
     return alumnos[0];
   }
 
-  async crearAlumno(LU: string): Promise<Alumno | undefined> {
-    const alumno = await this.existeAlumno("AND lu = $1", [LU]);
-      if (alumno) {
-        const res = await this.getAlumnoConLU(LU);
-        return res;
-      } else {
-        const queryInsertarAlumnoNuevo: string = `
-          INSERT INTO aida.alumnos 
-            (lu) 
-          VALUES ($1)
-          RETURNING *;
-        `;
-        const result = await this.client.query<Alumno>(queryInsertarAlumnoNuevo, [
-          LU
-        ]);
-        const res = result.rows[0];
-        return res;
-      }
-    }
+  async crearEntidadUniversitaria(lu:string, apellido:string, nombres:string) {
+    await this.client.query(`
+      INSERT INTO aida.entidadUniversitaria (lu, apellido, nombres)
+      VALUES ($1, $2, $3);
+    `, [lu, apellido, nombres]);
+  }
 
-    async updateAlumno(LU: string, name: string, lastName: string): Promise<Alumno | undefined> {
-      const alumno = await this.existeAlumno("AND lu = $1", [LU]);
-      if (!alumno) {
-        return undefined;
-      }
-      const queryUpdateAlumnoExistente: string = `
-        UPDATE aida.alumnos
-          SET apellido = $2, nombres = $3
-          WHERE lu = $1
-          RETURNING *;
+  async crearAlumnoCompleto(lu:string, titulo:string, titulo_en_tramite:string, egreso:string) {
+    const result = await this.client.query(`
+      INSERT INTO aida.alumnos (lu, titulo, titulo_en_tramite, egreso)
+      VALUES ($1, $2, $3, $4)
+      RETURNING *;
+    `, [lu, titulo, titulo_en_tramite, egreso]);
+
+    return result.rows[0];
+  }
+
+  async crearAlumno(lu: string): Promise<Alumno | undefined> {
+    const existeAlumno = await this.hayAlumnoConLu(lu);
+    if (existeAlumno) {
+      const res = await this.getAlumnoConLU(lu);
+      return res;
+    } else {
+      const queryInsertarAlumnoNuevo: string = `
+        INSERT INTO aida.alumnos  
+          (lu) 
+        VALUES ($1)
+        RETURNING *;
       `;
-      const result = await this.client.query<Alumno>(queryUpdateAlumnoExistente, [LU, lastName, name]);
+      const result = await this.client.query<Alumno>(queryInsertarAlumnoNuevo, [
+        lu
+      ]);
       const res = result.rows[0];
       return res;
     }
+  }    
+
+  async updateAlumno(LU: string, name: string, lastName: string): Promise<Alumno | undefined> {
+    const alumno = await this.existeAlumno("AND lu = $1", [LU]);
+    if (!alumno) {
+      return undefined;
+    }
+    const queryUpdateAlumnoExistente: string = `
+      UPDATE aida.alumnos
+        SET apellido = $2, nombres = $3
+        WHERE lu = $1
+        RETURNING *;
+    `;
+    const result = await this.client.query<Alumno>(queryUpdateAlumnoExistente, [LU, lastName, name]);
+    const res = result.rows[0];
+    return res;
+  }
 
   async deleteAlumno(LU: string): Promise<boolean> {
       const alumno = await this.existeAlumno("AND lu = $1", [LU]);

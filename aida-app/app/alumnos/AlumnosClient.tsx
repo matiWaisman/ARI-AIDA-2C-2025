@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Tabla from "@/components/tabla";
+import { apiClient } from "@/apiClient/apiClient";
 import LoadingScreen from "@/components/loadingScreen";
 import ErrorScreen from "@/components/errorScreen";
 
@@ -14,6 +15,9 @@ export default function AlumnosClient({
 }) {
   const [loading, setLoading] = useState(true);
   const [lista, setLista] = useState(alumnos);
+  useEffect(() => {
+    setLista(alumnos);
+  }, [alumnos]);
   const [actionError, setActionError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -21,56 +25,49 @@ export default function AlumnosClient({
     return () => clearTimeout(t);
   }, []);
 
-  // Acciones
-  const eliminarAlumno = async (lu: string) => {
-    try {
-      const res = await fetch(`/api/alumnos/delete?LU=${lu}`, { method: "POST" });
-      if (!res.ok) throw new Error("Error al eliminar");
-      setLista((prev) => prev.filter((a) => a.lu !== lu));
-      return true;
-    } catch (e: any) {
-      setActionError(e.message);
-      return false;
-    }
-  };
+const eliminarAlumno = async (lu: string) => {
+  try {
+    await apiClient(`/alumnos/delete?LU=${lu}`, { method: "POST" });
+    setLista(prev => prev.filter(a => a.lu !== lu));
+    return true;
+  } catch (e: any) {
+    setActionError(e.message);
+    return false;
+  }
+};
 
-  const insertarAlumno = async (
-    lu: string,
-    nombres: string,
-    apellido: string,
-    titulo: string,
-    titulo_en_tramite: string,
-    egreso: string
-  ) => {
-    try {
-      const res = await fetch("/api/alumnos/insert", {
-        method: "POST",
-        body: JSON.stringify({ lu, nombres, apellido, titulo, titulo_en_tramite, egreso }),
-      });
-      if (!res.ok) throw new Error("Error al insertar");
-      const nuevo = await res.json();
-      setLista((prev) => [...prev, nuevo]);
-      return true;
-    } catch (e: any) {
-      setActionError(e.message);
-      return false;
-    }
-  };
+const insertarAlumno = async (lu :string, nombres:string, apellido:string, titulo:string, titulo_en_tramite:string, egreso:string) => {
+  try {
+    const nuevo = await apiClient(`/alumnos/insert`, {
+      method: "POST",
+      body: JSON.stringify({ lu, nombres, apellido, titulo, titulo_en_tramite, egreso }),
+    });
 
-  const actualizarAlumno = async (lu: string, nombres: string, apellido: string) => {
-    try {
-      const res = await fetch("/api/alumnos/update", {
-        method: "POST",
-        body: JSON.stringify({ lu, nombres, apellido }),
-      });
-      if (!res.ok) throw new Error("Error al actualizar");
-      setLista((prev) => prev.map((a) => (a.lu === lu ? { ...a, nombres, apellido } : a)));
-      return true;
-    } catch (e: any) {
-      setActionError(e.message);
-      return false;
-    }
-  };
+    setLista(prev => [...prev, nuevo]);
+    return true;
+  } catch (e: any) {
+    setActionError(e.message);
+    return false;
+  }
+};
+
+const actualizarAlumno = async (lu:string, nombres:string, apellido:string) => {
+  try {
+    await apiClient(`/alumnos/update`, {
+      method: "POST",
+      body: JSON.stringify({ lu, nombres, apellido }),
+    });
+
+    setLista(prev =>
+      prev.map(a => (a.lu === lu ? { ...a, nombres, apellido } : a))
+    );
+
+    return true;
+  } catch (e: any) {
+    setActionError(e.message);
+    return false;
+  }
+};
 
   if (loading) return <LoadingScreen mensaje="Cargando alumnos..." />;
   if (error) return <ErrorScreen error={error} />;

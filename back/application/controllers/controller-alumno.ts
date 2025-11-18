@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { createDbClient } from "../../infrastructure/db/db-client.js";
-import { AlumnoBusiness } from "../../domain/business/alumno-business.ts";
+import { Business } from "../../domain/business/business.ts";
 import fs from "fs";
 import path from "path";
 
@@ -9,7 +9,7 @@ export class AlumnoController {
   static async _createDbClientAndInitializeBusiness() {
     const client = createDbClient();
     await client.connect();
-    const business = new AlumnoBusiness(client);
+    const business = new Business(client);
     return { client, business };
   }
 
@@ -51,7 +51,7 @@ export class AlumnoController {
     }
     const absolutePath = path.isAbsolute(file.path) ? file.path : path.resolve(process.cwd(), file.path);
     const {client, business} = await AlumnoController._createDbClientAndInitializeBusiness()
-    await business.CargarDatosEnAlumnos(absolutePath); 
+    await business.cargarDatosEnAlumnos(absolutePath); 
     res.status(200).json({ message: "Archivo cargado correctamente." });
     await client.end();
     fs.unlinkSync(absolutePath);
@@ -82,15 +82,28 @@ export class AlumnoController {
   }
 
   static async insertAlumno(req: Request, res: Response) {
-    const { lu, nombres, apellido} = req.body;
-    
-    if (!lu || !nombres || !apellido ) {
-      return res.status(400).json({ message: "Todos los campos son obligatorios" });
-    }
-    
-    const {client, business} = await AlumnoController._createDbClientAndInitializeBusiness()
-    const alummno = await business.crearAlumno(lu);
-    res.status(200).json({ message: "Alumno creado", lu: lu });
-    await client.end();  
+  const { lu, nombres, apellido, titulo, titulo_en_tramite, egreso } = req.body;
+  
+  if (!lu || !nombres || !apellido) {
+    return res.status(400).json({ message: "LU, nombres y apellido son obligatorios" });
   }
+
+  const { client, business } = await AlumnoController._createDbClientAndInitializeBusiness();
+
+  try {
+    const alumno = await business.crearAlumnoCompleto({
+      lu,
+      nombres,
+      apellido,
+      titulo,
+      titulo_en_tramite,
+      egreso
+    });
+
+    res.status(200).json(alumno);
+  } finally {
+    await client.end();
+  }
+}
+
 }
