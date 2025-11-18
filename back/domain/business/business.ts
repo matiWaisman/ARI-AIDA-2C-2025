@@ -83,5 +83,33 @@ export class Business {
         return this.alumnoRepo.getAlumnoConFechaDeseada(fecha);
     }
 
+    // ─────────────────────────────
+    //  USUARIO (autenticación, roles, etc.)
+    // ─────────────────────────────
+
+    async autenticarUsuario(username: string, password: string) {
+    return this.userRepo.autenticarUsuario(username, password);
+    }
+
+    async hashPassword(password: string) {
+    return this.userRepo.hashPassword(password);
+    }
+
+    async verifyPassword(password: string, hash: string) {
+    return this.userRepo.verifyPassword(password, hash);
+    }
+
+    async esAlumno(id: number | undefined): Promise<boolean> {
+    return this.userRepo.esAlumno(id);
+    }
+
+    async esProfesor(id: number | undefined): Promise<boolean> {
+    return this.userRepo.esProfesor(id);
+    }
+
+    // OPCIONAL: si querés mantener la versión simple
+    async crearUsuarioSimple(username: string, password: string, nombre: string, apellido: string, lu: string, email: string) {
+    return this.userRepo.crearUsuario(username, password, nombre, apellido, lu, email);
+    }
 }
 
