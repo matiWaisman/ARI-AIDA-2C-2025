@@ -42,7 +42,7 @@ export class Business {
     }
 
     async getAlumnos() {
-        return await this.alumnoRepo.getAlumnos();
+        return await this.alumnoRepo.getAlumnos('', []);
     }
 
     async getAlumnoConLU(lu: string) {

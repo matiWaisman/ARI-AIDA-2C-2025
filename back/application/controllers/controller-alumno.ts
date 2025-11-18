@@ -75,10 +75,10 @@ export class AlumnoController {
   static async deleteAlumno(req: Request, res: Response) {
     const LU = req.query.LU as string;
     const {client, business} = await AlumnoController._createDbClientAndInitializeBusiness()
-    const alummno = await business.deleteAlumno(LU);
+    await business.deleteAlumno(LU);
     res.status(200).json({ message: "Alumno eliminado", lu: LU });
     await client.end();
-  
+
   }
 
   static async insertAlumno(req: Request, res: Response) {

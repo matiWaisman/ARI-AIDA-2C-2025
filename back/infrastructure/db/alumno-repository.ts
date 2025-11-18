@@ -24,12 +24,12 @@ export class AlumnoRepository {
     );
   }
 
-  async getAlumnos(): Promise<Alumno[]> {
+  async getAlumnos(where: string, params: any[] = []): Promise<Alumno[]> {
     const query = `
       SELECT * 
         FROM aida.alumnos a
         INNER JOIN aida.entidadUniversitaria eu ON a.lu = eu.lu`;
-    const result = await this.client.query<Alumno>(query);
+    const result = await this.client.query<Alumno>(query, params);
     return result.rows;
   }
 
