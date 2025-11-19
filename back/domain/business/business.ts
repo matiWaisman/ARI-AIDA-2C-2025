@@ -5,12 +5,14 @@ import { EntidadUniversitariaRepository } from "../../infrastructure/db/entidadU
 import { ProfesorRepository } from "../../infrastructure/db/profesor-repository.ts";
 import type { Usuario } from "../entity/usuario.ts";
 import { CertificadoGenerator } from "../../infrastructure/files/generador-certificados.ts";
+import { MateriaRepository } from "../../infrastructure/db/materia-repository.ts";
 
 export class Business {
     private userRepo: UserRepository;
     private entidadUniversitariaRepo: EntidadUniversitariaRepository;
     private alumnoRepo: AlumnoRepository;
-    private profesorRepo: ProfesorRepository;
+    private profesorRepo: ProfesorRepository
+    private materiaRepo: MateriaRepository;
     private certificadoGenerator: CertificadoGenerator;
 
     constructor(client: Client) {
@@ -18,6 +20,7 @@ export class Business {
         this.entidadUniversitariaRepo = new EntidadUniversitariaRepository(client);
         this.alumnoRepo = new AlumnoRepository(client);
         this.profesorRepo = new ProfesorRepository(client);
+        this.materiaRepo = new MateriaRepository(client);
         this.certificadoGenerator = new CertificadoGenerator();
     }
 
@@ -103,6 +106,14 @@ export class Business {
 
     async crearUsuarioSimple(username: string, password: string, nombre: string, apellido: string, lu: string, email: string) {
     return this.userRepo.crearUsuario(username, password, nombre, apellido, lu, email);
+    }
+
+    async obtenerAlumnosDeMateria(codigoMateria: string, cuatrimestre: string) {
+    return this.materiaRepo.obtenerAlumnosDeMateria(codigoMateria, cuatrimestre, null);
+    }
+
+    async obtenerCompanierosDeMateria(codigoMateria: string, cuatrimestre: string, luAExcluir: string) {
+    return this.materiaRepo.obtenerAlumnosDeMateria(codigoMateria, cuatrimestre, luAExcluir);
     }
 }
 

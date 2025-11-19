@@ -52,4 +52,38 @@ export class MateriaRepository {
     await this.client.query(query, [codigoMateria, id]);
   }
   
+  async materiasCursadasPorAlumno(lu: string): Promise<any[]> {
+    const query = `
+      SELECT 
+        m.nombreMateria, 
+        m.codigoMateria, 
+        c.cuatrimestre
+      FROM aida.materias m
+      JOIN aida.cursa c ON m.codigoMateria = c.codigoMateria
+      WHERE c.luAlumno = $1;
+    `;
+    const result = await this.client.query(query, [lu]);
+    return result.rows;
+  } 
+
+  async obtenerAlumnosDeMateria(codigoMateria: string, cuatrimestre: string, luAExcluir?: string | null) {
+    const query = `
+      SELECT a.lu, e.nombres, e.apellido
+      FROM aida.cursa c
+      JOIN aida.alumnos a ON c.luAlumno = a.lu
+      JOIN aida.entidadUniversitaria e ON e.lu = a.lu
+      WHERE c.codigoMateria = $1
+        AND c.cuatrimestre = $2
+        AND ($3::text IS NULL OR a.lu <> $3)
+    `;
+
+    const result = await this.client.query(query, [
+      codigoMateria,
+      cuatrimestre,
+      luAExcluir ?? null
+    ]);
+
+  return result.rows;
+  }
+
 }
