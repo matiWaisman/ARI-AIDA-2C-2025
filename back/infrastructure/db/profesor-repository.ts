@@ -10,7 +10,6 @@ export class ProfesorRepository {
     return (result.rowCount ?? 0) > 0;
   }
 
-
   async getProfesorConLU(LU: string): Promise<Profesor | undefined> {
     const query = `SELECT * FROM aida.profesor WHERE lu = $1`;
     const result = await this.client.query(query, [LU]);

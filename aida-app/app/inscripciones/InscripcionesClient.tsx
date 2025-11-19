@@ -8,7 +8,8 @@ import { apiClient } from "@/apiClient/apiClient";
 
 export default function InscripcionesClient() {
   const [loading, setLoading] = useState(true);
-  const [materias, setMaterias] = useState<any[]>([]);
+  const [materiasCursar, setMateriasCursar] = useState<any[]>([]);
+  const [materiasDictar, setMateriasDictar] = useState<any[]>([]);
   const [esAlumno, setEsAlumno] = useState(false);
   const [esProfesor, setEsProfesor] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -17,11 +18,13 @@ export default function InscripcionesClient() {
   useEffect(() => {
     async function cargarDatos() {
       try {
-        const mats = await apiClient("/materias", { method: "GET" });
+        const matsCursar = await apiClient("/materiasCursar", { method: "GET" });
+        const matsDictar = await apiClient("/materiasDictar", { method: "GET" });
         const alumno = await apiClient("/esAlumno", { method: "GET" });
         const profesor = await apiClient("/esProfesor", { method: "GET" });
 
-        setMaterias(mats);
+        setMateriasCursar(matsCursar);
+        setMateriasDictar(matsDictar);
         setEsAlumno(alumno);
         setEsProfesor(profesor);
 
@@ -62,7 +65,7 @@ export default function InscripcionesClient() {
             Inscribirse a materias
           </h1>
           <TablaInscripciones
-            Materias={materias}
+            Materias={materiasCursar}
             tipo="alumno"
             onInscripcion={(codigo) =>
               inscribirseAMateria(codigo, "cursar")
@@ -77,7 +80,7 @@ export default function InscripcionesClient() {
             Dictar materias
           </h1>
           <TablaInscripciones
-            Materias={materias}
+            Materias={materiasDictar}
             tipo="profesor"
             onInscripcion={(codigo) =>
               inscribirseAMateria(codigo, "dictar")
