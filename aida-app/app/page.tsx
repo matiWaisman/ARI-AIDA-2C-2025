@@ -7,6 +7,15 @@ import { useUser } from "@/contexts/UserContext";
 export default function MenuPage() {
   const { loading, usuario } = useUser();
 
+  const menuOptions: Map<string, [string, string]> = new Map([
+    ["alumnos", ["/alumnos", "Ver, modificar, eliminar y agregar alumnos"]],
+    ["inscripciones", ["/inscripciones", "Inscripciones"]],
+    ["encuestas", ["/encuestas", "Encuestas"]],
+    ["lu", ["/lu", "Imprimir certificado por LU"]],
+    ["fecha", ["/fecha", "Imprimir certificado por fecha de trámite"]],
+    ["archivo", ["/archivo", "Subir CSV con novedades de alumnos"]],
+  ]);
+
   if (loading) return <LoadingScreen mensaje="Cargando menú..." />;
 
   return (
@@ -15,7 +24,7 @@ export default function MenuPage() {
       <h2 className="text-sm text-gray-500 mb-6">
         Menú principal — Bienvenido {usuario?.username || "Invitado"}
       </h2>
-      <Menu />
+      <Menu options={menuOptions} />
     </div>
   );
 }

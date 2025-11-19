@@ -29,6 +29,22 @@ export class MateriaController {
     await client.end();
   }
 
+  static async getAllMateriasQueNoCursa(req: Request, res: Response) {
+    const { client, business } =
+      await MateriaController._createDbClientAndInitializeBusiness();
+    const materias = await business.getAllMateriasQueNoParticipa(req.session.usuario?.id, "cursa", "Alumno");
+    res.status(200).json(materias);
+    await client.end();
+  }
+
+  static async getAllMateriasQueNoDicta(req: Request, res: Response) {
+    const { client, business } =
+      await MateriaController._createDbClientAndInitializeBusiness();
+    const materias = await business.getAllMateriasQueNoParticipa(req.session.usuario?.id, "dicta", "Profesor");
+    res.status(200).json(materias);
+    await client.end();
+  }
+
   static async inscribirACursar(req: Request, res: Response) {
     const codigoMateria = req.query.codigoMateria as string;
     const id = req.session.usuario?.id;

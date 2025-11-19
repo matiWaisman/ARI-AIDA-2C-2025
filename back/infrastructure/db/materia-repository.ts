@@ -41,6 +41,19 @@ export class MateriaRepository {
     return result.rows;
   }
 
+  async getMateriasQueParticipa(id: number | undefined, participacion: "cursa" | "dicta", rolEnMateria: "Alumno" | "Profesor"): Promise<any[]> {
+    const query = `
+    SELECT 
+      p.codigoMateria
+      FROM aida.${participacion} p
+      INNER JOIN aida.usuarios u ON p.lu${rolEnMateria} = u.lu
+      WHERE u.id = '${id}';
+    `;
+    const result = await this.client.query(query);
+    console.log("Resultado de la Query: ", result.rows);
+    return result.rows;
+  }
+
   async inscribirConId(codigoMateria: string, id:number|undefined, tabla: "cursa"|"dicta", condicion: "Profesor"|"Alumno"): Promise<void>{
     const query = `
     INSERT INTO aida.${tabla} (lu${condicion}, codigoMateria, cuatrimestre)
