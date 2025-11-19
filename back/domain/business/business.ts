@@ -65,10 +65,7 @@ export class Business {
         return this.alumnoRepo.cargarAlumnosFromCSV(filePath);
     }
 
-    // ─────────────────────────────────────────────────────────
     //  CERTIFICADOS
-    // ─────────────────────────────────────────────────────────
-
     async generarCertificadoSiAplica(lu: string) {
         const alumno = await this.alumnoRepo.getAlumnoConLU(lu);
 
@@ -83,10 +80,7 @@ export class Business {
         return this.alumnoRepo.getAlumnoConFechaDeseada(fecha);
     }
 
-    // ─────────────────────────────
-    //  USUARIO (autenticación, roles, etc.)
-    // ─────────────────────────────
-
+    //  USUARIO 
     async autenticarUsuario(username: string, password: string) {
     return this.userRepo.autenticarUsuario(username, password);
     }
@@ -107,7 +101,6 @@ export class Business {
     return this.userRepo.esProfesor(id);
     }
 
-    // OPCIONAL: si querés mantener la versión simple
     async crearUsuarioSimple(username: string, password: string, nombre: string, apellido: string, lu: string, email: string) {
     return this.userRepo.crearUsuario(username, password, nombre, apellido, lu, email);
     }

@@ -59,6 +59,7 @@ export class UserController {
   }
 
   static async esAlumno(req: Request, res: Response) {
+    console.log("SESSION usuario:", req.session.usuario);
     const { client, business } = await UserController._createBusiness();
     const result = await business.esAlumno(req.session.usuario?.id);
     res.json(result);

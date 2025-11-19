@@ -3,11 +3,17 @@ import { Client } from "pg";
 export class MateriaRepository {
   constructor(private client: Client) {}
 
-  async getMateria(where: string, params: any[] = []): Promise<boolean> {
-    const query = `SELECT 1 FROM aida.materias WHERE nombreMateria = $1 LIMIT 1`; 
-    const result = await this.client.query(query, params);
-    return result.rows.length > 0;
-  }
+  async getMateria(nombreMateria: string): Promise<boolean> {
+  const query = `
+    SELECT 1 
+    FROM aida.materias 
+    WHERE nombreMateria = $1 
+    LIMIT 1
+  `;  
+  const result = await this.client.query(query, [nombreMateria]);
+  return result.rows.length > 0;
+}
+
 
   async crearMateria(nombre: string, codigo: string): Promise<void> {
     const query = `
@@ -19,11 +25,17 @@ export class MateriaRepository {
   
   async getAllMaterias(): Promise<any[]> {
     const query = `
-      SELECT m.nombreMateria, m.codigoMateria, e.nombres, e.apellido, d.cuatrimestre
-	      FROM aida.materias m 
-	      INNER JOIN aida.dicta d ON m.codigoMateria = d.codigoMateria 
-	      INNER JOIN aida.profesor p ON d.luProfesor = p.lu
-	      INNER JOIN aida.entidadUniversitaria e ON p.lu = e.lu`;
+      SELECT 
+        m.nombreMateria, 
+        m.codigoMateria, 
+        e.nombres, 
+        e.apellido, 
+        d.cuatrimestre
+      FROM aida.materias m 
+      LEFT JOIN aida.dicta d ON m.codigoMateria = d.codigoMateria
+      LEFT JOIN aida.profesor p ON d.luProfesor = p.lu
+      LEFT JOIN aida.entidadUniversitaria e ON p.lu = e.lu;
+  `;
     const result = await this.client.query(query);
     console.log("Materias en la base ", result.rows)
     return result.rows;

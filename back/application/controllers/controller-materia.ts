@@ -27,18 +27,42 @@ export class MateriaController {
     await client.end();
   }
 
-  static async inscribirACursar(req: Request, res: Response){
-    const codigoMateria = req.query.codigoMateria as string; 
+  static async inscribirACursar(req: Request, res: Response) {
+    const codigoMateria = req.query.codigoMateria as string;
     const id = req.session.usuario?.id;
-    console.log("ID de usuario: ", id);
-    const {client, business} = await MateriaController._createDbClientAndInitializeBusiness()
-    const alumno = await business.inscribirAlumnoConIdDeUsuario(codigoMateria, id)
+
+    if (!id) {
+      return res.status(401).json({ error: "Usuario no autenticado" });
+    }
+
+    if (!codigoMateria) {
+      return res.status(400).json({ error: "Falta el código de materia" });
+    }
+
+    const { client, business } =
+      await MateriaController._createDbClientAndInitializeBusiness();
+
+    await business.inscribirAlumnoConIdDeUsuario(codigoMateria, id);
+
+    await client.end();
+
+    return res.status(200).json({
+      message: "Inscripción a cursar realizada correctamente",
+    });
   }
 
-  static async inscribirADictar(req: Request, res: Response){
-    const codigoMateria = req.query.codigoMateria as string; 
-    const id = req.session.usuario?.id
-    const {client, business} = await MateriaController._createDbClientAndInitializeBusiness();
-    const alumno = await business.inscribirProfesorConIdDeUsuario(codigoMateria, id);
+  static async inscribirADictar(req: Request, res: Response) {
+    const codigoMateria = req.query.codigoMateria as string;
+    const id = req.session.usuario?.id;
+    const { client, business } =
+      await MateriaController._createDbClientAndInitializeBusiness();
+
+    await business.inscribirProfesorConIdDeUsuario(codigoMateria, id);
+
+    await client.end();
+
+    return res.status(200).json({
+      message: "Inscripción como profesor realizada correctamente",
+    });
   }
 }

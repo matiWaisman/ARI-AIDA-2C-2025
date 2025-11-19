@@ -15,25 +15,25 @@ export class MateriaBusiness {
     if (existeMateria) {
       throw new Error();
     }
-    return this.repo.crearMateria(nombreMateria, codigoMateria);
+    return await this.repo.crearMateria(nombreMateria, codigoMateria);
   }
 
   async getAllMaterias() {
-    return this.repo.getAllMaterias();
+    return await this.repo.getAllMaterias();
   }
 
 
   async existeMateria(nombreMateria: string) {
-    const materia = this.repo.getMateria(nombreMateria);
+    const materia = await this.repo.getMateria(nombreMateria);
     return !!materia;
   }
 
   async inscribirAlumnoConIdDeUsuario(codigoMateria:string, id: number|undefined) {
-    return this.repo.inscribirConId(codigoMateria, id, "cursa", "Alumno");
+    return await this.repo.inscribirConId(codigoMateria, id, "cursa", "Alumno");
   }
 
   async inscribirProfesorConIdDeUsuario(codigoMateria:string, id: number|undefined) {
-    return this.repo.inscribirConId(codigoMateria, id, "dicta", "Profesor");
+    return await this.repo.inscribirConId(codigoMateria, id, "dicta", "Profesor");
   }
 
 

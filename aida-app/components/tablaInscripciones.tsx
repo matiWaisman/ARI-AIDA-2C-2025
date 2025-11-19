@@ -40,7 +40,7 @@ export function TablaInscripciones({
             nombreMateria={m.nombremateria}
             cuatrimestre={m.cuatrimestre}
             profesor={profesor}
-            inscripto={false} // si todavía no lo definiste
+            inscripto={false} 
             onInscripcion={onInscripcion}
           />
         );

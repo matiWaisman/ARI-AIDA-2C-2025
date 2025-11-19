@@ -4,71 +4,93 @@ import { useEffect, useState } from "react";
 import { TablaInscripciones } from "@/components/tablaInscripciones";
 import LoadingScreen from "@/components/loadingScreen";
 import ErrorScreen from "@/components/errorScreen";
-import session from "express-session";
+import { apiClient } from "@/apiClient/apiClient";
 
-export default function InscripcionesClient({
-  materias,
-  esAlumno,
-  esProfesor,
-  error,
-}: {
-  materias: any[];
-  esAlumno: boolean;
-  esProfesor: boolean;
-  error: string | null;
-}) {
+export default function InscripcionesClient() {
   const [loading, setLoading] = useState(true);
+  const [materias, setMaterias] = useState<any[]>([]);
+  const [esAlumno, setEsAlumno] = useState(false);
+  const [esProfesor, setEsProfesor] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
 
   useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 300);
-    return () => clearTimeout(t);
+    async function cargarDatos() {
+      try {
+        const mats = await apiClient("/materias", { method: "GET" });
+        const alumno = await apiClient("/esAlumno", { method: "GET" });
+        const profesor = await apiClient("/esProfesor", { method: "GET" });
+
+        setMaterias(mats);
+        setEsAlumno(alumno);
+        setEsProfesor(profesor);
+
+      } catch (e: any) {
+        setError(e.message || "Error inesperado");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    cargarDatos();
   }, []);
 
-  // Acciones
-
-  const inscribirseAMateria = async (codigoMateria: string, accion: string) => {
-    try{
-      const res = await fetch(`/api/materias/${accion}?codigoMateria=${codigoMateria}`, { method: "POST" , credentials: "include"});
-      if(!res.ok) throw new Error(`Error al inscribirse a ${accion}`);
+  const inscribirseAMateria = async (codigo: string, accion: string) => {
+    try {
+      await apiClient(`/materias/${accion}?codigoMateria=${codigo}`, {
+        method: "POST",
+      });
       return true;
-    } catch (e:any) {
+    } catch (e: any) {
       setActionError(e.message);
       return false;
     }
-    
-  }
+  };
 
   if (loading) return <LoadingScreen mensaje="Cargando materias..." />;
   if (error) return <ErrorScreen error={error} />;
 
   return (
     <>
-      {esAlumno && 
+      {actionError && (
+        <p className="text-red-500 text-center mb-4">{actionError}</p>
+      )}
+
+      {esAlumno && (
         <>
           <h1 className="mb-8 text-3xl font-bold text-center">
             Inscribirse a materias
           </h1>
-
           <TablaInscripciones
             Materias={materias}
             tipo="alumno"
-            onInscripcion={(codigo) => inscribirseAMateria(codigo, "cursar")}
+            onInscripcion={(codigo) =>
+              inscribirseAMateria(codigo, "cursar")
+            }
           />
         </>
-      }
+      )}
 
-      {esProfesor &&
+      {esProfesor && (
         <>
-          <h1 className="mb-8 text-3xl font-bold text-center">Dictar materias</h1>
-
+          <h1 className="mb-8 text-3xl font-bold text-center">
+            Dictar materias
+          </h1>
           <TablaInscripciones
             Materias={materias}
             tipo="profesor"
-            onInscripcion={(codigo) => inscribirseAMateria(codigo, "dictar")}
+            onInscripcion={(codigo) =>
+              inscribirseAMateria(codigo, "dictar")
+            }
           />
         </>
-      }
+      )}
+
+      {!esAlumno && !esProfesor && (
+        <p className="text-center text-gray-600 mt-8">
+          No tenés permisos para ver inscripciones.
+        </p>
+      )}
     </>
   );
 }
