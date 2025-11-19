@@ -25,22 +25,24 @@ export class MateriaBusiness {
 
   async getAllMateriasQueNoParticipa(id: number | undefined, participacion: "cursa" | "dicta", rolEnMateria: "Alumno" | "Profesor") {
     const todasLasMaterias: Materia[] = await this.repo.getAllMaterias();
-    console.log("Todas las Materias: ", todasLasMaterias)
+
+    if (id === undefined) {
+      return todasLasMaterias;
+    }
+    
     const materiasQueParticipa: Materia[] = await this.repo.getMateriasQueParticipa(id, participacion, rolEnMateria);
-    console.log("Materias que participa: ", materiasQueParticipa);
-    let materiasNoParticipa: Materia[] = [];
-    for (let i = 0; i < todasLasMaterias.length; i++) {
-      const materia = todasLasMaterias[i];
-
+    
+    const materiasNoParticipa: Materia[] = [];
+    for (const materia of todasLasMaterias) {
       const participa = materiasQueParticipa.some(
-        mp => mp.codigoMateria === materia.codigoMateria
+        m => m.codigoMateria === materia.codigoMateria
       );
-
       if (!participa) {
         materiasNoParticipa.push(materia);
       }
     }
-  return materiasNoParticipa;
+    console.log("Materias que no participa: ", materiasNoParticipa);
+    return materiasNoParticipa;
   }
 
   async existeMateria(nombreMateria: string) {

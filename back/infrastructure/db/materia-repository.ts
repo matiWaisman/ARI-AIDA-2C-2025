@@ -41,12 +41,19 @@ export class MateriaRepository {
     return result.rows;
   }
 
-  async getMateriasQueParticipa(id: number | undefined, participacion: "cursa" | "dicta", rolEnMateria: "Alumno" | "Profesor"): Promise<any[]> {
+  async getMateriasQueParticipa(id: number, participacion: "cursa" | "dicta", rolEnMateria: "Alumno" | "Profesor"): Promise<any[]> {
+    console.log(id, participacion, rolEnMateria);
     const query = `
     SELECT 
-      p.codigoMateria
+      m.nombreMateria, 
+      p.codigoMateria, 
+      e.nombres, 
+      e.apellido, 
+      p.cuatrimestre
       FROM aida.${participacion} p
       INNER JOIN aida.usuarios u ON p.lu${rolEnMateria} = u.lu
+      INNER JOIN aida.materias m ON p.codigoMateria = m.codigoMateria
+      INNER JOIN aida.entidadUniversitaria e ON p.lu${rolEnMateria} = e.lu
       WHERE u.id = '${id}';
     `;
     const result = await this.client.query(query);

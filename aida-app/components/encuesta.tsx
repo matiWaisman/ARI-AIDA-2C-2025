@@ -41,6 +41,7 @@ export default function Encuesta({ preguntas, onChange, onSubmit }: EncuestaProp
           Enviar
         </button>
       </div>
+
     </div>
   );
 }

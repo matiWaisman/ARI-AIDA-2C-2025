@@ -3,8 +3,8 @@
 import { FilaInscripcion } from "./filaInscripcion";
 
 interface MateriaApi {
-  nombremateria: string;
-  codigomateria: string;
+  nombreMateria: string;
+  codigoMateria: string;
   nombres: string;
   apellido: string;
   cuatrimestre: string;
