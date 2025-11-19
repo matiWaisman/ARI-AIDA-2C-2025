@@ -59,10 +59,10 @@ function requireLogin(req: Request, res: Response, next: NextFunction) {
 }
 
 app.use("/app", userRouter); 
-app.use("/app", materiaRouter)
+app.use("/app", requireLogin, materiaRouter)
 app.use("/app", requireLogin, alumnoRouter);
 app.use("/app", requireLogin, cursaRouter);
-
+  
 
 app.listen(port, () => {
   console.log(`💦🍆  Backend se esta corriendo 😲 ...en http://localhost:${port}/app/`);
