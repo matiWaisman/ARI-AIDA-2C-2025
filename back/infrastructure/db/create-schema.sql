@@ -53,6 +53,62 @@ CREATE TABLE aida.cursa (
     nota NUMERIC,
     PRIMARY KEY (luAlumno, codigoMateria, cuatrimestre)
 );
+CREATE TABLE aida.encuestaAProfesor(
+    luEncuestado TEXT REFERENCES aida.entidadUniversitaria(lu),
+    luEvaluado   TEXT REFERENCES aida.entidadUniversitaria(lu),
+    codigoMateria TEXT REFERENCES aida.materias(codigoMateria),
+    cuatrimestre TEXT,
+    respuesta1 NUMERIC,
+    respuesta2 NUMERIC,
+    respuesta3 NUMERIC,
+    respuesta4 NUMERIC,
+    respuesta5 NUMERIC,
+    respuesta6 NUMERIC,
+    respuesta7 NUMERIC,
+    respuesta8 NUMERIC,
+    respuesta9 NUMERIC,
+    respuesta10 NUMERIC,
+    respuesta11 NUMERIC,
+    respuesta12 NUMERIC,
+    comentario TEXT,
+    PRIMARY KEY (luEncuestado, luEvaluado, codigoMateria, cuatrimestre)
+);
+CREATE TABLE aida.encuestaAMateria(
+    luEncuestado TEXT REFERENCES aida.entidadUniversitaria(lu),
+    codigoMateria TEXT REFERENCES aida.materias(codigoMateria),
+    cuatrimestre TEXT,
+    respuesta1 NUMERIC,
+    respuesta2 NUMERIC,
+    respuesta3 NUMERIC,
+    respuesta4 NUMERIC,
+    respuesta5 NUMERIC,
+    respuesta6 NUMERIC,
+    respuesta7 NUMERIC,
+    respuesta8 NUMERIC,
+    respuesta9 NUMERIC,
+    respuesta10 NUMERIC,
+    respuesta11 NUMERIC,
+    respuesta12 NUMERIC,
+    respuesta13 NUMERIC,
+    respuesta14 NUMERIC,
+    respuesta15 NUMERIC,
+    respuesta16 NUMERIC,
+    comentario TEXT,
+    PRIMARY KEY (luEncuestado, codigoMateria, cuatrimestre)
+);
+CREATE TABLE aida.encuestaAAlumno(
+    luEncuestado TEXT REFERENCES aida.entidadUniversitaria(lu),
+    luEvaluado   TEXT REFERENCES aida.entidadUniversitaria(lu),
+    codigoMateria TEXT REFERENCES aida.materias(codigoMateria),
+    cuatrimestre TEXT,
+    respuesta1 NUMERIC,
+    respuesta2 NUMERIC,
+    respuesta3 NUMERIC,
+    respuesta4 NUMERIC,
+    respuesta5 NUMERIC,
+    comentario TEXT,    
+    PRIMARY KEY (luEncuestado, luEvaluado, codigoMateria, cuatrimestre)
+);
 
 grant select, insert, update, delete on all tables in schema aida to aida_admin;
 
