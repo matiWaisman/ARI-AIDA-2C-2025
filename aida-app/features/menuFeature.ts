@@ -15,16 +15,13 @@ export function menuFeature() {
         const data = await apiClient("/session");
         setUsuario(data.usuario || null);
         
-        // Si el login es requerido y no hay usuario, redirigir al login
         if (data.requireLogin && !data.usuario) {
           router.push("/login");
         }
       } catch (err: any) {
-        // Si hay error 401 y requireLogin está activo, redirigir al login
         if (err instanceof Error && err.message.includes("401")) {
           router.push("/login");
         } else {
-          // Si hay error pero no es 401, simplemente no hay usuario logueado
           setUsuario(null);
         }
       } finally {
