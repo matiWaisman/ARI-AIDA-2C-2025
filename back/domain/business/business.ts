@@ -6,6 +6,7 @@ import { ProfesorRepository } from "../../infrastructure/db/profesor-repository.
 import type { Usuario } from "../entity/usuario.ts";
 import { CertificadoGenerator } from "../../infrastructure/files/generador-certificados.ts";
 import { MateriaRepository } from "../../infrastructure/db/materia-repository.ts";
+import { EncuestasRepository } from "../../infrastructure/db/encuestas-repository.ts";
 
 export class Business {
     private userRepo: UserRepository;
@@ -14,6 +15,7 @@ export class Business {
     private profesorRepo: ProfesorRepository
     private materiaRepo: MateriaRepository;
     private certificadoGenerator: CertificadoGenerator;
+    private encuestasRepo: EncuestasRepository;
 
     constructor(client: Client) {
         this.userRepo = new UserRepository(client);
@@ -21,6 +23,7 @@ export class Business {
         this.alumnoRepo = new AlumnoRepository(client);
         this.profesorRepo = new ProfesorRepository(client);
         this.materiaRepo = new MateriaRepository(client);
+        this.encuestasRepo = new EncuestasRepository(client)
         this.certificadoGenerator = new CertificadoGenerator();
     }
 
@@ -115,5 +118,25 @@ export class Business {
     async obtenerCompanierosDeMateria(codigoMateria: string, cuatrimestre: string, luAExcluir: string) {
     return this.materiaRepo.obtenerAlumnosDeMateria(codigoMateria, cuatrimestre, luAExcluir);
     }
+
+    async obtenerEncuestasSobreMiComoAlumno(miLU: string) {
+    return this.encuestasRepo.obtenerEncuestasSobreMiComoAlumno(miLU);
+    }
+
+    async obtenerEncuestasSobreMiComoProfesor(miLU: string) {
+    return this.encuestasRepo.obtenerEncuestasSobreMiComoProfesor(miLU);
+    }
+
+    async crearEncuestaAMateria(e: {luEncuestado: string; codigoMateria: string; cuatrimestre: string; respuestas: number[];comentario?: string;}) {
+    return this.encuestasRepo.crearEncuestaAMateria(e);     
+    }
+
+    async crearEncuestaAAlumno(e: {luEvaluado: string; luEncuestado: string; codigoMateria: string; cuatrimestre: string; respuestas: number[];comentario?: string;}) {
+    return this.encuestasRepo.crearEncuestaAAlumno(e);     
+    }
+
+    async crearEncuestaAProfesor(e: {luEvaluado: string; luEncuestado: string; codigoMateria: string; cuatrimestre: string; respuestas: number[];comentario?: string;}) {
+    return this.encuestasRepo.crearEncuestaAProfesor(e);     
+    }   
 }
 
