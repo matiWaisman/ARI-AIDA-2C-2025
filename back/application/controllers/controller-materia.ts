@@ -1,13 +1,15 @@
 import type { Request, Response } from "express";
 import { createDbClient } from "../../infrastructure/db/db-client.js";
 import { MateriaBusiness } from "../../domain/business/materia-business.ts";
+import { Business } from "../../domain/business/business.ts";
 
 export class MateriaController {
   static async _createDbClientAndInitializeBusiness() {
     const client = createDbClient();
     await client.connect();
     const business = new MateriaBusiness(client);
-    return { client, business };
+    const businessNuevo = new Business(client);
+    return { client, business, businessNuevo };
   }
 
   static async crearMateria(req: Request, res: Response) {
@@ -80,5 +82,28 @@ export class MateriaController {
     return res.status(200).json({
       message: "Inscripción como profesor realizada correctamente",
     });
+  }
+
+  static async alumnosDeMateriaExcluyendo(req: Request, res: Response) {
+    const { codigoMateria, cuatrimestre, luAExcluir } = req.body;
+    const { client, businessNuevo } =
+      await MateriaController._createDbClientAndInitializeBusiness();
+
+    let alumnos;
+    if (luAExcluir) {
+      alumnos = await businessNuevo.obtenerCompanierosDeMateria(
+        codigoMateria,
+        cuatrimestre,
+        luAExcluir,
+      );
+    } else {
+      alumnos = await businessNuevo.obtenerAlumnosDeMateria(
+        codigoMateria,
+        cuatrimestre,
+      );
+    }
+
+    res.status(200).json(alumnos);
+    await client.end();
   }
 }
