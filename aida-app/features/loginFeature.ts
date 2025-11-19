@@ -3,6 +3,7 @@
   import { useState } from "react";
   import { useRouter } from "next/navigation";
   import { apiClient } from "@/apiClient/apiClient";
+  import { useUser } from "@/contexts/UserContext";
 
   export function LoginFeature() {
     const [username, setUsername] = useState("");
@@ -10,6 +11,7 @@
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const { checkSession } = useUser();
 
     async function handleLogin(e: React.FormEvent) {
       e.preventDefault();
@@ -22,6 +24,7 @@
         body: JSON.stringify({ username, password }),
       });
 
+        await checkSession();
         router.push("/");
       } catch (err) {
         if (err instanceof Error) setError(err.message);

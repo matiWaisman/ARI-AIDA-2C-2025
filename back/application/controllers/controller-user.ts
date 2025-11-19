@@ -16,9 +16,12 @@ export class UserController {
     const { client, business } = await UserController._createBusiness();
     const user = await business.autenticarUsuario(username, password);
     if (!user) {
+      await client.end();
       return res.status(401).json({ message: "Credenciales inválidas" });
     }
-    req.session.usuario = { id: user.id, username: user.username };
+    const esAlumno = await business.esAlumno(user.id);
+    const esProfesor = await business.esProfesor(user.id);
+    req.session.usuario = { id: user.id, username: user.username, esAlumno: esAlumno, esProfesor: esProfesor};
     req.session.save(() => {
       res.json({ message: "Login exitoso", usuario: req.session.usuario });
     });
@@ -49,7 +52,9 @@ export class UserController {
       return res.json({
         autenticado: true,
         usuario: req.session.usuario,
-        requireLogin: REQUIRE_LOGIN
+        requireLogin: REQUIRE_LOGIN,
+        esAlumno: req.session.usuario.esAlumno,
+        esProfesor: req.session.usuario.esProfesor,
       });
     }
     if (REQUIRE_LOGIN) {
