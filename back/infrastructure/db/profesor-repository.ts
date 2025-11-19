@@ -5,12 +5,14 @@ export class ProfesorRepository {
   constructor(private client: Client) {}
 
   async hayProfesorConLu(LU: string): Promise<boolean> {
-    const result = await this.client.query("AND lu = $1", [LU]);
-    return result.rows[0]
+    const query = `SELECT 1 FROM aida.profesor WHERE lu = $1 LIMIT 1`;
+    const result = await this.client.query(query, [LU]);
+    return (result.rowCount ?? 0) > 0;
   }
 
+
   async getProfesorConLU(LU: string): Promise<Profesor | undefined> {
-    const query = `SELECT * FROM aida.profesores WHERE lu = $1`;
+    const query = `SELECT * FROM aida.profesor WHERE lu = $1`;
     const result = await this.client.query(query, [LU]);
     return result.rows[0];
   }
@@ -22,7 +24,7 @@ export class ProfesorRepository {
         return res;
       } else {
         const queryInsertarProfesorNuevo: string = `
-          INSERT INTO aida.profesores 
+          INSERT INTO aida.profesor 
             (lu) 
           VALUES ($1)
           RETURNING *;
