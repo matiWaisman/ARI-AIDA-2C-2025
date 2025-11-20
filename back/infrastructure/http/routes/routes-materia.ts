@@ -4,6 +4,8 @@ import { MateriaController } from "../../../application/controllers/controller-m
 export const materiaRouter = Router();
 
 materiaRouter.get("/materias",MateriaController.getAllMateriasConProfesorYCuatri);
+materiaRouter.get("/materiasQueCursa",MateriaController.getAllMateriasQueCursa);
+materiaRouter.get("/materiasqueDicta",MateriaController.getAllMateriasQueDicta);
 materiaRouter.get("/materiasQueNoCursa",MateriaController.getAllMateriasQueNoCursa);
 materiaRouter.get("/materiasqueNoDicta",MateriaController.getAllMateriasQueNoDicta);
 materiaRouter.post("/materias/cursar",MateriaController.inscribirACursar)

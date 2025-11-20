@@ -59,8 +59,8 @@ export class MateriaRepository {
     return result.rows;
   }
 
-  async getMateriasQueNoParticipa(id: number | undefined, participacion: "cursa" | "dicta", rolEnMateria: "Alumno" | "Profesor"): Promise<any[]> {
-    console.log(id, participacion, rolEnMateria);
+  async getMateriasQueNoParticipa(id: number, participacion: "cursa" | "dicta", rolEnMateria: "Alumno" | "Profesor"): Promise<any[]> {
+
     const query = `
       WITH materiasQueNoParticipa AS (
         SELECT m2.*
@@ -89,6 +89,42 @@ export class MateriaRepository {
     console.log("Resultado de la Query: ", result.rows);
     return result.rows;
   }
+
+  async getMateriasQueSiParticipa(
+    id: number,
+    participacion: "cursa" | "dicta",
+    rolEnMateria: "Alumno" | "Profesor"
+  ): Promise<any[]> {
+
+    const query = `
+        WITH materiasQueSiParticipa AS (
+          SELECT m2.*
+            FROM aida.materias m2
+            WHERE EXISTS (
+              SELECT p.codigoMateria
+                FROM aida.${participacion} p
+                INNER JOIN aida.usuarios u ON p.lu${rolEnMateria} = u.lu
+                WHERE u.id = '${id}'
+                AND p.codigoMateria = m2.codigoMateria
+            )
+        )
+
+        SELECT 
+              m.nombreMateria, 
+              m.codigoMateria, 
+              e.nombres, 
+              e.apellido, 
+              '2C2025' AS cuatrimestre
+        FROM materiasQueSiParticipa m
+        LEFT JOIN aida.dicta d ON m.codigoMateria = d.codigoMateria
+        LEFT JOIN aida.entidadUniversitaria e ON d.luProfesor = e.lu
+    `;
+
+    const result = await this.client.query(query);
+    console.log("Resultado de la Query: ", result.rows);
+    return result.rows;
+  }
+
 
   async inscribirConId(codigoMateria: string, id:number|undefined, tabla: "cursa"|"dicta", condicion: "Profesor"|"Alumno"): Promise<void>{
     const query = `

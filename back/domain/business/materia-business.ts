@@ -23,8 +23,12 @@ export class MateriaBusiness {
     return await this.repo.getAllMaterias();
   }
 
-  async getAllMateriasQueNoParticipa(id: number | undefined, participacion: "cursa" | "dicta", rolEnMateria: "Alumno" | "Profesor") {
+  async getAllMateriasQueNoParticipa(id: number, participacion: "cursa" | "dicta", rolEnMateria: "Alumno" | "Profesor") {
     return await this.repo.getMateriasQueNoParticipa(id, participacion, rolEnMateria);
+  }
+
+  async getAllMateriasQueParticipa(id: number, participacion: "cursa" | "dicta", rolEnMateria: "Alumno" | "Profesor") {
+    return await this.repo.getMateriasQueParticipa(id, participacion, rolEnMateria);
   }
 
   async existeMateria(nombreMateria: string) {
