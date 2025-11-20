@@ -8,8 +8,6 @@ import { apiClient } from "@/apiClient/apiClient";
 
 export default function CompletarEncuestaPage() {
   const [loading, setLoading] = useState(true);
-  const [materiasQueCursa, setMateriasQueCursa] = useState<any[]>([]);
-  const [materiasQueDicta, setMateriasQueDicta] = useState<any[]>([]);
   const [esAlumno, setEsAlumno] = useState(false);
   const [esProfesor, setEsProfesor] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,9 +23,6 @@ export default function CompletarEncuestaPage() {
         const matsQueDicta = await apiClient("/materiasQueDicta", { method: "GET" });
         const alumno = await apiClient("/esAlumno", { method: "GET" });
         const profesor = await apiClient("/esProfesor", { method: "GET" });
-
-        setMateriasQueCursa(matsQueCursa);
-        setMateriasQueDicta(matsQueDicta);
         setEsAlumno(alumno);
         setEsProfesor(profesor);
 
@@ -76,18 +71,16 @@ export default function CompletarEncuestaPage() {
         <p className="text-red-500 text-center mb-4">{actionError}</p>
       )}
 
-      <h1 className="mb-8 text-3xl font-bold text-center">Completar encuestas</h1>
-
       {esAlumno && (
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900 mb-1">Encuestas</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-1">Completar encuestas de tus cursadas</h1>
           <Menu options={menuOptionsAlumno} />
         </div>
       )}
 
       {esProfesor && (
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900 mb-1">Encuestas</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-1">Completar encuestas de tus materias dictadas</h1>
           <Menu options={menuOptionsProfesor} />
         </div>
       )}
