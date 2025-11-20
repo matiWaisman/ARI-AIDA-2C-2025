@@ -18,8 +18,8 @@ export default function InscripcionesClient() {
   useEffect(() => {
     async function cargarDatos() {
       try {
-        const matsCursar = await apiClient("/materiasCursar", { method: "GET" });
-        const matsDictar = await apiClient("/materiasDictar", { method: "GET" });
+        const matsCursar = await apiClient("/materiasQueNoCursa", { method: "GET" });
+        const matsDictar = await apiClient("/materiasQueNoDicta", { method: "GET" });
         const alumno = await apiClient("/esAlumno", { method: "GET" });
         const profesor = await apiClient("/esProfesor", { method: "GET" });
 

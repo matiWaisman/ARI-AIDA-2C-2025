@@ -42,7 +42,6 @@ export class MateriaRepository {
   }
 
   async getMateriasQueParticipa(id: number, participacion: "cursa" | "dicta", rolEnMateria: "Alumno" | "Profesor"): Promise<any[]> {
-    console.log(id, participacion, rolEnMateria);
     const query = `
     SELECT 
       m.nombreMateria, 
@@ -55,6 +54,36 @@ export class MateriaRepository {
       INNER JOIN aida.materias m ON p.codigoMateria = m.codigoMateria
       INNER JOIN aida.entidadUniversitaria e ON p.lu${rolEnMateria} = e.lu
       WHERE u.id = '${id}';
+    `;
+    const result = await this.client.query(query);
+    return result.rows;
+  }
+
+  async getMateriasQueNoParticipa(id: number | undefined, participacion: "cursa" | "dicta", rolEnMateria: "Alumno" | "Profesor"): Promise<any[]> {
+    console.log(id, participacion, rolEnMateria);
+    const query = `
+      WITH materiasQueNoParticipa AS (
+        SELECT m2.*
+          FROM aida.materias m2
+          WHERE NOT EXISTS (
+            SELECT p.codigoMateria
+              FROM aida.${participacion} p
+              INNER JOIN aida.usuarios u ON p.lu${rolEnMateria} = u.lu
+              WHERE u.id = '${id}'
+              AND p.codigoMateria = m2.codigoMateria
+          )		
+      )
+
+
+      SELECT 
+            m.nombreMateria, 
+            m.codigoMateria, 
+            e.nombres, 
+            e.apellido, 
+            '2C2025' AS cuatrimestre
+            FROM materiasQueNoParticipa m
+            LEFT JOIN aida.dicta d ON m.codigoMateria = d.codigoMateria
+            LEFT JOIN aida.entidadUniversitaria e ON d.luProfesor = e.lu
     `;
     const result = await this.client.query(query);
     console.log("Resultado de la Query: ", result.rows);

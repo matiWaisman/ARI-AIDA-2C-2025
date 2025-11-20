@@ -24,25 +24,7 @@ export class MateriaBusiness {
   }
 
   async getAllMateriasQueNoParticipa(id: number | undefined, participacion: "cursa" | "dicta", rolEnMateria: "Alumno" | "Profesor") {
-    const todasLasMaterias: Materia[] = await this.repo.getAllMaterias();
-
-    if (id === undefined) {
-      return todasLasMaterias;
-    }
-    
-    const materiasQueParticipa: Materia[] = await this.repo.getMateriasQueParticipa(id, participacion, rolEnMateria);
-    
-    const materiasNoParticipa: Materia[] = [];
-    for (const materia of todasLasMaterias) {
-      const participa = materiasQueParticipa.some(
-        m => m.codigoMateria === materia.codigoMateria
-      );
-      if (!participa) {
-        materiasNoParticipa.push(materia);
-      }
-    }
-    console.log("Materias que no participa: ", materiasNoParticipa);
-    return materiasNoParticipa;
+    return await this.repo.getMateriasQueNoParticipa(id, participacion, rolEnMateria);
   }
 
   async existeMateria(nombreMateria: string) {
