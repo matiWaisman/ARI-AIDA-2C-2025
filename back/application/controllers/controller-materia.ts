@@ -46,7 +46,8 @@ export class MateriaController {
   static async getAllMateriasQueCursa(req: Request, res: Response) {
     const { client, business } =
       await MateriaController._createDbClientAndInitializeBusiness();
-    const materias = await business.getAllMateriasQueParticipa(req.session.usuario?.id, "cursa", "Alumno");
+    const id = req.session.usuario? req.session.usuario.id : -1;
+    const materias = await business.getAllMateriasQueParticipa(id, "cursa", "Alumno");
     res.status(200).json(materias);
     await client.end();
   }
@@ -54,7 +55,8 @@ export class MateriaController {
   static async getAllMateriasQueDicta(req: Request, res: Response) {
     const { client, business } =
       await MateriaController._createDbClientAndInitializeBusiness();
-    const materias = await business.getAllMateriasQueParticipa(req.session.usuario?.id, "dicta", "Profesor");
+    const id = req.session.usuario? req.session.usuario.id : -1;
+    const materias = await business.getAllMateriasQueParticipa(id, "dicta", "Profesor");
     res.status(200).json(materias);
     await client.end();
   }
