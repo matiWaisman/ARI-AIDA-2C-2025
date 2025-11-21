@@ -14,6 +14,7 @@ export default function MenuPage() {
     ["lu", ["/lu", "Imprimir certificado por LU"]],
     ["fecha", ["/fecha", "Imprimir certificado por fecha de trámite"]],
     ["archivo", ["/archivo", "Subir CSV con novedades de alumnos"]],
+    ["materias", ["/materias", "Ver mis materias"]]
   ]);
 
   if (loading) return <LoadingScreen mensaje="Cargando menú..." />;

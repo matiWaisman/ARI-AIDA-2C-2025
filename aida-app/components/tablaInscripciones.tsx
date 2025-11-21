@@ -2,7 +2,7 @@
 
 import { FilaInscripcion } from "./filaInscripcion";
 
-interface MateriaApi {
+export interface MateriaApi {
   nombreMateria: string;
   codigoMateria: string;
   nombres: string;
@@ -35,9 +35,9 @@ export function TablaInscripciones({
 
         return (
           <FilaInscripcion
-            key={`${tipo}-${m.codigomateria}`}
-            codigoMateria={m.codigomateria}
-            nombreMateria={m.nombremateria}
+            key={`${tipo}-${m.codigoMateria}`}
+            codigoMateria={m.codigoMateria}
+            nombreMateria={m.nombreMateria}
             cuatrimestre={m.cuatrimestre}
             profesor={profesor}
             inscripto={false} 
