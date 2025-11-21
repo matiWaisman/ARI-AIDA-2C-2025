@@ -159,7 +159,9 @@ export class Business {
     } 
 
     async ponerNotaAAlumno(codigoMateria: string, cuatrimestre: string, luAlumno: string, nota: number) {
-    return this.cursaRepo.ponerNotaAAlumno(codigoMateria, cuatrimestre, luAlumno, nota);
+        const result = await this.cursaRepo.ponerNotaAAlumno(codigoMateria, cuatrimestre, luAlumno, nota);
+        await this.alumnoRepo.alumnoCompletoCarrera(luAlumno);
+        return result
     }
 
     async crearMateria(nombreMateria: string, codigoMateria: string) {

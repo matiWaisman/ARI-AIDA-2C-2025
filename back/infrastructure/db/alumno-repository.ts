@@ -124,6 +124,37 @@ export class AlumnoRepository {
     await client.end();
   };
 
+  async alumnoCompletoCarrera(LU:string){
+   const query1 = `
+     SELECT NOT EXISTS (
+         SELECT 1
+         FROM aida.materias m
+         WHERE NOT EXISTS (
+             SELECT 1
+             FROM aida.cursa c
+             WHERE c.luAlumno = $1
+               AND c.codigoMateria = m.codigoMateria
+               AND c.nota > 4
+         )
+     ) AS completo;`
+     ;
+   const result = await this.client.query(query1, [LU]);
+   if (!result.rows[0]) {
+     throw new Error("La consulta no devolvió ninguna fila");
+   }
+   if(result.rows[0].completo){
+     const query2 = `
+       UPDATE aida.alumnos
+       SET titulo_en_tramite = CURRENT_DATE
+       WHERE lu = $1;
+       `
+     await this.client.query(query2, [LU]);
+   }
+  
+   return result.rows[0].completo;
+}
+
+
   async getAllAsDict(): Promise<AlumnosDict> {
     const result = await this.client.query<Alumno>("SELECT * FROM aida.alumnos");
     const dict: AlumnosDict = {};
