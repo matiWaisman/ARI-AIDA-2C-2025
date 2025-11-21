@@ -5,3 +5,4 @@ export const cursaRouter = Router();
 
 cursaRouter.post("/create/cursada", CursaController.crearCursa);
 cursaRouter.get("/get/cursada", CursaController.getCursa);
+cursaRouter.post("/materia/update", CursaController.ponerNotaAAlumno);

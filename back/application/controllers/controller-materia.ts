@@ -1,15 +1,13 @@
 import type { Request, Response } from "express";
 import { createDbClient } from "../../infrastructure/db/db-client.js";
-import { MateriaBusiness } from "../../domain/business/materia-business.ts";
 import { Business } from "../../domain/business/business.ts";
 
 export class MateriaController {
   static async _createDbClientAndInitializeBusiness() {
     const client = createDbClient();
     await client.connect();
-    const business = new MateriaBusiness(client);
-    const businessNuevo = new Business(client);
-    return { client, business, businessNuevo };
+    const business = new Business(client);
+    return { client, business };
   }
 
   static async crearMateria(req: Request, res: Response) {
@@ -86,24 +84,35 @@ export class MateriaController {
 
   static async alumnosDeMateriaExcluyendo(req: Request, res: Response) {
     const { codigoMateria, cuatrimestre, luAExcluir } = req.body;
-    const { client, businessNuevo } =
+    const { client, business } =
       await MateriaController._createDbClientAndInitializeBusiness();
 
     let alumnos;
     if (luAExcluir) {
-      alumnos = await businessNuevo.obtenerCompanierosDeMateria(
+      alumnos = await business.obtenerCompanierosDeMateria(
         codigoMateria,
         cuatrimestre,
         luAExcluir,
       );
     } else {
-      alumnos = await businessNuevo.obtenerAlumnosDeMateria(
+      alumnos = await business.obtenerAlumnosDeMateria(
         codigoMateria,
         cuatrimestre,
       );
     }
 
     res.status(200).json(alumnos);
+    await client.end();
+  }
+
+  static async ponerNotaAAlumno(req: Request, res: Response) {
+    const { codigoMateria, cuatrimestre, luAlumno, nota } = req.body;
+    const { client, business } =
+      await MateriaController._createDbClientAndInitializeBusiness();
+
+    await business.ponerNotaAAlumno(codigoMateria, cuatrimestre, luAlumno, nota);
+    
+    res.status(200).json({ message: "Nota actualizada correctamente" });
     await client.end();
   }
 }

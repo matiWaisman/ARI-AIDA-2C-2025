@@ -17,5 +17,32 @@ export class CursaRepository {
     const result = await this.client.query(query, [idAlumno, idMateria, cuatrimestre]);
     return result.rows.length > 0;
   }
+
+  async materiasQueCursoAlumno(lu: string): Promise<any[]> {
+    const query = `
+      SELECT m.codigo_materia, m.nombre
+      FROM aida.cursa c
+      JOIN aida.alumno a ON c.id_alumno = a.id_alumno
+      JOIN aida.materia m ON c.id_materia = m.id_materia
+      JOIN aida.entidad_universitaria eu ON a.id_entidad_universitaria = eu.id_entidad_universitaria
+      WHERE eu.lu = $1
+    `;
+    const result = await this.client.query(query, [lu]);
+    return result.rows;
+  }
+
+  async ponerNotaAAlumno(codigoMateria: string, cuatrimestre: string, luAlumno: string, nota: number): Promise<void> {
+    const query = `
+      UPDATE aida.cursa c
+      SET nota = $4
+      FROM aida.alumno a
+      JOIN aida.materia m ON c.id_materia = m.id_materia
+      JOIN aida.entidad_universitaria eu ON a.id_entidad_universitaria = eu.id_entidad_universitaria
+      WHERE eu.lu = $1
+        AND m.codigo_materia = $2
+        AND c.cuatrimestre = $3
+    `;
+    const params = [luAlumno, codigoMateria, cuatrimestre, nota];   
+  }
 }
 

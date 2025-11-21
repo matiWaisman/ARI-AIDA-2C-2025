@@ -148,5 +148,80 @@ async crearEncuestaAProfesor(e: {
   return result.rows[0];
 }
 
+async obtenerEncuestasNoRespondidas(lu: string) {
+  const query = `
+  WITH
+  materias_alumno AS (
+      SELECT c.codigoMateria, c.cuatrimestre
+      FROM aida.cursa c
+      WHERE c.luAlumno = $1
+  ),
+
+  materias_profesor AS (
+      SELECT d.codigoMateria, d.cuatrimestre, d.luProfesor
+      FROM aida.dicta d
+      WHERE d.luProfesor = $1
+  ),
+
+  pendientes_materia AS (
+      SELECT 
+          m.codigoMateria,
+          m.cuatrimestre,
+          'encuestaAMateria' AS tipoEncuesta
+      FROM materias_alumno m
+      LEFT JOIN aida.encuestaAMateria e
+        ON e.luEncuestado = $1
+       AND e.codigoMateria = m.codigoMateria
+       AND e.cuatrimestre = m.cuatrimestre
+      WHERE e.luEncuestado IS NULL
+  ),
+
+  pendientes_a_profesor AS (
+      SELECT 
+          m.codigoMateria,
+          m.cuatrimestre,
+          'encuestaAProfesor' AS tipoEncuesta,
+          p.luProfesor AS luEvaluado
+      FROM materias_profesor p
+      JOIN materias_alumno m
+           ON m.codigoMateria = p.codigoMateria
+          AND m.cuatrimestre = p.cuatrimestre
+      LEFT JOIN aida.encuestaAProfesor e
+        ON e.luEncuestado = $1
+       AND e.luEvaluado = p.luProfesor
+       AND e.codigoMateria = p.codigoMateria
+       AND e.cuatrimestre = p.cuatrimestre
+      WHERE e.luEncuestado IS NULL
+  ),
+
+  pendientes_a_alumno AS (
+      SELECT 
+          c.codigoMateria,
+          c.cuatrimestre,
+          'encuestaAAlumno' AS tipoEncuesta,
+          c.luAlumno AS luEvaluado
+      FROM materias_profesor p
+      JOIN aida.cursa c
+           ON c.codigoMateria = p.codigoMateria
+          AND c.cuatrimestre = p.cuatrimestre
+      LEFT JOIN aida.encuestaAAlumno e
+        ON e.luEncuestado = $1
+       AND e.luEvaluado = c.luAlumno
+       AND e.codigoMateria = c.codigoMateria
+       AND e.cuatrimestre = c.cuatrimestre
+      WHERE e.luEncuestado IS NULL
+  )
+
+  SELECT * FROM pendientes_materia
+  UNION ALL
+  SELECT * FROM pendientes_a_profesor
+  UNION ALL
+  SELECT * FROM pendientes_a_alumno;
+  `;
+
+  const result = await this.client.query(query, [lu]);
+  return result.rows;
+}
+
 
 }

@@ -29,4 +29,8 @@ export class CursaBusiness {
     return !!alumno;
   }
 
+  async ponerNotaAAlumno(codigoMateria: string, cuatrimestre: string, luAlumno: string, nota: number) {
+    return await this.repo.ponerNotaAAlumno(codigoMateria, cuatrimestre, luAlumno, nota);
+  }
+
 }

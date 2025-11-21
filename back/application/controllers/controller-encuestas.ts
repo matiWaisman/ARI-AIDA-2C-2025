@@ -1,6 +1,5 @@
 import type { Request, Response } from "express";
 import { createDbClient } from "../../infrastructure/db/db-client.js";
-import { MateriaBusiness } from "../../domain/business/materia-business.ts";
 import { Business } from "../../domain/business/business.ts";
 
 export class EncuestasController {
@@ -33,9 +32,17 @@ export class EncuestasController {
       await client.end();
   }
 
+  static async obtenerEncuestasNoRespondidas(req: Request, res: Response) {
+    const { client, business } = await this._createDbClientAndInitializeBusiness();
+    const lu = req.params.LU? req.params.LU : "";
+      const encuestas = await business.obtenerEncuestasNoRespondidas(lu);
+      res.status(200).json(encuestas);
+      await client.end();
+  }
+
   static async obtenerEncuestasSobreMiComoProfesor(req: Request, res: Response) {
     const { client, business } = await this._createDbClientAndInitializeBusiness();
-    const lu = req.params.miLU? req.params.miLU : "";
+    const lu = req.params.LU? req.params.LU : "";
       const encuestas = await business.obtenerEncuestasSobreMiComoProfesor(lu);
       res.status(200).json(encuestas);
       await client.end();
@@ -43,7 +50,7 @@ export class EncuestasController {
 
   static async obtenerEncuestasSobreMiComoAlumno(req: Request, res: Response) {
     const { client, business } = await this._createDbClientAndInitializeBusiness();
-    const lu = req.params.miLU? req.params.miLU : "";
+    const lu = req.params.LU? req.params.LU : "";
     const encuestas = await business.obtenerEncuestasSobreMiComoAlumno(lu);
     res.status(200).json(encuestas);
     await client.end();

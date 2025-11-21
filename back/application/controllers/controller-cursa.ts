@@ -1,12 +1,12 @@
 import type { Request, Response } from "express";
 import { createDbClient } from "../../infrastructure/db/db-client.js";
-import { CursaBusiness } from "../../domain/business/cursa-business.ts";
+import { Business } from "../../domain/business/business.ts";
 
 export class CursaController {
   static async _createDbClientAndInitializeBusiness() {
       const client = createDbClient();
       await client.connect();
-      const business = new CursaBusiness(client);
+      const business = new Business(client);
       return { client, business };
     }
 
@@ -31,6 +31,14 @@ export class CursaController {
     const { client, business }= await CursaController._createDbClientAndInitializeBusiness()
     await business.getCursa(idAlumno, idMateria, cuatrimestre);
     res.status(200).json({ message: "Cursada obtenida exitosamente" });
+    await client.end();
+  }
+
+  static async ponerNotaAAlumno(req: Request, res: Response) { 
+    const { codigoMateria, cuatrimestre, luAlumno, nota } = req.body;
+    const { client, business }= await CursaController._createDbClientAndInitializeBusiness()
+    await business.ponerNotaAAlumno(codigoMateria, cuatrimestre, luAlumno, nota);
+    res.status(200).json({ message: "Nota puesta exitosamente" });
     await client.end();
   }
 }
