@@ -232,5 +232,8 @@ export class Business {
     return !!alumno;
   }
 
+  async getAllMateriasQueParticipa(id: number, participacion: "cursa" | "dicta", rolEnMateria: "Alumno" | "Profesor") {
+    return await this.materiaRepo.getMateriasQueParticipa(id, participacion, rolEnMateria);
+  }
 }
 
