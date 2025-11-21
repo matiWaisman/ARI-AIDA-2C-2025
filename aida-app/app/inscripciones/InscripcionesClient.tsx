@@ -15,26 +15,26 @@ export default function InscripcionesClient() {
   const [error, setError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function cargarDatos() {
-      try {
-        const matsCursar = await apiClient("/materiasQueNoCursa", { method: "GET" });
-        const matsDictar = await apiClient("/materiasQueNoDicta", { method: "GET" });
-        const alumno = await apiClient("/esAlumno", { method: "GET" });
-        const profesor = await apiClient("/esProfesor", { method: "GET" });
+  async function cargarDatos() {
+    try {
+      const matsCursar = await apiClient("/materiasQueNoCursa", { method: "GET" });
+      const matsDictar = await apiClient("/materiasQueNoDicta", { method: "GET" });
+      const alumno = await apiClient("/esAlumno", { method: "GET" });
+      const profesor = await apiClient("/esProfesor", { method: "GET" });
 
-        setMateriasCursar(matsCursar);
-        setMateriasDictar(matsDictar);
-        setEsAlumno(alumno);
-        setEsProfesor(profesor);
+      setMateriasCursar(matsCursar);
+      setMateriasDictar(matsDictar);
+      setEsAlumno(alumno);
+      setEsProfesor(profesor);
 
-      } catch (e: any) {
-        setError(e.message || "Error inesperado");
-      } finally {
-        setLoading(false);
-      }
+    } catch (e: any) {
+      setError(e.message || "Error inesperado");
+    } finally {
+      setLoading(false);
     }
+  }
 
+  useEffect(() => {
     cargarDatos();
   }, []);
 
@@ -43,6 +43,7 @@ export default function InscripcionesClient() {
       await apiClient(`/materias/${accion}?codigoMateria=${codigo}`, {
         method: "POST",
       });
+      cargarDatos();
       return true;
     } catch (e: any) {
       setActionError(e.message);
