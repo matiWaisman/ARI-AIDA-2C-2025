@@ -8,7 +8,7 @@ export default function MenuPage() {
   const { loading, usuario } = useUser();
 
   const menuOptions: Map<string, [string, string]> = new Map([
-    ["Completar encuestas", ["/completarEncuesta", "Completar encuestas"]],
+    ["Completar encuestas", ["/completarEncuestas", "Completar encuestas"]],
     ["Ver resultados encuestas", ["/verEncuestas", "Ver resultados de encuestas"]],
   ]);
 
