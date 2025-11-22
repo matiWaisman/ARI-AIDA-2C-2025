@@ -36,6 +36,7 @@ declare module "express-session" {
       username: string;
       esProfesor: boolean;
       esAlumno: boolean;
+      lu: string;
     };
   }
 }
