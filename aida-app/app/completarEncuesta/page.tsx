@@ -19,7 +19,8 @@ export default function CompletarEncuestaPage() {
   useEffect(() => {
     async function cargarDatos() {
       try {
-        const matsQueCursa = await apiClient("/materiasQueCursa", { method: "GET" });
+        const matsQueCursa = await apiClient("/completarEncuestas/encuestasPendientes", { method: "GET" });
+        console.log("Materias que cursa: ", matsQueCursa);
         const matsQueDicta = await apiClient("/materiasQueDicta", { method: "GET" });
         const alumno = await apiClient("/esAlumno", { method: "GET" });
         const profesor = await apiClient("/esProfesor", { method: "GET" });

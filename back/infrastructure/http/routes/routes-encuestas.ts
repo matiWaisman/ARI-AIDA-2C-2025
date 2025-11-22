@@ -8,5 +8,5 @@ encuestasRouter.get("/encuestas/get/profesor", EncuestasController.obtenerEncues
 encuestasRouter.post("/encuestas/create/materia", EncuestasController.crearEncuestaAMateria);
 encuestasRouter.post("/encuestas/create/alumno", EncuestasController.crearEncuestaAAlumno);
 encuestasRouter.post("/encuestas/create/profesor", EncuestasController.crearEncuestaAProfesor);
-encuestasRouter.get("/encuestas/get", EncuestasController.obtenerEncuestasNoRespondidas);
+encuestasRouter.get("/completarEncuestas/encuestasPendientes", EncuestasController.obtenerEncuestasNoRespondidas);
 

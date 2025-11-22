@@ -81,4 +81,12 @@ async autenticarUsuario(username: string,password: string): Promise<Usuario | nu
         return res.rows[0].existe;
     }
 
+    async getLuFromUserId(id: number): Promise<string | null> {
+        const res = await this.client.query(
+            'SELECT lu FROM aida.usuarios WHERE id = $1',
+            [id]
+        );
+        return res.rows[0]?.lu || null;
+    }
+
 }

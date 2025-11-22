@@ -167,7 +167,8 @@ async obtenerEncuestasNoRespondidas(lu: string) {
       SELECT 
           m.codigoMateria,
           m.cuatrimestre,
-          'encuestaAMateria' AS tipoEncuesta
+          'encuestaAMateria' AS tipoEncuesta,
+          NULL AS luEvaluado
       FROM materias_alumno m
       LEFT JOIN aida.encuestaAMateria e
         ON e.luEncuestado = $1

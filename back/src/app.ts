@@ -7,6 +7,7 @@ import { UserController } from "../application/controllers/controller-user.ts";
 import { userRouter } from "../infrastructure/http/routes/routes-user.ts";
 import { cursaRouter } from "../infrastructure/http/routes/routes-cursa.ts";
 import { materiaRouter } from "../infrastructure/http/routes/routes-materia.ts";
+import { encuestasRouter } from "../infrastructure/http/routes/routes-encuestas.ts";
 
 dotenv.config({ path: "./local-sets.env" });
 
@@ -64,6 +65,7 @@ app.use("/app", userRouter);
 app.use("/app", requireLogin, materiaRouter)
 app.use("/app", requireLogin, alumnoRouter);
 app.use("/app", requireLogin, cursaRouter);
+app.use("/app", requireLogin, encuestasRouter);
   
 
 app.listen(port, () => {

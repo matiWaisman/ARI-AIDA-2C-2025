@@ -114,6 +114,10 @@ export class Business {
     return this.userRepo.esProfesor(id);
     }
 
+    async getLuFromUserId(id: number): Promise<string | null> {
+    return this.userRepo.getLuFromUserId(id);
+    }
+
     async crearUsuarioSimple(username: string, password: string, nombre: string, apellido: string, lu: string, email: string) {
     return this.userRepo.crearUsuario(username, password, nombre, apellido, lu, email);
     }
