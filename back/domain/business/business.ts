@@ -187,17 +187,15 @@ export class Business {
     return await this.materiaRepo.getAllMaterias();
     }
 
-    async getAllMateriasQueNoParticipa(id: number | undefined, participacion: "cursa" | "dicta", rolEnMateria: "Alumno" | "Profesor") {
+    async getAllMateriasQueNoParticipa(id: number, participacion: "cursa" | "dicta", rolEnMateria: "Alumno" | "Profesor") {
         const todasLasMaterias: Materia[] = await this.materiaRepo.getAllMaterias();
-        console.log("Todas las Materias: ", todasLasMaterias)
         const materiasQueParticipa: Materia[] = await this.materiaRepo.getMateriasQueParticipa(id, participacion, rolEnMateria);
-        console.log("Materias que participa: ", materiasQueParticipa);
         let materiasNoParticipa: Materia[] = [];
         for (let i = 0; i < todasLasMaterias.length; i++) {
             const materia = todasLasMaterias[i];
 
             if (!materia) {
-            continue;
+                continue;
             }
 
             const participa = materiasQueParticipa.some(
@@ -205,7 +203,7 @@ export class Business {
             );
 
             if (!participa) {
-            materiasNoParticipa.push(materia);
+                materiasNoParticipa.push(materia);
             }
         }
         return materiasNoParticipa;

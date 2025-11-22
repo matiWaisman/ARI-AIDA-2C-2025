@@ -26,14 +26,14 @@ export class MateriaRepository {
   async getAllMaterias(): Promise<any[]> {
     const query = `
       SELECT 
-        m.nombreMateria, 
-        m.codigoMateria, 
+        m.nombremateria AS "nombreMateria", 
+        m.codigomateria AS "codigoMateria", 
         e.nombres, 
         e.apellido, 
         d.cuatrimestre
       FROM aida.materias m 
-      LEFT JOIN aida.dicta d ON m.codigoMateria = d.codigoMateria
-      LEFT JOIN aida.profesor p ON d.luProfesor = p.lu
+      LEFT JOIN aida.dicta d ON m.codigomateria = d.codigomateria
+      LEFT JOIN aida.profesor p ON d.luprofesor = p.lu
       LEFT JOIN aida.entidadUniversitaria e ON p.lu = e.lu;
   `;
     const result = await this.client.query(query);
@@ -42,50 +42,51 @@ export class MateriaRepository {
   }
 
   async getMateriasQueParticipa(id: number, participacion: "cursa" | "dicta", rolEnMateria: "Alumno" | "Profesor"): Promise<any[]> {
+    const columnaLu = rolEnMateria === "Alumno" ? "lualumno" : "luprofesor";
     const query = `
     SELECT 
-      m.nombreMateria, 
-      p.codigoMateria, 
+      m.nombremateria AS "nombreMateria", 
+      p.codigomateria AS "codigoMateria", 
       e.nombres, 
       e.apellido, 
       p.cuatrimestre
       FROM aida.${participacion} p
-      INNER JOIN aida.usuarios u ON p.lu${rolEnMateria} = u.lu
-      INNER JOIN aida.materias m ON p.codigoMateria = m.codigoMateria
-      INNER JOIN aida.entidadUniversitaria e ON p.lu${rolEnMateria} = e.lu
-      WHERE u.id = '${id}';
+      INNER JOIN aida.usuarios u ON p.${columnaLu} = u.lu
+      INNER JOIN aida.materias m ON p.codigomateria = m.codigomateria
+      INNER JOIN aida.entidadUniversitaria e ON p.${columnaLu} = e.lu
+      WHERE u.id = $1;
     `;
-    const result = await this.client.query(query);
+    const result = await this.client.query(query, [id]);
     return result.rows;
   }
 
   async getMateriasQueNoParticipa(id: number, participacion: "cursa" | "dicta", rolEnMateria: "Alumno" | "Profesor"): Promise<any[]> {
-
+    const columnaLu = rolEnMateria === "Alumno" ? "lualumno" : "luprofesor";
     const query = `
       WITH materiasQueNoParticipa AS (
         SELECT m2.*
           FROM aida.materias m2
           WHERE NOT EXISTS (
-            SELECT p.codigoMateria
+            SELECT p.codigomateria
               FROM aida.${participacion} p
-              INNER JOIN aida.usuarios u ON p.lu${rolEnMateria} = u.lu
-              WHERE u.id = '${id}'
-              AND p.codigoMateria = m2.codigoMateria
+              INNER JOIN aida.usuarios u ON p.${columnaLu} = u.lu
+              WHERE u.id = $1
+              AND p.codigomateria = m2.codigomateria
           )		
       )
 
 
       SELECT 
-            m.nombreMateria, 
-            m.codigoMateria, 
+            m.nombremateria AS "nombreMateria", 
+            m.codigomateria AS "codigoMateria", 
             e.nombres, 
             e.apellido, 
             '2C2025' AS cuatrimestre
             FROM materiasQueNoParticipa m
-            LEFT JOIN aida.dicta d ON m.codigoMateria = d.codigoMateria
-            LEFT JOIN aida.entidadUniversitaria e ON d.luProfesor = e.lu
+            LEFT JOIN aida.dicta d ON m.codigomateria = d.codigomateria
+            LEFT JOIN aida.entidadUniversitaria e ON d.luprofesor = e.lu
     `;
-    const result = await this.client.query(query);
+    const result = await this.client.query(query, [id]);
     console.log("Resultado de la Query: ", result.rows);
     return result.rows;
   }
@@ -95,40 +96,51 @@ export class MateriaRepository {
     participacion: "cursa" | "dicta",
     rolEnMateria: "Alumno" | "Profesor"
   ): Promise<any[]> {
-
+    const columnaLu = rolEnMateria === "Alumno" ? "lualumno" : "luprofesor";
     const query = `
         WITH materiasQueSiParticipa AS (
           SELECT m2.*
             FROM aida.materias m2
             WHERE EXISTS (
-              SELECT p.codigoMateria
+              SELECT p.codigomateria
                 FROM aida.${participacion} p
-                INNER JOIN aida.usuarios u ON p.lu${rolEnMateria} = u.lu
-                WHERE u.id = '${id}'
-                AND p.codigoMateria = m2.codigoMateria
+                INNER JOIN aida.usuarios u ON p.${columnaLu} = u.lu
+                WHERE u.id = $1
+                AND p.codigomateria = m2.codigomateria
             )
         )
 
         SELECT 
-              m.nombreMateria, 
-              m.codigoMateria, 
+              m.nombremateria AS "nombreMateria", 
+              m.codigomateria AS "codigoMateria", 
               e.nombres, 
               e.apellido, 
               '2C2025' AS cuatrimestre
         FROM materiasQueSiParticipa m
-        LEFT JOIN aida.dicta d ON m.codigoMateria = d.codigoMateria
-        LEFT JOIN aida.entidadUniversitaria e ON d.luProfesor = e.lu
+        LEFT JOIN aida.dicta d ON m.codigomateria = d.codigomateria
+        LEFT JOIN aida.entidadUniversitaria e ON d.luprofesor = e.lu
     `;
 
-    const result = await this.client.query(query);
+    const result = await this.client.query(query, [id]);
     console.log("Resultado de la Query: ", result.rows);
     return result.rows;
   }
 
 
   async inscribirConId(codigoMateria: string, id:number|undefined, tabla: "cursa"|"dicta", condicion: "Profesor"|"Alumno"): Promise<void>{
+    // Verificar que la materia existe antes de insertar
+    const materiaCheck = await this.client.query(
+      'SELECT codigomateria FROM aida.materias WHERE codigomateria = $1',
+      [codigoMateria]
+    );
+    
+    if (materiaCheck.rows.length === 0) {
+      throw new Error(`La materia con código ${codigoMateria} no existe`);
+    }
+    
+    const columnaLu = condicion === "Alumno" ? "lualumno" : "luprofesor";
     const query = `
-    INSERT INTO aida.${tabla} (lu${condicion}, codigoMateria, cuatrimestre)
+    INSERT INTO aida.${tabla} (${columnaLu}, codigomateria, cuatrimestre)
       VALUES (
         (SELECT lu FROM aida.usuarios WHERE id = $2),
         $1,
