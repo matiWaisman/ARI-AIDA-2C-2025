@@ -16,6 +16,21 @@ export class ProfesorRepository {
     return result.rows[0];
   }
 
+async assertEsProfesorDeMateriaEnCuatrimestre(luProfe: string, codigoMateria: string, cuatrimestre: string): Promise<boolean> {
+  const query = `
+    SELECT EXISTS (
+      SELECT 1
+      FROM aida.dicta d
+      WHERE d.luProfesor = $1
+        AND d.codigoMateria = $2
+        AND d.cuatrimestre = $3
+    ) AS dicta;
+  `;
+  const result = await this.client.query(query, [luProfe, codigoMateria, cuatrimestre]);
+  return result.rows[0].dicta === true;
+}
+
+
   async crearProfesor(LU: string): Promise<Profesor | undefined> {
     const profesor = await this.hayProfesorConLu(LU);
       if (profesor) {

@@ -31,3 +31,4 @@ alumnoRouter.post("/alumnos/delete", AlumnoController.deleteAlumno);
 alumnoRouter.get("/alumnos/all", AlumnoController.getAlumnos); 
 alumnoRouter.post("/alumnos/insert", AlumnoController.insertAlumno);
 alumnoRouter.post("/alumnos/cargarCSV", upload.single("archivo"), AlumnoController.cargarDatosEnAlumnos);
+alumnoRouter.get("/alumnos/profesor/:luProfe/:codigoMateria/:cuatrimestre", AlumnoController.getAlumnosDeProfesorPorMateriaYCuatrimestre);

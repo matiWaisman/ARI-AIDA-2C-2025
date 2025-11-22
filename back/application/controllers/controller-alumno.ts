@@ -41,7 +41,18 @@ export class AlumnoController {
     const ruta = await business.generarCertificadoSiAplica(LU);
     res.json({ message: "Certificado generado", path: ruta });
     await client.end();
-}
+  }
+
+  static async getAlumnosDeProfesorPorMateriaYCuatrimestre(req: Request, res: Response){
+    const {luProfe, codigoMateria, cuatrimestre} = req.body;
+    if(!luProfe || !codigoMateria || !cuatrimestre){
+      return res.status(400).json({ error: "luProfesor, codigoMateria y cuatrimestre son obligatorios." });
+    }
+    const {client, business} = await AlumnoController._createDbClientAndInitializeBusiness()
+    const resultado = await business.alumnosDeProfesorPorMateriaYCuatrimestre(luProfe, codigoMateria, cuatrimestre);
+    res.json(resultado);
+    await client.end();
+  }
 
 
   static async cargarDatosEnAlumnos(req: Request, res: Response) {

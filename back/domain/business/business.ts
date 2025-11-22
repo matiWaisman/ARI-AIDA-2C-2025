@@ -164,6 +164,13 @@ export class Business {
         return result
     }
 
+    async alumnosDeProfesorPorMateriaYCuatrimestre(luProfe: string, codigoMateria: string, cuatrimestre: string){
+        if(!(await this.profesorRepo.assertEsProfesorDeMateriaEnCuatrimestre(luProfe, codigoMateria, cuatrimestre))){
+            throw new Error(`El ${luProfe} no pertenece a un profesor de la materia: ${codigoMateria}`);
+        }
+        return await this.materiaRepo.obtenerAlumnosDeMateria(codigoMateria, cuatrimestre);
+    }
+
     async crearMateria(nombreMateria: string, codigoMateria: string) {
     const existeMateria = await this.existeMateria(nombreMateria);
     if (existeMateria) {
