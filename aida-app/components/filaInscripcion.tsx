@@ -18,41 +18,29 @@ export function FilaInscripcion({
   onInscripcion,
 }: filaInscripcionProps) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-0 md:items-center md:px-2 py-3 rounded-lg hover:bg-muted/50 transition-colors">
-      <div className="col-span-1 md:col-span-4">
-        <p className="md:hidden text-xs text-muted-foreground font-semibold">
-          Materia
-        </p>
-        <p className="font-medium text-foreground">{nombreMateria}</p>
-      </div>
-
-      <div className="col-span-1 md:col-span-2">
-        <p className="md:hidden text-xs text-muted-foreground font-semibold">
-          Cuatrimestre
-        </p>
-        <p className="text-sm text-foreground">{cuatrimestre}</p>
-      </div>
-
-      <div className="col-span-1 md:col-span-4">
-        <p className="md:hidden text-xs text-muted-foreground font-semibold">
-          Profesor
-        </p>
-        <p className="text-sm text-foreground">{profesor}</p>
-      </div>
-
-      <div className="col-span-1 md:col-span-2 flex justify-start md:justify-end">
+    <tr className="hover:bg-gray-50 transition-colors">
+      <td className="border border-gray-300 px-4 py-3">
+        <p className="font-medium text-gray-900">{nombreMateria}</p>
+      </td>
+      <td className="border border-gray-300 px-4 py-3">
+        <p className="text-sm text-gray-700">{cuatrimestre}</p>
+      </td>
+      <td className="border border-gray-300 px-4 py-3">
+        <p className="text-sm text-gray-700">{profesor}</p>
+      </td>
+      <td className="border border-gray-300 px-4 py-3 text-center">
         <button
           onClick={() => onInscripcion(codigoMateria)}
           disabled={inscripto}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
             inscripto
-              ? "bg-muted text-muted-foreground cursor-not-allowed"
-              : "bg-primary text-primary-foreground hover:opacity-90 active:opacity-80"
+              ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+              : "bg-sky-400 text-white hover:bg-sky-500 active:bg-sky-600"
           }`}
         >
           {inscripto ? "Inscripto" : "Inscribirse"}
         </button>
-      </div>
-    </div>
+      </td>
+    </tr>
   );
 }

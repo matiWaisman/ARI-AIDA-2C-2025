@@ -128,6 +128,16 @@ export class MateriaRepository {
 
 
   async inscribirConId(codigoMateria: string, id:number|undefined, tabla: "cursa"|"dicta", condicion: "Profesor"|"Alumno"): Promise<void>{
+    if (!codigoMateria) {
+      throw new Error("El código de materia es requerido");
+    }
+    
+    if (!id) {
+      throw new Error("El ID de usuario es requerido");
+    }
+    
+    console.log("inscribirConId - codigoMateria:", codigoMateria, "id:", id, "tabla:", tabla, "condicion:", condicion);
+    
     // Verificar que la materia existe antes de insertar
     const materiaCheck = await this.client.query(
       'SELECT codigomateria FROM aida.materias WHERE codigomateria = $1',

@@ -63,8 +63,15 @@ export class MateriaController {
 
 
   static async inscribirACursar(req: Request, res: Response) {
-    const codigoMateria = req.query.codigoMateria as string;
+    let codigoMateria = req.query.codigoMateria as string;
+    if (codigoMateria) {
+      codigoMateria = decodeURIComponent(codigoMateria);
+    }
     const id = req.session.usuario?.id;
+
+    console.log("Inscribir a cursar - codigoMateria:", codigoMateria);
+    console.log("Inscribir a cursar - id:", id);
+    console.log("Inscribir a cursar - query completo:", req.query);
 
     if (!id) {
       return res.status(401).json({ error: "Usuario no autenticado" });
@@ -77,13 +84,16 @@ export class MateriaController {
     const { client, business } =
       await MateriaController._createDbClientAndInitializeBusiness();
 
-    await business.inscribirAlumnoConIdDeUsuario(codigoMateria, id);
-
-    await client.end();
-
-    return res.status(200).json({
-      message: "Inscripción a cursar realizada correctamente",
-    });
+    try {
+      await business.inscribirAlumnoConIdDeUsuario(codigoMateria, id);
+      await client.end();
+      return res.status(200).json({
+        message: "Inscripción a cursar realizada correctamente",
+      });
+    } catch (error: any) {
+      await client.end();
+      return res.status(500).json({ error: error.message || "Error al inscribirse" });
+    }
   }
 
   static async inscribirADictar(req: Request, res: Response) {
