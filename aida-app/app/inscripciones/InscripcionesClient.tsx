@@ -22,9 +22,6 @@ export default function InscripcionesClient() {
       const alumno = await apiClient("/esAlumno", { method: "GET" });
       const profesor = await apiClient("/esProfesor", { method: "GET" });
 
-      console.log("Materias para cursar:", matsCursar);
-      console.log("Materias para dictar:", matsDictar);
-
       setMateriasCursar(matsCursar);
       setMateriasDictar(matsDictar);
       setEsAlumno(alumno);
@@ -42,7 +39,6 @@ export default function InscripcionesClient() {
   }, []);
 
   const inscribirseAMateria = async (codigo: string, accion: string) => {
-    console.log("Inscribirse a materia - codigo:", codigo, "accion:", accion);
     if (!codigo || codigo === "undefined") {
       setActionError("Código de materia inválido");
       return false;

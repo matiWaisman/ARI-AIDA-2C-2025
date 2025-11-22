@@ -30,7 +30,8 @@ export class MateriaController {
   static async getAllMateriasQueNoCursa(req: Request, res: Response) {
     const { client, business } =
       await MateriaController._createDbClientAndInitializeBusiness();
-    const materias = await business.getAllMateriasQueNoParticipa(req.session.usuario?.id, "cursa", "Alumno");
+    const id = req.session.usuario?.id;
+    const materias = await business.getAllMateriasQueNoParticipa(id, "cursa", "Alumno");
     res.status(200).json(materias);
     await client.end();
   }
@@ -38,7 +39,8 @@ export class MateriaController {
   static async getAllMateriasQueNoDicta(req: Request, res: Response) {
     const { client, business } =
       await MateriaController._createDbClientAndInitializeBusiness();
-    const materias = await business.getAllMateriasQueNoParticipa(req.session.usuario?.id, "dicta", "Profesor");
+    const id = req.session.usuario?.id;
+    const materias = await business.getAllMateriasQueNoParticipa(id, "dicta", "Profesor");
     res.status(200).json(materias);
     await client.end();
   }
@@ -46,7 +48,11 @@ export class MateriaController {
   static async getAllMateriasQueCursa(req: Request, res: Response) {
     const { client, business } =
       await MateriaController._createDbClientAndInitializeBusiness();
-    const id = req.session.usuario? req.session.usuario.id : -1;
+    const id = req.session.usuario?.id;
+    if (!id) {
+      await client.end();
+      return res.status(200).json([]);
+    }
     const materias = await business.getAllMateriasQueParticipa(id, "cursa", "Alumno");
     res.status(200).json(materias);
     await client.end();
@@ -55,7 +61,11 @@ export class MateriaController {
   static async getAllMateriasQueDicta(req: Request, res: Response) {
     const { client, business } =
       await MateriaController._createDbClientAndInitializeBusiness();
-    const id = req.session.usuario? req.session.usuario.id : -1;
+    const id = req.session.usuario?.id;
+    if (!id) {
+      await client.end();
+      return res.status(200).json([]);
+    }
     const materias = await business.getAllMateriasQueParticipa(id, "dicta", "Profesor");
     res.status(200).json(materias);
     await client.end();
@@ -68,10 +78,6 @@ export class MateriaController {
       codigoMateria = decodeURIComponent(codigoMateria);
     }
     const id = req.session.usuario?.id;
-
-    console.log("Inscribir a cursar - codigoMateria:", codigoMateria);
-    console.log("Inscribir a cursar - id:", id);
-    console.log("Inscribir a cursar - query completo:", req.query);
 
     if (!id) {
       return res.status(401).json({ error: "Usuario no autenticado" });
@@ -129,10 +135,35 @@ export class MateriaController {
         cuatrimestre,
       );
     }
-
+    
     res.status(200).json(alumnos);
     await client.end();
   }
+
+  static async profesoresDeMateriaExcluyendo(req: Request, res: Response) {
+    const { codigoMateria, cuatrimestre, luAExcluir } = req.body;
+    
+    const { client, business } =
+      await MateriaController._createDbClientAndInitializeBusiness();
+
+    let profesores;
+    if (luAExcluir) {
+      profesores = await business.obtenerProfesoresDeMateriaExcluyendo(
+        codigoMateria,
+        cuatrimestre,
+        luAExcluir
+      );
+    } else {
+      profesores = await business.obtenerProfesoresDeMateria(
+        codigoMateria,
+        cuatrimestre
+      );
+    }
+
+    res.status(200).json(profesores);
+    await client.end();
+  }
+
 
   static async ponerNotaAAlumno(req: Request, res: Response) {
     const { codigoMateria, cuatrimestre, luAlumno, nota } = req.body;

@@ -21,7 +21,12 @@ export class UserController {
     }
     const esAlumno = await business.esAlumno(user.id);
     const esProfesor = await business.esProfesor(user.id);
-    req.session.usuario = { id: user.id, username: user.username, esAlumno: esAlumno, esProfesor: esProfesor};
+    const lu = await business.getLuFromUserId(user.id);
+    if (!lu) {
+      await client.end();
+      return res.status(500).json({ message: "No se pudo obtener el LU del usuario" });
+    }
+    req.session.usuario = { id: user.id, username: user.username, esAlumno: esAlumno, esProfesor: esProfesor, lu: lu};
     req.session.save(() => {
       res.json({ message: "Login exitoso", usuario: req.session.usuario });
     });
@@ -64,7 +69,6 @@ export class UserController {
   }
 
   static async esAlumno(req: Request, res: Response) {
-    console.log("SESSION usuario:", req.session.usuario);
     const { client, business } = await UserController._createBusiness();
     const result = await business.esAlumno(req.session.usuario?.id);
     res.json(result);

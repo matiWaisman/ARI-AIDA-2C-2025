@@ -9,8 +9,8 @@ materiaRouter.get("/materiasqueDicta",MateriaController.getAllMateriasQueDicta);
 materiaRouter.get("/materiasQueNoCursa",MateriaController.getAllMateriasQueNoCursa);
 materiaRouter.get("/materiasqueNoDicta",MateriaController.getAllMateriasQueNoDicta);
 materiaRouter.get("/alumnosDeMateria",MateriaController.getAlumnosDeMateriaConNota)
+materiaRouter.post("/materias/alumnos", MateriaController.alumnosDeMateriaExcluyendo);
+materiaRouter.post("/materias/profesores", MateriaController.profesoresDeMateriaExcluyendo);
 materiaRouter.post("/materias/cursar",MateriaController.inscribirACursar)
 materiaRouter.post("/materias/dictar",MateriaController.inscribirADictar)
-materiaRouter.post("/materia/alumnos", MateriaController.alumnosDeMateriaExcluyendo);
 materiaRouter.post("/materias/create", MateriaController.crearMateria);
-materiaRouter.post("/materia/profesor", MateriaController.alumnosDeMateriaExcluyendo);

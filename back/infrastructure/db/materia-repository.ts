@@ -37,7 +37,6 @@ export class MateriaRepository {
       LEFT JOIN aida.entidadUniversitaria e ON p.lu = e.lu;
   `;
     const result = await this.client.query(query);
-    console.log("Materias en la base ", result.rows)
     return result.rows;
   }
 
@@ -87,7 +86,6 @@ export class MateriaRepository {
             LEFT JOIN aida.entidadUniversitaria e ON d.luprofesor = e.lu
     `;
     const result = await this.client.query(query, [id]);
-    console.log("Resultado de la Query: ", result.rows);
     return result.rows;
   }
 
@@ -122,7 +120,6 @@ export class MateriaRepository {
     `;
 
     const result = await this.client.query(query, [id]);
-    console.log("Resultado de la Query: ", result.rows);
     return result.rows;
   }
 
@@ -136,7 +133,6 @@ export class MateriaRepository {
       throw new Error("El ID de usuario es requerido");
     }
     
-    console.log("inscribirConId - codigoMateria:", codigoMateria, "id:", id, "tabla:", tabla, "condicion:", condicion);
     
     // Verificar que la materia existe antes de insertar
     const materiaCheck = await this.client.query(
@@ -177,9 +173,9 @@ export class MateriaRepository {
     const query = `
       SELECT a.lu, e.nombres, e.apellido
       FROM aida.cursa c
-      JOIN aida.alumnos a ON c.luAlumno = a.lu
+      JOIN aida.alumnos a ON c.lualumno = a.lu
       JOIN aida.entidadUniversitaria e ON e.lu = a.lu
-      WHERE c.codigoMateria = $1
+      WHERE c.codigomateria = $1
         AND c.cuatrimestre = $2
         AND ($3::text IS NULL OR a.lu <> $3)
     `;
@@ -193,13 +189,34 @@ export class MateriaRepository {
   return result.rows;
   }
 
+  async obtenerProfesoresDeMateria(codigoMateria: string, cuatrimestre: string, luAExcluir?: string | null) {
+    const query = `
+      SELECT p.lu, e.nombres, e.apellido
+      FROM aida.dicta d
+      JOIN aida.profesor p ON d.luprofesor = p.lu
+      JOIN aida.entidadUniversitaria e ON e.lu = p.lu
+      WHERE d.codigomateria = $1
+        AND d.cuatrimestre = $2
+        AND ($3::text IS NULL OR p.lu <> $3)
+    `;
+
+    const result = await this.client.query(query, [
+      codigoMateria,
+      cuatrimestre,
+      luAExcluir ?? null
+    ]);
+
+    return result.rows;
+  }
+
+
   async obtenerAlumnosDeMateriaConNota(codigoMateria: string, cuatrimestre: string) {
     const query = `
     SELECT a.lu, e.nombres, e.apellido, c.nota
       FROM aida.cursa c
-      JOIN aida.alumnos a ON c.luAlumno = a.lu
+      JOIN aida.alumnos a ON c.lualumno = a.lu
       JOIN aida.entidadUniversitaria e ON e.lu = a.lu
-      WHERE c.codigoMateria = $1
+      WHERE c.codigomateria = $1
         AND c.cuatrimestre = $2
     `;
 

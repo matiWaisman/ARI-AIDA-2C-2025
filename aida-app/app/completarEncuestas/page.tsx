@@ -29,7 +29,6 @@ export default function CompletarEncuestasPage() {
 
         for (const e of encuestas) {
           const titulo = `Completar encuesta de ${e.nombreMateria}`;
-          console.log(e);
           if (e.tipoEncuesta === "encuestaAMateria") {
             const ruta = `/completarEncuestaCursada/${encodeURIComponent(e.codigoMateria)}`;
             cursadasMap.set(titulo, [ruta, titulo]);

@@ -12,7 +12,6 @@ export function useMateriasFeature() {
   const cargarMaterias = async () => {
     try {
       const data = await apiClient("/materias", { method: "GET" });
-      console.log("Datos de materias obtenidos: ", data);
       setMaterias(data);
       setError(null);
     } catch (e) {

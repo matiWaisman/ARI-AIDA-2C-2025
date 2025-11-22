@@ -134,6 +134,14 @@ export class Business {
     return this.materiaRepo.obtenerAlumnosDeMateria(codigoMateria, cuatrimestre, luAExcluir);
     }
 
+    async obtenerProfesoresDeMateria(codigoMateria: string, cuatrimestre: string) {
+    return this.materiaRepo.obtenerProfesoresDeMateria(codigoMateria, cuatrimestre, null);
+    }
+
+    async obtenerProfesoresDeMateriaExcluyendo(codigoMateria: string, cuatrimestre: string, luAExcluir: string) {
+    return this.materiaRepo.obtenerProfesoresDeMateria(codigoMateria, cuatrimestre, luAExcluir);
+    }
+
     async obtenerEncuestasSobreMiComoAlumno(miLU: string) {
     return this.encuestasRepo.obtenerEncuestasSobreMiComoAlumno(miLU);
     }
@@ -191,8 +199,13 @@ export class Business {
     return await this.materiaRepo.getAllMaterias();
     }
 
-    async getAllMateriasQueNoParticipa(id: number, participacion: "cursa" | "dicta", rolEnMateria: "Alumno" | "Profesor") {
+    async getAllMateriasQueNoParticipa(id: number | undefined, participacion: "cursa" | "dicta", rolEnMateria: "Alumno" | "Profesor") {
         const todasLasMaterias: Materia[] = await this.materiaRepo.getAllMaterias();
+        
+        if (id === undefined) {
+            return todasLasMaterias;
+        }
+        
         const materiasQueParticipa: Materia[] = await this.materiaRepo.getMateriasQueParticipa(id, participacion, rolEnMateria);
         let materiasNoParticipa: Materia[] = [];
         for (let i = 0; i < todasLasMaterias.length; i++) {
