@@ -1,48 +1,75 @@
-"use client"
+"use client";
 
-import { MateriaApi } from "./tablaInscripciones"
-import { FilaMateria } from "./filaMateria"
+import { FilaInscripcion } from "./filaMateria";
 
-interface TablaMateriaProps {
-    Materias: MateriaApi[];
-    onEnter?: (codigoMateria: string, cuatrimestre: string) => void;
-    tipo: "alumno" | "profesor";
-    nombreCampoAux: string
+export interface MateriaApi {
+  nombreMateria: string;
+  codigoMateria: string;
+  nombres: string;
+  apellido: string;
+  cuatrimestre: string;
+  nota?: number;
+}
+
+interface TablaMateriasProps {
+  Materias: MateriaApi[];
+  onAccion?: (codigoMateria: string, cuatrimestre?: string) => void;
+  tipo: "inscripcion" | "participacion";
+  nombreCampoAux: string;
 }
 
 export function TablaMaterias({
-    Materias,
-    onEnter,
-    tipo,
-    nombreCampoAux
-}: TablaMateriaProps) {
-
+  Materias,
+  onAccion,
+  tipo,
+  nombreCampoAux
+}: TablaMateriasProps) {
+  if (Materias.length === 0) {
     return (
-        <div className="w-full space-y-3">
-          <div className="hidden md:grid grid-cols-12 gap-4 px-2 text-sm font-semibold text-muted-foreground mb-4">
-            <div className="col-span-4">Materia</div>
-            <div className="col-span-2">Cuatrimestre</div>
-            <div className="col-span-4">Profesor</div>
-            <div className="col-span-2">{nombreCampoAux}</div>
-          </div>
-    
-          {Materias.map((m) => {
-            const profesor = `${m.nombres} ${m.apellido}`;
+      <div className="text-center py-8 text-gray-500">
+        No hay materias disponibles para inscribirse
+      </div>
+    );
+  }
 
-            console.log(m.nombremateria);
+  return (
+    <div className="w-full overflow-x-auto">
+      <table className="w-full border-collapse border border-gray-300 bg-white rounded-lg shadow-sm">
+        <thead>
+          <tr className="bg-gray-50 border-b border-gray-300">
+            <th className="border border-gray-300 px-4 py-3 text-left text-sm font-semibold text-gray-700">
+              Materia
+            </th>
+            <th className="border border-gray-300 px-4 py-3 text-left text-sm font-semibold text-gray-700">
+              Cuatrimestre
+            </th>
+            <th className="border border-gray-300 px-4 py-3 text-left text-sm font-semibold text-gray-700">
+              Profesor
+            </th>
+            <th className="border border-gray-300 px-4 py-3 text-center text-sm font-semibold text-gray-700">
+              {nombreCampoAux}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {Materias.map((m) => {
+            const profesor = `${m.nombres || ""} ${m.apellido || ""}`.trim() || "Sin profesor asignado";
+
             return (
-              <FilaMateria
-                key={`${tipo}-${m.codigomateria}`}
-                codigoMateria={m.codigomateria}
-                nombreMateria={m.nombremateria}
+              <FilaInscripcion
+                key={`${tipo}-${m.codigoMateria}`}
+                codigoMateria={m.codigoMateria}
+                nombreMateria={m.nombreMateria}
                 cuatrimestre={m.cuatrimestre}
                 profesor={profesor}
-                onEnter={onEnter}
+                inscripto={false} 
+                onAccion={onAccion}
                 tipo={tipo}
-                nota={m.nota}
               />
             );
           })}
-        </div>
-      );
+        </tbody>
+      </table>
+    </div>
+  );
 }

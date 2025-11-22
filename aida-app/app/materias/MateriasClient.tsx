@@ -56,7 +56,7 @@ export default function MateriasClient() {
                 </h1>
                 <TablaMaterias
                 Materias={materiasCursando}
-                tipo="alumno"
+                tipo="participacion"
                 nombreCampoAux="Nota"
                 />
             </>
@@ -69,13 +69,13 @@ export default function MateriasClient() {
                 </h1>
                 <TablaMaterias
                 Materias={materiasDictando}
-                tipo="profesor"
-                onEnter={(codigoMateria, cuatrimestre) => 
+                tipo="participacion"
+                onAccion={(codigoMateria, cuatrimestre) => 
                   <a href={`/materias/${codigoMateria}/${cuatrimestre}/alumnos`}>
                     Ver alumnos
                   </a>
                 }
-                nombreCampoAux="Ver Alumnos"
+                nombreCampoAux="Accións"
                 />
             </>
             

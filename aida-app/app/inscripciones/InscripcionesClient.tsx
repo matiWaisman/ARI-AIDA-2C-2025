@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { TablaInscripciones } from "@/components/tablaInscripciones";
+import { TablaMaterias } from "@/components/tablaMaterias";
 import LoadingScreen from "@/components/loadingScreen";
 import ErrorScreen from "@/components/errorScreen";
 import { apiClient } from "@/apiClient/apiClient";
@@ -73,12 +73,13 @@ export default function InscripcionesClient() {
           <h1 className="mb-8 text-3xl font-bold text-center">
             Inscribirse a materias
           </h1>
-          <TablaInscripciones
+          <TablaMaterias
             Materias={materiasCursar}
-            tipo="alumno"
-            onInscripcion={(codigo) =>
+            tipo="inscripcion"
+            onAccion={(codigo) =>
               inscribirseAMateria(codigo, "cursar")
             }
+            nombreCampoAux="Acción"
           />
         </>
       )}
@@ -88,12 +89,13 @@ export default function InscripcionesClient() {
           <h1 className="mb-8 text-3xl font-bold text-center">
             Dictar materias
           </h1>
-          <TablaInscripciones
+          <TablaMaterias
             Materias={materiasDictar}
-            tipo="profesor"
-            onInscripcion={(codigo) =>
+            tipo="inscripcion"
+            onAccion={(codigo) =>
               inscribirseAMateria(codigo, "dictar")
             }
+            nombreCampoAux="Acción"
           />
         </>
       )}

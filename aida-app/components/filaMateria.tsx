@@ -1,66 +1,69 @@
 "use client";
 
-interface filaMateriaProps {
+interface filaInscripcionProps {
   codigoMateria: string;
   nombreMateria: string;
   cuatrimestre: string;
   profesor: string;
-  onEnter?: (codigoMateria: string, cuatrimestre: string) => void;
-  tipo: "alumno" | "profesor";
-  nota?: number | null
+  onAccion?: (codigoMateria: string, cuatrimestre?: string) => void;
+  inscripto?: boolean;
+  nota?: number;
+  tipo: "inscripcion" | "participacion"
 }
 
-export function FilaMateria({
+export function FilaInscripcion({
   codigoMateria,
   nombreMateria,
   cuatrimestre,
   profesor,
-  onEnter,
-  tipo,
-  nota
-}: filaMateriaProps) {
+  inscripto = false,
+  onAccion,
+  nota,
+  tipo
+}: filaInscripcionProps) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-0 md:items-center md:px-2 py-3 rounded-lg hover:bg-muted/50 transition-colors">
-      <div className="col-span-1 md:col-span-4">
-        <p className="md:hidden text-xs text-muted-foreground font-semibold">
-          Materia
-        </p>
-        <p className="font-medium text-foreground">{nombreMateria}</p>
-      </div>
-
-      <div className="col-span-1 md:col-span-2">
-        <p className="md:hidden text-xs text-muted-foreground font-semibold">
-          Cuatrimestre
-        </p>
-        <p className="text-sm text-foreground">{cuatrimestre}</p>
-      </div>
-
-      <div className="col-span-1 md:col-span-4">
-        <p className="md:hidden text-xs text-muted-foreground font-semibold">
-          Profesor
-        </p>
-        <p className="text-sm text-foreground">{profesor}</p>
-      </div>
-
-      {tipo === "alumno" && (
-        <div className="col-span-1 md:col-span-2">
-          <p className="md:hidden text-xs text-muted-foreground font-semibold">
-            Nota
-          </p>
+    <tr className="hover:bg-gray-50 transition-colors">
+      <td className="border border-gray-300 px-4 py-3">
+        <p className="font-medium text-gray-900">{nombreMateria}</p>
+      </td>
+      <td className="border border-gray-300 px-4 py-3">
+        <p className="text-sm text-gray-700">{cuatrimestre}</p>
+      </td>
+      <td className="border border-gray-300 px-4 py-3">
+        <p className="text-sm text-gray-700">{profesor}</p>
+      </td>
+      <td className="border border-gray-300 px-4 py-3 text-center">
+        {onAccion != undefined && (
+          tipo === "inscripcion" && 
+            (<button
+              onClick={() => onAccion?.(codigoMateria, cuatrimestre)}
+              disabled={inscripto}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                inscripto
+                  ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                  : "bg-sky-400 text-white hover:bg-sky-500 active:bg-sky-600"
+              }`}
+            >
+              {inscripto ? "Inscripto" : "Inscribirse"}
+            </button>)
+          
+          ||
+          
+          tipo === "participacion" && (
+            <button
+              onClick={() => onAccion?.(codigoMateria, cuatrimestre)}
+              className="px-4 py-2 rounded-md text-sm font-medium transition-colors 
+                        bg-sky-400 text-white hover:bg-sky-500 active:bg-sky-600"
+            >
+              Ver Alumnos
+            </button>
+          ))}
+        {onAccion === undefined &&(
           <p className="text-sm text-foreground">
             {nota != null ? nota : "—"}
           </p>
-        </div>
-      )}
-
-      {tipo === "profesor" && 
-        (<div className="col-span-1 md:col-span-2 flex justify-start md:justify-end">
-          <button
-            className="text-sm text-blue-600 underline"
-            onClick={() => onEnter?.(codigoMateria, cuatrimestre)}>
-            Ver alumnos
-          </button>
-        </div>)}
-    </div>
+        )}
+      </td>
+    </tr>
   );
 }
