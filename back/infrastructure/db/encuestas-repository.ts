@@ -4,14 +4,14 @@ export class EncuestasRepository {
   constructor(private client: Client) {}
 
   async crearEncuestaAAlumno(e: {
-  luEncuestado: string;
-  luEvaluado: string;
-  codigoMateria: string;
-  cuatrimestre: string;
-  respuestas: number[];
-  comentario?: string;
-}) {
-  const query = `
+    luEncuestado: string;
+    luEvaluado: string;
+    codigoMateria: string;
+    cuatrimestre: string;
+    respuestas: number[];
+    comentario?: string;
+  }) {
+    const query = `
     INSERT INTO aida.encuestaAAlumno(
       luEncuestado, luEvaluado, codigoMateria, cuatrimestre,
       respuesta1, respuesta2, respuesta3, respuesta4, respuesta5,
@@ -23,31 +23,31 @@ export class EncuestasRepository {
     ) RETURNING *;
   `;
 
-  const params = [
-    e.luEncuestado,
-    e.luEvaluado,
-    e.codigoMateria,
-    e.cuatrimestre,
-    e.respuestas[0],
-    e.respuestas[1],
-    e.respuestas[2],
-    e.respuestas[3],
-    e.respuestas[4],
-    e.comentario ?? null
-  ];
+    const params = [
+      e.luEncuestado,
+      e.luEvaluado,
+      e.codigoMateria,
+      e.cuatrimestre,
+      e.respuestas[0],
+      e.respuestas[1],
+      e.respuestas[2],
+      e.respuestas[3],
+      e.respuestas[4],
+      e.comentario ?? null,
+    ];
 
-  const r = await this.client.query(query, params);
-  return r.rows[0];
+    const r = await this.client.query(query, params);
+    return r.rows[0];
   }
 
   async crearEncuestaAMateria(e: {
-  luEncuestado: string;
-  codigoMateria: string;
-  cuatrimestre: string;
-  respuestas: number[];
-  comentario?: string;
-}) {
-  const query = `
+    luEncuestado: string;
+    codigoMateria: string;
+    cuatrimestre: string;
+    respuestas: number[];
+    comentario?: string;
+  }) {
+    const query = `
     INSERT INTO aida.encuestaAMateria(
       luEncuestado, codigoMateria, cuatrimestre,
       respuesta1, respuesta2, respuesta3, respuesta4,
@@ -65,21 +65,19 @@ export class EncuestasRepository {
     ) RETURNING *;
   `;
 
-  const params = [
-    e.luEncuestado,
-    e.codigoMateria,
-    e.cuatrimestre,
-    ...e.respuestas,
-    e.comentario ?? null
-  ];
+    const params = [
+      e.luEncuestado,
+      e.codigoMateria,
+      e.cuatrimestre,
+      ...e.respuestas,
+      e.comentario ?? null,
+    ];
 
-  const r = await this.client.query(query, params);
-  return r.rows[0];
-}
+    const r = await this.client.query(query, params);
+    return r.rows[0];
+  }
 
-  async obtenerEncuestasSobreMiComoProfesor(
-    miLU: string
-  ) {
+  async obtenerEncuestasSobreMiComoProfesor(miLU: string) {
     const query = `
       SELECT *
       FROM aida.encuestaAAlumno
@@ -91,25 +89,25 @@ export class EncuestasRepository {
   }
 
   async obtenerEncuestasSobreMiComoAlumno(miLU: string) {
-  const query = `
+    const query = `
     SELECT *
     FROM aida.encuestaAProfesor
     WHERE luEvaluado = $1;
   `;
 
-  const r = await this.client.query(query, [miLU]);
-  return r.rows;
-}
+    const r = await this.client.query(query, [miLU]);
+    return r.rows;
+  }
 
-async crearEncuestaAProfesor(e: {
-  luEncuestado: string;
-  luEvaluado: string;
-  codigoMateria: string;
-  cuatrimestre: string;
-  respuestas: number[];   
-  comentario?: string;
-}) {
-  const query = `
+  async crearEncuestaAProfesor(e: {
+    luEncuestado: string;
+    luEvaluado: string;
+    codigoMateria: string;
+    cuatrimestre: string;
+    respuestas: number[];
+    comentario?: string;
+  }) {
+    const query = `
     INSERT INTO aida.encuestaAProfesor(
       luEncuestado,
       luEvaluado,
@@ -135,21 +133,21 @@ async crearEncuestaAProfesor(e: {
     RETURNING *;
   `;
 
-  const params = [
-    e.luEncuestado,
-    e.luEvaluado,
-    e.codigoMateria,
-    e.cuatrimestre,
-    ...e.respuestas,   
-    e.comentario ?? null
-  ];
+    const params = [
+      e.luEncuestado,
+      e.luEvaluado,
+      e.codigoMateria,
+      e.cuatrimestre,
+      ...e.respuestas,
+      e.comentario ?? null,
+    ];
 
-  const result = await this.client.query(query, params);
-  return result.rows[0];
-}
+    const result = await this.client.query(query, params);
+    return result.rows[0];
+  }
 
-async obtenerEncuestasNoRespondidas(lu: string) {
-  const query = `
+  async obtenerEncuestasNoRespondidas(lu: string) {
+    const query = `
   WITH
   materias_alumno AS (
       SELECT c.codigoMateria, c.cuatrimestre
@@ -165,11 +163,13 @@ async obtenerEncuestasNoRespondidas(lu: string) {
 
   pendientes_materia AS (
       SELECT 
-          m.codigoMateria,
-          m.cuatrimestre,
-          'encuestaAMateria' AS tipoEncuesta,
-          NULL AS luEvaluado
+          m.codigoMateria    AS "codigoMateria",
+          m.cuatrimestre     AS "cuatrimestre",
+          mat.nombreMateria  AS "nombreMateria",
+          'encuestaAMateria' AS "tipoEncuesta",
+          NULL::text         AS "luEvaluado"
       FROM materias_alumno m
+      JOIN aida.materias mat ON mat.codigoMateria = m.codigoMateria
       LEFT JOIN aida.encuestaAMateria e
         ON e.luEncuestado = $1
        AND e.codigoMateria = m.codigoMateria
@@ -179,14 +179,16 @@ async obtenerEncuestasNoRespondidas(lu: string) {
 
   pendientes_a_profesor AS (
       SELECT 
-          m.codigoMateria,
-          m.cuatrimestre,
-          'encuestaAProfesor' AS tipoEncuesta,
-          p.luProfesor AS luEvaluado
+          m.codigoMateria   AS "codigoMateria",
+          m.cuatrimestre    AS "cuatrimestre",
+          mat.nombreMateria AS "nombreMateria",
+          'encuestaAProfesor' AS "tipoEncuesta",
+          p.luProfesor      AS "luEvaluado"
       FROM materias_profesor p
       JOIN materias_alumno m
            ON m.codigoMateria = p.codigoMateria
           AND m.cuatrimestre = p.cuatrimestre
+      JOIN aida.materias mat ON mat.codigoMateria = m.codigoMateria
       LEFT JOIN aida.encuestaAProfesor e
         ON e.luEncuestado = $1
        AND e.luEvaluado = p.luProfesor
@@ -197,14 +199,16 @@ async obtenerEncuestasNoRespondidas(lu: string) {
 
   pendientes_a_alumno AS (
       SELECT 
-          c.codigoMateria,
-          c.cuatrimestre,
-          'encuestaAAlumno' AS tipoEncuesta,
-          c.luAlumno AS luEvaluado
+          c.codigoMateria   AS "codigoMateria",
+          c.cuatrimestre    AS "cuatrimestre",
+          mat.nombreMateria AS "nombreMateria",
+          'encuestaAAlumno' AS "tipoEncuesta",
+          c.luAlumno        AS "luEvaluado"
       FROM materias_profesor p
       JOIN aida.cursa c
            ON c.codigoMateria = p.codigoMateria
           AND c.cuatrimestre = p.cuatrimestre
+      JOIN aida.materias mat ON mat.codigoMateria = c.codigoMateria
       LEFT JOIN aida.encuestaAAlumno e
         ON e.luEncuestado = $1
        AND e.luEvaluado = c.luAlumno
@@ -220,9 +224,7 @@ async obtenerEncuestasNoRespondidas(lu: string) {
   SELECT * FROM pendientes_a_alumno;
   `;
 
-  const result = await this.client.query(query, [lu]);
-  return result.rows;
-}
-
-
+    const result = await this.client.query(query, [lu]);
+    return result.rows;
+  }
 }
