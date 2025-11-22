@@ -34,7 +34,7 @@ export default function MateriasClient() {
             setLoading(false);
         }
 
-    }
+    }     
 
     useEffect(() => {
         cargarDatos();
@@ -57,6 +57,7 @@ export default function MateriasClient() {
                 <TablaMaterias
                 Materias={materiasCursando}
                 tipo="alumno"
+                nombreCampoAux="Nota"
                 />
             </>
           )}
@@ -69,9 +70,12 @@ export default function MateriasClient() {
                 <TablaMaterias
                 Materias={materiasDictando}
                 tipo="profesor"
-                onEnter={(codigo) =>
-                    mostrarAlumnosDeMateria(codigo)
+                onEnter={(codigoMateria, cuatrimestre) => 
+                  <a href={`/materias/${codigoMateria}/${cuatrimestre}/alumnos`}>
+                    Ver alumnos
+                  </a>
                 }
+                nombreCampoAux="Ver Alumnos"
                 />
             </>
             
