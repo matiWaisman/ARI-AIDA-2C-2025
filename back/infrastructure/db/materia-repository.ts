@@ -41,7 +41,7 @@ export class MateriaRepository {
     return result.rows;
   }
 
-  async getMateriasQueParticipa(id: number, participacion: "cursa" | "dicta", rolEnMateria: "Alumno" | "Profesor"): Promise<any[]> {
+  async getMateriasQueParticipa(id: number | undefined, participacion: "cursa" | "dicta", rolEnMateria: "Alumno" | "Profesor"): Promise<any[]> {
     const query = `
     SELECT 
       m.nombreMateria, 
@@ -169,6 +169,21 @@ export class MateriaRepository {
     ]);
 
   return result.rows;
+  }
+
+  async obtenerAlumnosDeMateriaConNota(codigoMateria: string, cuatrimestre: string) {
+    const query = `
+    SELECT a.lu, e.nombres, e.apellido, c.nota
+      FROM aida.cursa c
+      JOIN aida.alumnos a ON c.luAlumno = a.lu
+      JOIN aida.entidadUniversitaria e ON e.lu = a.lu
+      WHERE c.codigoMateria = $1
+        AND c.cuatrimestre = $2
+    `;
+
+    const result = await this.client.query(query, [codigoMateria, cuatrimestre]);
+
+    return result.rows;
   }
 
 }

@@ -5,14 +5,16 @@ import { FilaMateria } from "./filaMateria"
 
 interface TablaMateriaProps {
     Materias: MateriaApi[];
-    onEnter: (codigoMateria: string) => void;
+    onEnter?: (codigoMateria: string, cuatrimestre: string) => void;
     tipo: "alumno" | "profesor";
+    nombreCampoAux: string
 }
 
 export function TablaMaterias({
     Materias,
     onEnter,
-    tipo
+    tipo,
+    nombreCampoAux
 }: TablaMateriaProps) {
 
     return (
@@ -21,20 +23,23 @@ export function TablaMaterias({
             <div className="col-span-4">Materia</div>
             <div className="col-span-2">Cuatrimestre</div>
             <div className="col-span-4">Profesor</div>
-            <div className="col-span-2 text-right">Acción</div>
+            <div className="col-span-2">{nombreCampoAux}</div>
           </div>
     
           {Materias.map((m) => {
             const profesor = `${m.nombres} ${m.apellido}`;
-    
+
+            console.log(m.nombremateria);
             return (
               <FilaMateria
-                key={`${tipo}-${m.codigoMateria}`}
-                codigoMateria={m.codigoMateria}
-                nombreMateria={m.nombreMateria}
+                key={`${tipo}-${m.codigomateria}`}
+                codigoMateria={m.codigomateria}
+                nombreMateria={m.nombremateria}
                 cuatrimestre={m.cuatrimestre}
                 profesor={profesor}
                 onEnter={onEnter}
+                tipo={tipo}
+                nota={m.nota}
               />
             );
           })}

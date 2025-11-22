@@ -126,6 +126,10 @@ export class Business {
     return this.materiaRepo.obtenerAlumnosDeMateria(codigoMateria, cuatrimestre, null);
     }
 
+    async obtenerAlumnosDeMateriaConNota(codigoMateria: string, cuatrimestre: string) {
+    return await this.materiaRepo.obtenerAlumnosDeMateriaConNota(codigoMateria, cuatrimestre);
+    }
+
     async obtenerCompanierosDeMateria(codigoMateria: string, cuatrimestre: string, luAExcluir: string) {
     return this.materiaRepo.obtenerAlumnosDeMateria(codigoMateria, cuatrimestre, luAExcluir);
     }

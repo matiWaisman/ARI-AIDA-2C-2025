@@ -5,7 +5,9 @@ interface filaMateriaProps {
   nombreMateria: string;
   cuatrimestre: string;
   profesor: string;
-  onEnter: (codigoMateria: string) => void;
+  onEnter?: (codigoMateria: string, cuatrimestre: string) => void;
+  tipo: "alumno" | "profesor";
+  nota?: number | null
 }
 
 export function FilaMateria({
@@ -14,6 +16,8 @@ export function FilaMateria({
   cuatrimestre,
   profesor,
   onEnter,
+  tipo,
+  nota
 }: filaMateriaProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-0 md:items-center md:px-2 py-3 rounded-lg hover:bg-muted/50 transition-colors">
@@ -38,12 +42,25 @@ export function FilaMateria({
         <p className="text-sm text-foreground">{profesor}</p>
       </div>
 
-      <div className="col-span-1 md:col-span-2 flex justify-start md:justify-end">
-        <button
-          onClick={() => onEnter(codigoMateria)}
-        >
-        </button>
-      </div>
+      {tipo === "alumno" && (
+        <div className="col-span-1 md:col-span-2">
+          <p className="md:hidden text-xs text-muted-foreground font-semibold">
+            Nota
+          </p>
+          <p className="text-sm text-foreground">
+            {nota != null ? nota : "—"}
+          </p>
+        </div>
+      )}
+
+      {tipo === "profesor" && 
+        (<div className="col-span-1 md:col-span-2 flex justify-start md:justify-end">
+          <button
+            className="text-sm text-blue-600 underline"
+            onClick={() => onEnter?.(codigoMateria, cuatrimestre)}>
+            Ver alumnos
+          </button>
+        </div>)}
     </div>
   );
 }
