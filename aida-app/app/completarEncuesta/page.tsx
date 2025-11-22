@@ -29,6 +29,15 @@ export default function CompletarEncuestaPage() {
 
         const alumnoMap = new Map();
         for (const materia of matsQueCursa) {
+          if(materia.tipoencuesta = "encuestaAMateria"){
+            alumnoMap.set(
+              `Completar encuesta de ${materia.nombremateria}`,
+              [
+                `/completarEncuesta/${materia.codigomateria}`,
+                `Completar encuesta de ${materia.nombremateria}`,
+              ]
+            );
+          }
           console.log("Materia que cursa: ", materia);
           alumnoMap.set(
             `Completar encuesta de ${materia.nombremateria}`,

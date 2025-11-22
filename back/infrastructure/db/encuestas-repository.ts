@@ -167,9 +167,11 @@ async obtenerEncuestasNoRespondidas(lu: string) {
       SELECT 
           m.codigoMateria,
           m.cuatrimestre,
+          mat.nombreMateria,
           'encuestaAMateria' AS tipoEncuesta,
           NULL AS luEvaluado
       FROM materias_alumno m
+      JOIN aida.materias mat ON mat.codigoMateria = m.codigoMateria
       LEFT JOIN aida.encuestaAMateria e
         ON e.luEncuestado = $1
        AND e.codigoMateria = m.codigoMateria
@@ -181,12 +183,14 @@ async obtenerEncuestasNoRespondidas(lu: string) {
       SELECT 
           m.codigoMateria,
           m.cuatrimestre,
+          mat.nombreMateria,
           'encuestaAProfesor' AS tipoEncuesta,
           p.luProfesor AS luEvaluado
       FROM materias_profesor p
       JOIN materias_alumno m
            ON m.codigoMateria = p.codigoMateria
           AND m.cuatrimestre = p.cuatrimestre
+      JOIN aida.materias mat ON mat.codigoMateria = m.codigoMateria
       LEFT JOIN aida.encuestaAProfesor e
         ON e.luEncuestado = $1
        AND e.luEvaluado = p.luProfesor
@@ -199,12 +203,14 @@ async obtenerEncuestasNoRespondidas(lu: string) {
       SELECT 
           c.codigoMateria,
           c.cuatrimestre,
+          mat.nombreMateria,
           'encuestaAAlumno' AS tipoEncuesta,
           c.luAlumno AS luEvaluado
       FROM materias_profesor p
       JOIN aida.cursa c
            ON c.codigoMateria = p.codigoMateria
           AND c.cuatrimestre = p.cuatrimestre
+      JOIN aida.materias mat ON mat.codigoMateria = c.codigoMateria
       LEFT JOIN aida.encuestaAAlumno e
         ON e.luEncuestado = $1
        AND e.luEvaluado = c.luAlumno
