@@ -1,15 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 type LabelEncuestaProps = {
   texto: string;
   onChange?: (valor: number) => void;
+  valorInicial?: number;
 };
 
-export default function LabelEncuesta({ texto, onChange }: LabelEncuestaProps) {
-  const [valor, setValor] = useState<number | null>(null);
+export default function LabelEncuesta({ texto, onChange, valorInicial }: LabelEncuestaProps) {
+  const [valor, setValor] = useState<number | null>(valorInicial || null);
   const [hover, setHover] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (valorInicial !== undefined && valorInicial > 0) {
+      setValor(valorInicial);
+    }
+  }, [valorInicial]);
 
   const puntuar = (n: number) => {
     setValor(n);

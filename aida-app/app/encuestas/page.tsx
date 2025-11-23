@@ -8,8 +8,8 @@ export default function MenuPage() {
   const { loading, usuario } = useUser();
 
   const menuOptions: Map<string, [string, string]> = new Map([
-    ["Completar encuestas", ["/completarEncuestas", "Completar encuestas"]],
-    ["Ver resultados encuestas", ["/verEncuestas", "Ver resultados de encuestas"]],
+    ["Completar encuestas", ["/encuestas/completar", "Completar encuestas"]],
+    ["Ver resultados encuestas", ["/encuestas/visualizar", "Ver resultados de encuestas"]],
   ]);
 
   if (loading) return <LoadingScreen mensaje="Cargando menú..." />;

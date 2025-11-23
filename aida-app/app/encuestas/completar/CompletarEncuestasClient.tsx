@@ -6,7 +6,7 @@ import LoadingScreen from "@/components/loadingScreen";
 import ErrorScreen from "@/components/errorScreen";
 import { apiClient } from "@/apiClient/apiClient";
 
-export default function CompletarEncuestasPage() {
+export default function CompletarEncuestasClient() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [menuCursadas, setMenuCursadas] = useState<
@@ -30,10 +30,10 @@ export default function CompletarEncuestasPage() {
         for (const e of encuestas) {
           const titulo = `Completar encuesta de ${e.nombreMateria}`;
           if (e.tipoEncuesta === "encuestaAMateria") {
-            const ruta = `/completarEncuestaCursada/${encodeURIComponent(e.codigoMateria)}`;
+            const ruta = `/encuestas/completar/cursada/${encodeURIComponent(e.codigoMateria)}?nombreMateria=${encodeURIComponent(e.nombreMateria)}&cuatrimestre=${encodeURIComponent(e.cuatrimestre)}`;
             cursadasMap.set(titulo, [ruta, titulo]);
           } else {
-            const ruta = `/completarEncuestaDictado/${encodeURIComponent(e.codigoMateria)}`;
+            const ruta = `/encuestas/completar/dictado/${encodeURIComponent(e.codigoMateria)}?nombreMateria=${encodeURIComponent(e.nombreMateria)}&cuatrimestre=${encodeURIComponent(e.cuatrimestre)}`;
             dictadosMap.set(titulo, [ruta, titulo]);
           }
         }
@@ -84,3 +84,4 @@ export default function CompletarEncuestasPage() {
     </>
   );
 }
+

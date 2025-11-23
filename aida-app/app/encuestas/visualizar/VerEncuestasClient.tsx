@@ -8,3 +8,4 @@ import { apiClient } from "@/apiClient/apiClient";
 export default function VerEncuestasClient() {
 
 }
+
