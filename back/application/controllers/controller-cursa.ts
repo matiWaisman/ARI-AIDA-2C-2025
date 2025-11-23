@@ -35,9 +35,10 @@ export class CursaController {
   }
 
   static async ponerNotaAAlumno(req: Request, res: Response) { 
-    const { codigoMateria, cuatrimestre, luAlumno, nota } = req.body;
+    const { codigoMateria, cuatrimestre, lu, nota } = req.body;
+    console.log("Parametros a pasarle a la query", { codigoMateria, cuatrimestre, lu, nota });
     const { client, business }= await CursaController._createDbClientAndInitializeBusiness()
-    await business.ponerNotaAAlumno(codigoMateria, cuatrimestre, luAlumno, nota);
+    await business.ponerNotaAAlumno(codigoMateria, cuatrimestre, lu, nota);
     res.status(200).json({ message: "Nota puesta exitosamente" });
     await client.end();
   }

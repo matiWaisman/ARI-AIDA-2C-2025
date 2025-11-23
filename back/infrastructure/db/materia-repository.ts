@@ -210,7 +210,7 @@ export class MateriaRepository {
   }
 
 
-  async obtenerAlumnosDeMateriaConNota(codigoMateria: string, cuatrimestre: string) {
+  async obtenerAlumnosDeMateriaConNota(codigoMateria: string | undefined, cuatrimestre: string) {
     const query = `
     SELECT a.lu, e.nombres, e.apellido, c.nota
       FROM aida.cursa c

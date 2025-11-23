@@ -175,6 +175,7 @@ export class Business {
     } 
 
     async ponerNotaAAlumno(codigoMateria: string, cuatrimestre: string, luAlumno: string, nota: number) {
+        console.log("Parametros en Business: ", {codigoMateria, cuatrimestre, luAlumno, nota});
         const result = await this.cursaRepo.ponerNotaAAlumno(codigoMateria, cuatrimestre, luAlumno, nota);
         await this.alumnoRepo.alumnoCompletoCarrera(luAlumno);
         return result
