@@ -57,4 +57,5 @@ export class EncuestasController {
     res.status(200).json(encuestas);
     await client.end();
   }
+
 }
