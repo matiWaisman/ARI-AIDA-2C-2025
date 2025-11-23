@@ -8,7 +8,7 @@ materiaRouter.get("/materiasQueCursa",MateriaController.getAllMateriasQueCursa);
 materiaRouter.get("/materiasqueDicta",MateriaController.getAllMateriasQueDicta);
 materiaRouter.get("/materiasQueNoCursa",MateriaController.getAllMateriasQueNoCursa);
 materiaRouter.get("/materiasqueNoDicta",MateriaController.getAllMateriasQueNoDicta);
-materiaRouter.get("/alumnosDeMateria",MateriaController.getAlumnosDeMateriaConNota)
+materiaRouter.get("/alumnosDeMateria/:codigoMateria/:cuatrimestre",MateriaController.getAlumnosDeMateriaConNota)
 materiaRouter.post("/materias/alumnos", MateriaController.alumnosDeMateriaExcluyendo);
 materiaRouter.post("/materias/profesores", MateriaController.profesoresDeMateriaExcluyendo);
 materiaRouter.post("/materias/cursar",MateriaController.inscribirACursar)

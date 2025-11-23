@@ -40,15 +40,17 @@ export default function AlumnosDeMateriaClient({
         setActionError(null);
 
         try {
-        const res = await apiClient("/materias/update", {
-            method: "POST",
-            body: JSON.stringify({ codigoMateria, cuatrimestre, lu, nota }),
+            console.log("Datos que van al back: ", { codigoMateria, cuatrimestre, lu, nota })
+            const res = await apiClient("/materia/update", {
+                method: "POST",
+                body: JSON.stringify({ codigoMateria, cuatrimestre, lu, nota }),
         });
 
-        if (!res.ok) {
-            const data = await res.json().catch(() => null);
-            throw new Error(data?.error || "Error actualizando nota");
-        }
+        //if (!res.ok) {
+        //    console.log("Hubo un error en el cambio de la nota");
+        //    const data = await res.json().catch(() => null);
+        //    throw new Error(data?.error || "Error actualizando nota");
+        //}
 
         setLista((prev) =>
             prev.map((a) => (a.lu === lu ? { ...a, nota } : a))

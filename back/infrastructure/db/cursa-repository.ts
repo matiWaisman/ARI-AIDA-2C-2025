@@ -33,16 +33,14 @@ export class CursaRepository {
 
   async ponerNotaAAlumno(codigoMateria: string, cuatrimestre: string, luAlumno: string, nota: number): Promise<void> {
     const query = `
-      UPDATE aida.cursa c
-      SET nota = $4
-      FROM aida.alumno a
-      JOIN aida.materia m ON c.id_materia = m.id_materia
-      JOIN aida.entidad_universitaria eu ON a.id_entidad_universitaria = eu.id_entidad_universitaria
-      WHERE eu.lu = $1
-        AND m.codigo_materia = $2
-        AND c.cuatrimestre = $3
+      UPDATE aida.cursa
+        SET nota = $4
+        WHERE luAlumno = $1
+          AND codigoMateria = $2
+          AND cuatrimestre = $3;
     `;
-    const params = [luAlumno, codigoMateria, cuatrimestre, nota];   
+    const params = [luAlumno, codigoMateria, cuatrimestre, nota];
+    const result = await this.client.query(query, params);
   }
 }
 

@@ -177,14 +177,11 @@ export class MateriaController {
   }
 
   static async getAlumnosDeMateriaConNota(req: Request, res: Response) {
-    const codigoMateria = req.query.codigoMateria as string;
-    const cuatrimestre = req.query.cuatrimestre as string;
-
+    const {codigoMateria, cuatrimestre} = req.params;
     const { client, business } =
       await MateriaController._createDbClientAndInitializeBusiness();
 
     const alumnos = await business.obtenerAlumnosDeMateriaConNota(codigoMateria, cuatrimestre);
-
     res.status(200).json(alumnos);
     await client.end();
   }
