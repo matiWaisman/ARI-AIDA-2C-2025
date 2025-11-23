@@ -8,7 +8,7 @@ import { apiClient } from "@/apiClient/apiClient";
 import { useUser } from "@/contexts/UserContext";
 import EncuestaDesplegable from "@/components/encuestaDesplegable";
 import { preguntasCompañeros, preguntasProfesores, preguntasMateria } from "@/app/encuestas/preguntas";
-import { useEncuestasPersonas, useEncuestaMateria } from "../useEncuestas";
+import { useEncuestasPersonas, useEncuestaMateria } from "@/features/completarEncuestasFeature";
 
 type Props = {
   codigoMateria: string;
@@ -17,8 +17,8 @@ type Props = {
 export default function CompletarEncuestaCursadaClient({ codigoMateria }: Props) {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const nombreMateriaParam = searchParams.get("nombreMateria");
-  const nombreMateria = nombreMateriaParam || codigoMateria;
+  
+  const nombreMateria = searchParams.get("nombreMateria") || codigoMateria;
   const cuatrimestre = searchParams.get("cuatrimestre") || "2C-2025";
   const { usuario } = useUser();
 

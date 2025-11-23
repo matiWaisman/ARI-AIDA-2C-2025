@@ -9,12 +9,8 @@ import { apiClient } from "@/apiClient/apiClient";
 export default function CompletarEncuestasClient() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [menuCursadas, setMenuCursadas] = useState<
-    Map<string, [string, string]>
-  >(new Map());
-  const [menuDictados, setMenuDictados] = useState<
-    Map<string, [string, string]>
-  >(new Map());
+  const [menuCursadas, setMenuCursadas] = useState<Map<string, [string, string]>>(new Map());
+  const [menuDictados, setMenuDictados] = useState<Map<string, [string, string]>>(new Map());
 
   useEffect(() => {
     async function cargarDatos() {
