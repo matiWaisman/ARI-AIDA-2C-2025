@@ -1,6 +1,6 @@
 "use client";
 
-import { FilaInscripcion } from "./filaMateria";
+import { FilaMateria } from "./filaMateria";
 
 export interface MateriaApi {
   nombreMateria: string;
@@ -13,7 +13,7 @@ export interface MateriaApi {
 
 interface TablaMateriasProps {
   Materias: MateriaApi[];
-  onAccion?: (codigoMateria: string, cuatrimestre?: string) => void;
+  onAccion?: (codigoMateria: string, cuatrimestre: string) => void;
   tipo: "inscripcion" | "participacion";
   nombreCampoAux: string;
 }
@@ -56,7 +56,7 @@ export function TablaMaterias({
             const profesor = `${m.nombres || ""} ${m.apellido || ""}`.trim() || "Sin profesor asignado";
 
             return (
-              <FilaInscripcion
+              <FilaMateria
                 key={`${tipo}-${m.codigoMateria}`}
                 codigoMateria={m.codigoMateria}
                 nombreMateria={m.nombreMateria}

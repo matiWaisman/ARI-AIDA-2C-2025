@@ -5,13 +5,13 @@ interface filaInscripcionProps {
   nombreMateria: string;
   cuatrimestre: string;
   profesor: string;
-  onAccion?: (codigoMateria: string, cuatrimestre?: string) => void;
+  onAccion?: (codigoMateria: string, cuatrimestre: string) => void;
   inscripto?: boolean;
   nota?: number;
   tipo: "inscripcion" | "participacion"
 }
 
-export function FilaInscripcion({
+export function FilaMateria({
   codigoMateria,
   nombreMateria,
   cuatrimestre,

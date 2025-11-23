@@ -5,6 +5,7 @@ import LoadingScreen from "@/components/loadingScreen";
 import ErrorScreen from "@/components/errorScreen";
 import { apiClient } from "@/apiClient/apiClient";
 import { TablaMaterias } from "@/components/tablaMaterias";
+import { useRouter } from "next/navigation";
 
 export default function MateriasClient() {
     
@@ -15,6 +16,7 @@ export default function MateriasClient() {
     const [esProfesor, setEsProfesor] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [actionError, setActionError] = useState<string | null>(null);
+    const router = useRouter();
 
     async function cargarDatos() {
         try {
@@ -71,9 +73,7 @@ export default function MateriasClient() {
                 Materias={materiasDictando}
                 tipo="participacion"
                 onAccion={(codigoMateria, cuatrimestre) => 
-                  <a href={`/materias/${codigoMateria}/${cuatrimestre}/alumnos`}>
-                    Ver alumnos
-                  </a>
+                  router.push(`/alumnosPorMateria/${encodeURIComponent(codigoMateria)}/${encodeURIComponent(cuatrimestre)}`)
                 }
                 nombreCampoAux="Accións"
                 />
