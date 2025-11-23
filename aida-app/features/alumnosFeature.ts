@@ -38,7 +38,6 @@ export function useAlumnosFeature() {
       await apiClient(`/delete?LU=${encodeURIComponent(lu)}`, {
         method: "POST",
       });
-      // Recargar la lista de alumnos después de eliminar
       await cargarAlumnos();
       return true;
     } catch (e) {
@@ -64,7 +63,6 @@ export function useAlumnosFeature() {
           egreso
         }),
       });
-      // Recarga la lista de alumnos después de insertar
       await cargarAlumnos();
       return true;
     } catch (e) {
@@ -83,7 +81,6 @@ export function useAlumnosFeature() {
         method: "POST",
         body: JSON.stringify({ lu, nombres, apellido }),
       });
-      // Recarga la lista de alumnos después de actualizar
       await cargarAlumnos();
       return true;
     } catch (e) {
