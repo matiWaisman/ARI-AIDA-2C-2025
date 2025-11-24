@@ -65,6 +65,7 @@ export function TablaMaterias({
                 inscripto={false} 
                 onAccion={onAccion}
                 tipo={tipo}
+                nota={m.nota}
               />
             );
           })}

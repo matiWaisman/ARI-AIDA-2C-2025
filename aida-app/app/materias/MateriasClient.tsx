@@ -28,6 +28,8 @@ export default function MateriasClient() {
       const alumno = await apiClient("/esAlumno", { method: "GET" });
       const profesor = await apiClient("/esProfesor", { method: "GET" });
 
+      console.log("Materias que estas cursando: ", matsCursando);
+
       setMateriasCursando(matsCursando);
       setMateriasDictando(matsDictando);
       setEsAlumno(alumno);
