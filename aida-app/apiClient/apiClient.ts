@@ -13,7 +13,9 @@ export async function apiClient(path: string, options: RequestInit = {}) {
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || `Error ${res.status}`);
+    const message =
+      (err && (err.error || err.message)) || `Error ${res.status}`;
+    throw new Error(message);
   }
 
   return res.json();

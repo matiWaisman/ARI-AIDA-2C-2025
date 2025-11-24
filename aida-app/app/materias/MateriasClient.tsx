@@ -6,8 +6,10 @@ import ErrorScreen from "@/components/errorScreen";
 import { apiClient } from "@/apiClient/apiClient";
 import { TablaMaterias } from "@/components/materias/tablaMaterias";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/contexts/UserContext";
 
 export default function MateriasClient() {
+  const { usuario, loading: userLoading } = useUser();
   const [loading, setLoading] = useState(true);
   const [materiasCursando, setMateriasCursando] = useState<any[]>([]);
   const [materiasDictando, setMateriasDictando] = useState<any[]>([]);
@@ -19,19 +21,37 @@ export default function MateriasClient() {
 
   async function cargarDatos() {
     try {
-      const matsCursando = await apiClient("/materiasQueCursa", {
-        method: "GET",
-      });
-      const matsDictando = await apiClient("/materiasQueDicta", {
-        method: "GET",
-      });
-      const alumno = await apiClient("/esAlumno", { method: "GET" });
-      const profesor = await apiClient("/esProfesor", { method: "GET" });
+      if (!usuario) {
+        setEsAlumno(false);
+        setEsProfesor(false);
+        setMateriasCursando([]);
+        setMateriasDictando([]);
+        return;
+      }
+
+      const alumno = usuario.esAlumno === true;
+      const profesor = usuario.esProfesor === true;
+
+      setEsAlumno(alumno);
+      setEsProfesor(profesor);
+
+      let matsCursando: any[] = [];
+      let matsDictando: any[] = [];
+
+      if (alumno) {
+        matsCursando = await apiClient("/materiasQueCursa", {
+          method: "GET",
+        });
+      }
+
+      if (profesor) {
+        matsDictando = await apiClient("/materiasQueDicta", {
+          method: "GET",
+        });
+      }
 
       setMateriasCursando(matsCursando);
       setMateriasDictando(matsDictando);
-      setEsAlumno(alumno);
-      setEsProfesor(profesor);
     } catch (e: any) {
       setError(e.message || "Error inesperado");
     } finally {
@@ -40,8 +60,10 @@ export default function MateriasClient() {
   }
 
   useEffect(() => {
-    cargarDatos();
-  }, []);
+    if (!userLoading) {
+      cargarDatos();
+    }
+  }, [userLoading, usuario]);
 
   if (loading) return <LoadingScreen mensaje="Cargando materias..." />;
   if (error) return <ErrorScreen error={error} />;

@@ -103,18 +103,33 @@ export class MateriaController {
   }
 
   static async inscribirADictar(req: Request, res: Response) {
-    const codigoMateria = req.query.codigoMateria as string;
+    let codigoMateria = req.query.codigoMateria as string;
+    if (codigoMateria) {
+      codigoMateria = decodeURIComponent(codigoMateria);
+    }
     const id = req.session.usuario?.id;
+
+    if (!id) {
+      return res.status(401).json({ error: "Usuario no autenticado" });
+    }
+
+    if (!codigoMateria) {
+      return res.status(400).json({ error: "Falta el código de materia" });
+    }
+
     const { client, business } =
       await MateriaController._createDbClientAndInitializeBusiness();
 
-    await business.inscribirProfesorConIdDeUsuario(codigoMateria, id);
-
-    await client.end();
-
-    return res.status(200).json({
-      message: "Inscripción como profesor realizada correctamente",
-    });
+    try {
+      await business.inscribirProfesorConIdDeUsuario(codigoMateria, id);
+      await client.end();
+      return res.status(200).json({
+        message: "Inscripción como profesor realizada correctamente",
+      });
+    } catch (error: any) {
+      await client.end();
+      return res.status(500).json({ error: error.message || "Error al inscribirse" });
+    }
   }
 
   static async alumnosDeMateriaExcluyendo(req: Request, res: Response) {

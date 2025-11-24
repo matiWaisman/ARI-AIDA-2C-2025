@@ -4,16 +4,15 @@ export class MateriaRepository {
   constructor(private client: Client) {}
 
   async getMateria(nombreMateria: string): Promise<boolean> {
-  const query = `
+    const query = `
     SELECT 1 
     FROM aida.materias 
     WHERE nombreMateria = $1 
     LIMIT 1
-  `;  
-  const result = await this.client.query(query, [nombreMateria]);
-  return result.rows.length > 0;
-}
-
+  `;
+    const result = await this.client.query(query, [nombreMateria]);
+    return result.rows.length > 0;
+  }
 
   async crearMateria(nombre: string, codigo: string): Promise<void> {
     const query = `
@@ -22,26 +21,32 @@ export class MateriaRepository {
     `;
     await this.client.query(query, [nombre, codigo]);
   }
-  
+
   async getAllMaterias(): Promise<any[]> {
     const query = `
-      SELECT 
-        m.nombremateria AS "nombreMateria", 
-        m.codigomateria AS "codigoMateria", 
-        e.nombres, 
-        e.apellido, 
+      SELECT
+        m.nombremateria AS "nombreMateria",
+        m.codigomateria AS "codigoMateria",
+        e.nombres,
+        e.apellido,
         d.cuatrimestre
-      FROM aida.materias m 
+      FROM aida.materias m
       LEFT JOIN aida.dicta d ON m.codigomateria = d.codigomateria
       LEFT JOIN aida.profesor p ON d.luprofesor = p.lu
-      LEFT JOIN aida.entidadUniversitaria e ON p.lu = e.lu;
-  `;
+      LEFT JOIN aida.entidadUniversitaria e ON p.lu = e.lu
+      ORDER BY m.codigomateria, d.cuatrimestre, e.apellido, e.nombres;
+    `;
     const result = await this.client.query(query);
     return result.rows;
   }
 
-  async getMateriasQueParticipa(id: number, participacion: "cursa" | "dicta", rolEnMateria: "Alumno" | "Profesor"): Promise<any[]> {
+  async getMateriasQueParticipa(
+    id: number,
+    participacion: "cursa" | "dicta",
+    rolEnMateria: "Alumno" | "Profesor"
+  ): Promise<any[]> {
     const columnaLu = rolEnMateria === "Alumno" ? "lualumno" : "luprofesor";
+    const notaColumn = participacion === "cursa" ? ", p.nota" : "";
     const query = `
     SELECT 
       m.nombremateria AS "nombreMateria", 
@@ -49,6 +54,7 @@ export class MateriaRepository {
       e.nombres, 
       e.apellido, 
       p.cuatrimestre
+      ${notaColumn}
       FROM aida.${participacion} p
       INNER JOIN aida.usuarios u ON p.${columnaLu} = u.lu
       INNER JOIN aida.materias m ON p.codigomateria = m.codigomateria
@@ -59,7 +65,11 @@ export class MateriaRepository {
     return result.rows;
   }
 
-  async getMateriasQueNoParticipa(id: number, participacion: "cursa" | "dicta", rolEnMateria: "Alumno" | "Profesor"): Promise<any[]> {
+  async getMateriasQueNoParticipa(
+    id: number,
+    participacion: "cursa" | "dicta",
+    rolEnMateria: "Alumno" | "Profesor"
+  ): Promise<any[]> {
     const columnaLu = rolEnMateria === "Alumno" ? "lualumno" : "luprofesor";
     const query = `
       WITH materiasQueNoParticipa AS (
@@ -78,12 +88,13 @@ export class MateriaRepository {
       SELECT 
             m.nombremateria AS "nombreMateria", 
             m.codigomateria AS "codigoMateria", 
-            e.nombres, 
-            e.apellido, 
+            string_agg(DISTINCT e.nombres || ' ' || e.apellido, ' / ') AS "nombres",
+            ''::text AS "apellido",
             '2C2025' AS cuatrimestre
-            FROM materiasQueNoParticipa m
-            LEFT JOIN aida.dicta d ON m.codigomateria = d.codigomateria
-            LEFT JOIN aida.entidadUniversitaria e ON d.luprofesor = e.lu
+      FROM materiasQueNoParticipa m
+      LEFT JOIN aida.dicta d ON m.codigomateria = d.codigomateria
+      LEFT JOIN aida.entidadUniversitaria e ON d.luprofesor = e.lu
+      GROUP BY m.nombremateria, m.codigomateria
     `;
     const result = await this.client.query(query, [id]);
     return result.rows;
@@ -111,50 +122,76 @@ export class MateriaRepository {
         SELECT 
               m.nombremateria AS "nombreMateria", 
               m.codigomateria AS "codigoMateria", 
-              e.nombres, 
-              e.apellido, 
+              string_agg(DISTINCT e.nombres || ' ' || e.apellido, ' / ') AS "nombres",
+              ''::text AS "apellido",
               '2C2025' AS cuatrimestre
         FROM materiasQueSiParticipa m
         LEFT JOIN aida.dicta d ON m.codigomateria = d.codigomateria
         LEFT JOIN aida.entidadUniversitaria e ON d.luprofesor = e.lu
+        GROUP BY m.nombremateria, m.codigomateria
     `;
 
     const result = await this.client.query(query, [id]);
     return result.rows;
   }
 
-
-  async inscribirConId(codigoMateria: string, id:number|undefined, tabla: "cursa"|"dicta", condicion: "Profesor"|"Alumno"): Promise<void>{
+  async inscribirConId(
+    codigoMateria: string,
+    id: number | undefined,
+    tabla: "cursa" | "dicta",
+    condicion: "Profesor" | "Alumno"
+  ): Promise<void> {
     if (!codigoMateria) {
       throw new Error("El código de materia es requerido");
     }
-    
+
     if (!id) {
       throw new Error("El ID de usuario es requerido");
     }
-    
-    
-    // Verificar que la materia existe antes de insertar
+
     const materiaCheck = await this.client.query(
-      'SELECT codigomateria FROM aida.materias WHERE codigomateria = $1',
+      "SELECT codigomateria FROM aida.materias WHERE codigomateria = $1",
       [codigoMateria]
     );
-    
+
     if (materiaCheck.rows.length === 0) {
       throw new Error(`La materia con código ${codigoMateria} no existe`);
     }
-    
+
+    const luResult = await this.client.query(
+      "SELECT lu FROM aida.usuarios WHERE id = $1",
+      [id]
+    );
+
+    if (luResult.rows.length === 0 || !luResult.rows[0].lu) {
+      throw new Error("Usuario no encontrado o sin LU asignado");
+    }
+
+    const lu = luResult.rows[0].lu;
+
+    const tablaOpuesta = tabla === "cursa" ? "dicta" : "cursa";
+    const columnaOpuesta = tabla === "cursa" ? "luprofesor" : "lualumno";
+
+    const conflictoCheck = await this.client.query(
+      `SELECT 1 FROM aida.${tablaOpuesta} WHERE ${columnaOpuesta} = $1 AND codigomateria = $2 LIMIT 1`,
+      [lu, codigoMateria]
+    );
+
+    if (conflictoCheck.rows.length > 0) {
+      const accion = tabla === "cursa" ? "cursar" : "dictar";
+      const accionOpuesta = tabla === "cursa" ? "dictando" : "cursando";
+      throw new Error(
+        `No podés ${accion} una materia que ya estás ${accionOpuesta}`
+      );
+    }
+
     const columnaLu = condicion === "Alumno" ? "lualumno" : "luprofesor";
     const query = `
     INSERT INTO aida.${tabla} (${columnaLu}, codigomateria, cuatrimestre)
-      VALUES (
-        (SELECT lu FROM aida.usuarios WHERE id = $2),
-        $1,
-        '2C2025'
-    );`;
-    await this.client.query(query, [codigoMateria, id]);
+      VALUES ($2, $1, '2C2025');`;
+    await this.client.query(query, [codigoMateria, lu]);
   }
-  
+
   async materiasCursadasPorAlumno(lu: string): Promise<any[]> {
     const query = `
       SELECT 
@@ -167,9 +204,13 @@ export class MateriaRepository {
     `;
     const result = await this.client.query(query, [lu]);
     return result.rows;
-  } 
+  }
 
-  async obtenerAlumnosDeMateria(codigoMateria: string, cuatrimestre: string, luAExcluir?: string | null) {
+  async obtenerAlumnosDeMateria(
+    codigoMateria: string,
+    cuatrimestre: string,
+    luAExcluir?: string | null
+  ) {
     const query = `
       SELECT a.lu, e.nombres, e.apellido
       FROM aida.cursa c
@@ -183,13 +224,17 @@ export class MateriaRepository {
     const result = await this.client.query(query, [
       codigoMateria,
       cuatrimestre,
-      luAExcluir ?? null
+      luAExcluir ?? null,
     ]);
 
-  return result.rows;
+    return result.rows;
   }
 
-  async obtenerProfesoresDeMateria(codigoMateria: string, cuatrimestre: string, luAExcluir?: string | null) {
+  async obtenerProfesoresDeMateria(
+    codigoMateria: string,
+    cuatrimestre: string,
+    luAExcluir?: string | null
+  ) {
     const query = `
       SELECT p.lu, e.nombres, e.apellido
       FROM aida.dicta d
@@ -203,14 +248,16 @@ export class MateriaRepository {
     const result = await this.client.query(query, [
       codigoMateria,
       cuatrimestre,
-      luAExcluir ?? null
+      luAExcluir ?? null,
     ]);
 
     return result.rows;
   }
 
-
-  async obtenerAlumnosDeMateriaConNota(codigoMateria: string | undefined, cuatrimestre: string) {
+  async obtenerAlumnosDeMateriaConNota(
+    codigoMateria: string | undefined,
+    cuatrimestre: string
+  ) {
     const query = `
     SELECT a.lu, e.nombres, e.apellido, c.nota
       FROM aida.cursa c
@@ -220,9 +267,11 @@ export class MateriaRepository {
         AND c.cuatrimestre = $2
     `;
 
-    const result = await this.client.query(query, [codigoMateria, cuatrimestre]);
+    const result = await this.client.query(query, [
+      codigoMateria,
+      cuatrimestre,
+    ]);
 
     return result.rows;
   }
-
 }

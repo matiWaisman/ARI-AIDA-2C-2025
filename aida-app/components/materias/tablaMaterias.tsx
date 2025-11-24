@@ -11,6 +11,14 @@ export interface MateriaApi {
   nota?: number;
 }
 
+interface MateriaAgrupada {
+  nombreMateria: string;
+  codigoMateria: string;
+  cuatrimestre: string;
+  nota?: number;
+  profesores: string[];
+}
+
 interface TablaMateriasProps {
   Materias: MateriaApi[];
   onAccion?: (codigoMateria: string, cuatrimestre: string) => void;
@@ -22,7 +30,7 @@ export function TablaMaterias({
   Materias,
   onAccion,
   tipo,
-  nombreCampoAux
+  nombreCampoAux,
 }: TablaMateriasProps) {
   if (Materias.length === 0) {
     return (
@@ -44,7 +52,7 @@ export function TablaMaterias({
               Cuatrimestre
             </th>
             <th className="border border-gray-300 px-4 py-3 text-left text-sm font-semibold text-gray-700">
-              Profesor
+              Profesores
             </th>
             <th className="border border-gray-300 px-4 py-3 text-center text-sm font-semibold text-gray-700">
               {nombreCampoAux}
@@ -52,19 +60,47 @@ export function TablaMaterias({
           </tr>
         </thead>
         <tbody>
-          {Materias.map((m) => {
-            const profesor = `${m.nombres || ""} ${m.apellido || ""}`.trim() || "Sin profesor asignado";
+          {Object.values(
+            Materias.reduce((acc, m) => {
+              const key = `${m.codigoMateria}-${m.cuatrimestre}`;
+              const nombreCompleto = `${m.nombres || ""} ${
+                m.apellido || ""
+              }`.trim();
+
+              if (!acc[key]) {
+                acc[key] = {
+                  nombreMateria: m.nombreMateria,
+                  codigoMateria: m.codigoMateria,
+                  cuatrimestre: m.cuatrimestre,
+                  nota: m.nota,
+                  profesores: nombreCompleto ? [nombreCompleto] : [],
+                };
+              } else if (
+                nombreCompleto &&
+                !acc[key].profesores.includes(nombreCompleto)
+              ) {
+                acc[key].profesores.push(nombreCompleto);
+              }
+
+              return acc;
+            }, {} as Record<string, MateriaAgrupada>)
+          ).map((m) => {
+            const profesoresTexto =
+              m.profesores.length > 0
+                ? m.profesores.join(" / ")
+                : "Sin profesor asignado";
 
             return (
               <FilaMateria
-                key={`${tipo}-${m.codigoMateria}`}
+                key={`${tipo}-${m.codigoMateria}-${m.cuatrimestre}`}
                 codigoMateria={m.codigoMateria}
                 nombreMateria={m.nombreMateria}
                 cuatrimestre={m.cuatrimestre}
-                profesor={profesor}
-                inscripto={false} 
+                profesor={profesoresTexto}
+                inscripto={false}
                 onAccion={onAccion}
                 tipo={tipo}
+                nota={m.nota}
               />
             );
           })}
@@ -73,4 +109,3 @@ export function TablaMaterias({
     </div>
   );
 }
-
