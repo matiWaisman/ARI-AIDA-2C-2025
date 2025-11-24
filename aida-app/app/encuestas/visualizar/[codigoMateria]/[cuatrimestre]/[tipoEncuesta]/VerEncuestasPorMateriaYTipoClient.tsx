@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { apiClient } from "@/apiClient/apiClient";
+import RespuestaEncuestaDesplegable from "@/components/RespuestasEncuestaDesplegable";
 
 export default function VerEncuestasPorMateriaYTipoClient({
     codigoMateria,
@@ -33,6 +34,8 @@ export default function VerEncuestasPorMateriaYTipoClient({
         
         }
     }, [codigoMateria, cuatrimestre, tipoEncuesta]);
-
-    return <></>
+    
+    encuestas.map((encuesta:  {nombreEncuestado: string, resultados: number[], comentarios: string[]}) => {
+        return <RespuestaEncuestaDesplegable encuesta={encuesta}/>
+    })
 }
