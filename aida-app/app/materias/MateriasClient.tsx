@@ -50,6 +50,8 @@ export default function MateriasClient() {
         });
       }
 
+      console.log("Materias que estas cursando: ", matsCursando);
+
       setMateriasCursando(matsCursando);
       setMateriasDictando(matsDictando);
     } catch (e: any) {

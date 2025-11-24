@@ -54,7 +54,11 @@ export class MateriaRepository {
       e.nombres, 
       e.apellido, 
       p.cuatrimestre
+<<<<<<< HEAD
       ${notaColumn}
+=======
+      ${participacion === "cursa" ? `,p.nota`: ``}
+>>>>>>> 561f73d7fcdcc27807c27551312c1f80556881fb
       FROM aida.${participacion} p
       INNER JOIN aida.usuarios u ON p.${columnaLu} = u.lu
       INNER JOIN aida.materias m ON p.codigomateria = m.codigomateria

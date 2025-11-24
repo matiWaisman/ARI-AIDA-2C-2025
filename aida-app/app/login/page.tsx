@@ -40,7 +40,7 @@ export default function LoginPage() {
       </form>
 
       <p className="text-sm mt-4">
-        ¿Como no vas a tener una cuenta putete? createla ya mismo {" "}
+        ¿Como no vas a tener una cuenta? createla ya mismo {" "}
         <a
           href="/register"
           className="text-blue-600 hover:underline"
