@@ -7,15 +7,29 @@ import { useUser } from "@/contexts/UserContext";
 export default function MenuPage() {
   const { loading, usuario } = useUser();
 
-  const menuOptions: Map<string, [string, string]> = new Map([
-    ["alumnos", ["/alumnos", "Ver, modificar, eliminar y agregar alumnos"]],
-    ["inscripciones", ["/inscripciones", "Inscripciones"]],
-    ["encuestas", ["/encuestas", "Encuestas"]],
-    ["lu", ["/lu", "Imprimir certificado por LU"]],
-    ["fecha", ["/fecha", "Imprimir certificado por fecha de trámite"]],
-    ["archivo", ["/archivo", "Subir CSV con novedades de alumnos"]],
-    ["materias", ["/materias", "Ver mis materias"]]
-  ]);
+  const esProfesor = usuario?.esProfesor === true;
+
+  const menuOptions: Map<string, [string, string]> = new Map();
+
+  if (esProfesor) {
+    menuOptions.set("alumnos", [
+      "/alumnos",
+      "Ver, modificar, eliminar y agregar alumnos",
+    ]);
+    menuOptions.set("lu", ["/lu", "Imprimir certificado por LU"]);
+    menuOptions.set("fecha", [
+      "/fecha",
+      "Imprimir certificado por fecha de trámite",
+    ]);
+    menuOptions.set("archivo", [
+      "/archivo",
+      "Subir CSV con novedades de alumnos",
+    ]);
+  }
+
+  menuOptions.set("inscripciones", ["/inscripciones", "Inscripciones"]);
+  menuOptions.set("encuestas", ["/encuestas", "Encuestas"]);
+  menuOptions.set("materias", ["/materias", "Ver mis materias"]);
 
   if (loading) return <LoadingScreen mensaje="Cargando menú..." />;
 

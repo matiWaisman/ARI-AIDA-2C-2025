@@ -45,15 +45,38 @@ export class MateriaRepository {
     participacion: "cursa" | "dicta",
     rolEnMateria: "Alumno" | "Profesor"
   ): Promise<any[]> {
+    if (participacion === "cursa" && rolEnMateria === "Alumno") {
+      const query = `
+        SELECT
+          m.nombremateria AS "nombreMateria",
+          c.codigomateria AS "codigoMateria",
+          eu.nombres,
+          eu.apellido,
+          c.cuatrimestre,
+          c.nota
+        FROM aida.cursa c
+        INNER JOIN aida.usuarios u ON c.lualumno = u.lu
+        INNER JOIN aida.materias m ON c.codigomateria = m.codigomateria
+        LEFT JOIN aida.dicta d
+          ON c.codigomateria = d.codigomateria
+         AND c.cuatrimestre = d.cuatrimestre
+        LEFT JOIN aida.profesor p ON d.luprofesor = p.lu
+        LEFT JOIN aida.entidadUniversitaria eu ON p.lu = eu.lu
+        WHERE u.id = $1;
+      `;
+      const result = await this.client.query(query, [id]);
+      return result.rows;
+    }
+
     const columnaLu = rolEnMateria === "Alumno" ? "lualumno" : "luprofesor";
     const notaColumn = participacion === "cursa" ? ", p.nota" : "";
     const query = `
-    SELECT 
-      m.nombremateria AS "nombreMateria", 
-      p.codigomateria AS "codigoMateria", 
-      e.nombres, 
-      e.apellido, 
-      p.cuatrimestre${notaColumn}
+      SELECT 
+        m.nombremateria AS "nombreMateria", 
+        p.codigomateria AS "codigoMateria", 
+        e.nombres, 
+        e.apellido, 
+        p.cuatrimestre${notaColumn}
       FROM aida.${participacion} p
       INNER JOIN aida.usuarios u ON p.${columnaLu} = u.lu
       INNER JOIN aida.materias m ON p.codigomateria = m.codigomateria
