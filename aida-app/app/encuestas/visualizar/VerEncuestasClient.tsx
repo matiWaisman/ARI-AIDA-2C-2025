@@ -28,7 +28,7 @@ export default function VerEncuestasClient() {
                 
                 const titulo = `Ver encuesta de ${m.nombreMateria} - ${m.cuatrimestre}`;
                     
-                const ruta = `/encuestas/visualizar/${encodeURIComponent(m.codigoMateria)}/${encodeURIComponent(m.cuatrimestre)}`;
+                const ruta = `/encuestas/visualizar/${encodeURIComponent(m.codigoMateria)}/${encodeURIComponent(m.cuatrimestre)}?nombreMateria=${encodeURIComponent(m.nombreMateria)}`;
                 materiasMap.set(titulo, [ruta, titulo]);
             }
 

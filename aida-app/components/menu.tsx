@@ -1,4 +1,4 @@
-import MenuOption from "./menu_option";
+import MenuOption from "./menuOption";
 
 type MenuProps = {
   options: Map<string, [string, string]>;

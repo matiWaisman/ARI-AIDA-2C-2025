@@ -3,7 +3,7 @@
 import Menu from "@/components/menu";
 import LoadingScreen from "@/components/loadingScreen";
 import { useUser } from "@/contexts/UserContext";
-
+import { useSearchParams } from "next/navigation";
 
 export default function VerEncuestasPorMateriaClient({
     codigoMateria,
@@ -13,13 +13,14 @@ export default function VerEncuestasPorMateriaClient({
     cuatrimestre: string;
 }) {
 
-    const { loading, usuario } = useUser();
-    
+    const { loading } = useUser();
+    const searchParams = useSearchParams();
+    const nombreMateria = searchParams.get("nombreMateria") || "";
 
     const menuOptions: Map<string, [string, string]> = new Map([
-        ["Encuestas de la Materia", [`/encuestas/visualizar/${codigoMateria}/${cuatrimestre}/materia`, "Encuestas de la Materia"]],
-        ["Encuestas de los Profesores", [`/encuestas/visualizar/${codigoMateria}/${cuatrimestre}/profesores`, "Encuestas de los Profesores"]],
-        ["Encuestas de los Alumnos", [`/encuestas/visualizar/${codigoMateria}/${cuatrimestre}/alumnos`, "Encuestas de los Alumnos"]],
+        ["Encuestas de la Materia", [`/encuestas/visualizar/${codigoMateria}/${cuatrimestre}/materia?nombreMateria=${encodeURIComponent(nombreMateria)}`, "Encuestas de la Materia"]],
+        ["Encuestas de los Profesores", [`/encuestas/visualizar/${codigoMateria}/${cuatrimestre}/profesores?nombreMateria=${encodeURIComponent(nombreMateria)}`, "Encuestas de los Profesores"]],
+        ["Encuestas de los Alumnos", [`/encuestas/visualizar/${codigoMateria}/${cuatrimestre}/alumnos?nombreMateria=${encodeURIComponent(nombreMateria)}`, "Encuestas de los Alumnos"]],
     ]);
 
     if (loading) return <LoadingScreen mensaje="Cargando menú..." />;

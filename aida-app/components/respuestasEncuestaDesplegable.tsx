@@ -1,11 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { preguntasCompañeros, preguntasProfesores, preguntasMateria } from "@/app/encuestas/preguntas";
+import {
+  preguntasCompañeros,
+  preguntasProfesores,
+  preguntasMateria,
+} from "@/app/encuestas/preguntas";
 
 export default function RespuestaEncuestaDesplegable({
   encuesta,
-  tipoEncuesta
+  tipoEncuesta,
 }: {
   encuesta: {
     nombreEncuestado: string;
@@ -19,7 +23,6 @@ export default function RespuestaEncuestaDesplegable({
 
   return (
     <div className="border border-gray-200 rounded-lg shadow-sm bg-white mb-4 overflow-hidden transition-shadow hover:shadow-md">
-      
       <button
         onClick={() => setAbierto(!abierto)}
         className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 transition-all duration-200 group"
@@ -53,33 +56,21 @@ export default function RespuestaEncuestaDesplegable({
         }`}
       >
         <div className="px-6 py-4 border-t border-gray-200 space-y-6">
-
           {encuesta.resultados.map((valor, index) => (
             <div
               key={index}
               className="p-4 bg-gray-50 rounded-lg border border-gray-200"
             >
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-gray-800 font-medium">
-                  {tipoEncuesta === "materia" &&
-                    (
-                      preguntasMateria[index]
-                    )
-                  }
-                  {tipoEncuesta === "alumnos" &&
-                    (
-                      preguntasCompañeros[index]
-                    )
-                  }
-                  {tipoEncuesta === "profesores" &&
-                    (
-                      preguntasProfesores[index]
-                    )
-                  }
+              <div className="flex justify-between items-start gap-4 mb-2">
+                <span className="text-gray-800 font-medium flex-1 min-w-0">
+                  {tipoEncuesta === "materia" && preguntasMateria[index]}
+                  {tipoEncuesta === "alumnos" && preguntasCompañeros[index]}
+                  {tipoEncuesta === "profesores" && preguntasProfesores[index]}
                 </span>
 
-                <span className="text-sky-600 font-bold text-lg">
-                   {valor != null ? format(valor) : "-"}{" "} <span className="text-gray-500 text-base">/5</span>
+                <span className="text-sky-600 font-bold text-lg flex-shrink-0 whitespace-nowrap">
+                  {valor != null ? format(valor) : "-"}{" "}
+                  <span className="text-gray-500 text-base">/5</span>
                 </span>
               </div>
             </div>
@@ -104,7 +95,6 @@ export default function RespuestaEncuestaDesplegable({
               </div>
             </div>
           )}
-
         </div>
       </div>
     </div>
