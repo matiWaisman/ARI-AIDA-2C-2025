@@ -172,10 +172,21 @@ export class Business {
 
     async obtenerEncuestasNoRespondidas(lu: string) {
     return this.encuestasRepo.obtenerEncuestasNoRespondidas(lu);
-    } 
+    }
+
+    async obtenerEncuestasDeMateriaDeCuatri(codigoMateria: string, cuatrimestre: string) {
+        return this.encuestasRepo.obtenerEncuestasDeMateriaDeCuatri(codigoMateria, cuatrimestre);
+    }
+
+    async obtenerEncustasDeProfesorEnMateriaYCuatri(codigoMateria: string, cuatrimestre: string) {
+        return this.encuestasRepo.obtenerEncustasDeProfesorEnMateriaYCuatri(codigoMateria, cuatrimestre);
+    }
+
+    async obtenerEncuestasDeAlumnosEnMateriaYCuatri(codigoMateria: string, cuatrimestre: string) {
+        return this.encuestasRepo.obtenerEncuestasDeAlumnosEnMateriaYCuatri(codigoMateria, cuatrimestre);
+    }
 
     async ponerNotaAAlumno(codigoMateria: string, cuatrimestre: string, luAlumno: string, nota: number) {
-        console.log("Parametros en Business: ", {codigoMateria, cuatrimestre, luAlumno, nota});
         const result = await this.cursaRepo.ponerNotaAAlumno(codigoMateria, cuatrimestre, luAlumno, nota);
         await this.alumnoRepo.alumnoCompletoCarrera(luAlumno);
         return result

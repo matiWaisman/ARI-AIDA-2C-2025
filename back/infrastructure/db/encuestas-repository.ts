@@ -227,4 +227,77 @@ export class EncuestasRepository {
     const result = await this.client.query(query, [lu]);
     return result.rows;
   }
+
+  async obtenerEncuestasDeMateriaDeCuatri(codigoMateria: string, cuatrimestre: string) {
+    const query = `
+    SELECT e.codigoMateria, 
+      AVG(respuesta1) AS respuesta1, 
+      AVG(respuesta2) AS respuesta2,
+      AVG(respuesta3) AS respuesta3,
+      AVG(respuesta4) AS respuesta4,
+      AVG(respuesta5) AS respuesta5,
+      AVG(respuesta6) AS respuesta6,
+      AVG(respuesta7) AS respuesta7,
+      AVG(respuesta8) AS respuesta8,
+      AVG(respuesta9) AS respuesta9,
+      AVG(respuesta10) AS respuesta10,
+      AVG(respuesta11) AS respuesta11,
+      AVG(respuesta12) AS respuesta12,
+      AVG(respuesta13) AS respuesta13,
+      AVG(respuesta14) AS respuesta14,
+      AVG(respuesta15) AS respuesta15,
+      AVG(respuesta16) AS respuesta16
+      FROM aida.encuestaAMateria e
+      WHERE e.codigoMateria = '${codigoMateria}'
+      AND e.cuatrimestre = '${cuatrimestre}'
+      GROUP BY e.codigoMateria, e.cuatrimestre
+    `;
+
+    const result = await this.client.query(query);
+    return result.rows;
+  }
+
+  async obtenerEncustasDeProfesorEnMateriaYCuatri(codigoMateria: string, cuatrimestre: string) {
+    const query = `
+    SELECT e.luEvaluado, 
+	    AVG(respuesta1) AS respuesta1, 
+	    AVG(respuesta2) AS respuesta2,
+      AVG(respuesta3) AS respuesta3,
+      AVG(respuesta4) AS respuesta4,
+      AVG(respuesta5) AS respuesta5,
+      AVG(respuesta6) AS respuesta6,
+      AVG(respuesta7) AS respuesta7,
+      AVG(respuesta8) AS respuesta8,
+      AVG(respuesta9) AS respuesta9,
+      AVG(respuesta10) AS respuesta10,
+      AVG(respuesta11) AS respuesta11,
+      AVG(respuesta12) AS respuesta12
+      FROM aida.encuestaAProfesor e
+      WHERE e.codigoMateria = '${codigoMateria}'
+      AND e.cuatrimestre = '${cuatrimestre}'
+      GROUP BY e.codigoMateria, e.cuatrimestre, e.luEvaluado
+    `;
+
+    const result = await this.client.query(query);
+    return result.rows;
+  }
+
+  async obtenerEncuestasDeAlumnosEnMateriaYCuatri(codigoMateria: string, cuatrimestre: string) {
+    const query = `
+    SELECT e.luEvaluado, 
+      AVG(respuesta1) AS respuesta1, 
+      AVG(respuesta2) AS respuesta2,
+      AVG(respuesta3) AS respuesta3,
+      AVG(respuesta4) AS respuesta4,
+      AVG(respuesta5) AS respuesta5
+      FROM aida.encuestaAAlumno e
+      WHERE e.codigoMateria = '${codigoMateria}'
+      AND e.cuatrimestre = '${cuatrimestre}'
+      GROUP BY e.codigoMateria, e.cuatrimestre, e.luEvaluado
+    `;
+
+    const result = await this.client.query(query);
+    return result.rows;
+  }
+
 }

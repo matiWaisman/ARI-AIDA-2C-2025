@@ -58,4 +58,29 @@ export class EncuestasController {
     await client.end();
   }
 
+  static async obtenerEncuestasDeMateriaDeCuatri(req: Request, res: Response) {
+    const { client, business } = await EncuestasController._createDbClientAndInitializeBusiness();
+    const {codigoMateria, cuatrimestre} = req.params;
+    const respuestas = 
+      await business.obtenerEncuestasDeMateriaDeCuatri(codigoMateria, cuatrimestre);
+    res.status(200).json(respuestas);
+  }
+
+  static async obtenerEncustasDeProfesorEnMateriaYCuatri(req: Request, res: Response) {
+    const { client, business } = await EncuestasController._createDbClientAndInitializeBusiness();
+    const {codigoMateria, cuatrimestre} = req.params;
+    const respuestas = 
+      await business.obtenerEncustasDeProfesorEnMateriaYCuatri(codigoMateria, cuatrimestre);
+    res.status(200).json(respuestas);
+  }
+
+  static async obtenerEncuestasDeAlumnosEnMateriaYCuatri(req: Request, res: Response) {
+    const { client, business } = await EncuestasController._createDbClientAndInitializeBusiness();
+    const {codigoMateria, cuatrimestre} = req.params;
+    const respuestas = 
+      await business.obtenerEncuestasDeAlumnosEnMateriaYCuatri(codigoMateria, cuatrimestre);
+
+    res.status(200).json(respuestas);
+  }
+
 }
