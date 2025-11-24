@@ -1,6 +1,6 @@
 "use client";
 
-import CargarCertificado from "@/components/cargarCertificado";
+import CargarCertificado from "@/components/certificados/cargarCertificado";
 
 type Props = {
   params: { fecha: string };

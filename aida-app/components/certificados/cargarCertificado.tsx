@@ -3,16 +3,20 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Alumno } from "@/types/alumno";
-import Certificado from "@/components/certificado";
+import Certificado from "./certificado";
 import { apiClient } from "@/apiClient/apiClient";
 
 type CargarCertificadoProps = {
-  endpointPath: string;      // e.g. "/lu" or "/fecha"
-  paramName: string;         // e.g. "LU" or "fecha"
-  paramValue: string;        // value for the query param
+  endpointPath: string;
+  paramName: string;
+  paramValue: string;
 };
 
-export default function CargarCertificado({ endpointPath, paramName, paramValue }: CargarCertificadoProps) {
+export default function CargarCertificado({
+  endpointPath,
+  paramName,
+  paramValue,
+}: CargarCertificadoProps) {
   const [alumno, setAlumno] = useState<Alumno | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -23,7 +27,9 @@ export default function CargarCertificado({ endpointPath, paramName, paramValue 
       try {
         setLoading(true);
         setError(null);
-        const url = `${endpointPath}?${encodeURIComponent(paramName)}=${encodeURIComponent(paramValue)}`;
+        const url = `${endpointPath}?${encodeURIComponent(
+          paramName
+        )}=${encodeURIComponent(paramValue)}`;
         const alumnoData: Alumno = await apiClient(url);
         setAlumno(alumnoData);
       } catch (err) {
@@ -45,9 +51,7 @@ export default function CargarCertificado({ endpointPath, paramName, paramValue 
     return (
       <div>
         <p>Error: {error}</p>
-        <button onClick={() => router.back()}>
-          Volver al formulario
-        </button>
+        <button onClick={() => router.back()}>Volver al formulario</button>
       </div>
     );
   }

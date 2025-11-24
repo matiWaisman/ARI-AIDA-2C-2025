@@ -70,13 +70,9 @@ export default function FilaAlumnoDeMateria({
           {alumno.lu}
         </td>
 
-        <td className="px-2 py-3 text-sm text-gray-700">
-          {alumno.nombres}
-        </td>
+        <td className="px-2 py-3 text-sm text-gray-700">{alumno.nombres}</td>
 
-        <td className="px-2 py-3 text-sm text-gray-700">
-          {alumno.apellido}
-        </td>
+        <td className="px-2 py-3 text-sm text-gray-700">{alumno.apellido}</td>
 
         <td className="px-2 py-3 text-sm text-center text-gray-900 whitespace-nowrap">
           {editando ? (
@@ -104,5 +100,4 @@ export default function FilaAlumnoDeMateria({
       </tr>
     </>
   );
-
 }

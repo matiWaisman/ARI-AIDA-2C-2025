@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Link from "next/link";
 import "./globals.css";
 import HeaderClient from "@/components/headerClient";
+import FooterClient from "@/components/footerClient";
 import { UserProvider } from "@/contexts/UserContext";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
@@ -25,11 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
           </main>
 
-          <footer className="mt-10 border-t border-gray-200 bg-white">
-            <div className="container-page text-xs text-gray-500 py-4">
-              © {new Date().getFullYear()} Facultad - AIDA
-            </div>
-          </footer>
+          <FooterClient />
         </UserProvider>
       </body>
     </html>

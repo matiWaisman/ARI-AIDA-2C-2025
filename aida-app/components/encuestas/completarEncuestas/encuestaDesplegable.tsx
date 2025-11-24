@@ -32,7 +32,10 @@ export default function EncuestaDesplegable({
       });
       setRespuestas(nuevasRespuestas);
       const respuestasActuales = Object.values(nuevasRespuestas);
-      if (respuestasActuales.length > 0 && respuestasActuales.some(r => r > 0)) {
+      if (
+        respuestasActuales.length > 0 &&
+        respuestasActuales.some((r) => r > 0)
+      ) {
         onRespuestasChange?.(respuestasIniciales, comentario);
       }
     }
@@ -47,16 +50,24 @@ export default function EncuestaDesplegable({
   const actualizarRespuesta = (index: number, valor: number) => {
     const nuevas = { ...respuestas, [index]: valor };
     setRespuestas(nuevas);
-    
-    const respuestasArray = Array.from({ length: preguntas.length }, (_, i) => nuevas[i] || 0);
+
+    const respuestasArray = Array.from(
+      { length: preguntas.length },
+      (_, i) => nuevas[i] || 0
+    );
     onRespuestasChange?.(respuestasArray, comentario);
   };
 
-  const handleComentarioChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleComentarioChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
     const nuevoComentario = e.target.value;
     setComentario(nuevoComentario);
-    
-    const respuestasArray = Array.from({ length: preguntas.length }, (_, i) => respuestas[i] || 0);
+
+    const respuestasArray = Array.from(
+      { length: preguntas.length },
+      (_, i) => respuestas[i] || 0
+    );
     onRespuestasChange?.(respuestasArray, nuevoComentario);
   };
 
@@ -121,4 +132,3 @@ export default function EncuestaDesplegable({
     </div>
   );
 }
-

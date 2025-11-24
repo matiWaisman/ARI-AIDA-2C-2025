@@ -1,18 +1,37 @@
 import { Alumno } from "@/types/alumno";
-import FilaTabla from "@/components/filaTabla";
-import FilaAgregar from "@/components/filaAgregar";
+import FilaTabla from "./filaTabla";
+import FilaAgregar from "./filaAgregar";
 
 type TablaProps = {
   alumnos: Alumno[];
   onEliminar: (lu: string) => Promise<boolean>;
-  onInsertar: (lu: string, nombres: string, apellido: string, titulo: string, titulo_en_tramite: string, egreso: string) => Promise<boolean>;
-  onActualizar: (lu: string, nombres: string, apellido: string) => Promise<boolean>;
+  onInsertar: (
+    lu: string,
+    nombres: string,
+    apellido: string,
+    titulo: string,
+    titulo_en_tramite: string,
+    egreso: string
+  ) => Promise<boolean>;
+  onActualizar: (
+    lu: string,
+    nombres: string,
+    apellido: string
+  ) => Promise<boolean>;
 };
 
-export default function Tabla({alumnos, onEliminar, onInsertar, onActualizar}: TablaProps) {
+export default function Tabla({
+  alumnos,
+  onEliminar,
+  onInsertar,
+  onActualizar,
+}: TablaProps) {
   return (
     <div className="shadow-lg rounded-lg overflow-hidden">
-      <table className="w-full bg-white border border-gray-200" style={{ tableLayout: 'fixed' }}>
+      <table
+        className="w-full bg-white border border-gray-200"
+        style={{ tableLayout: "fixed" }}
+      >
         <colgroup>
           <col className="w-[6%]" />
           <col className="w-[14%]" />
@@ -49,7 +68,12 @@ export default function Tabla({alumnos, onEliminar, onInsertar, onActualizar}: T
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
           {alumnos.map((alumno, index) => (
-            <FilaTabla key={alumno.lu || index} alumno={alumno} onEliminar={onEliminar} onActualizar={onActualizar} />
+            <FilaTabla
+              key={alumno.lu || index}
+              alumno={alumno}
+              onEliminar={onEliminar}
+              onActualizar={onActualizar}
+            />
           ))}
           <FilaAgregar onInsertar={onInsertar} />
         </tbody>

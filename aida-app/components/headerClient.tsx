@@ -4,7 +4,7 @@ import { useUser } from "@/contexts/UserContext";
 
 export default function HeaderClient() {
   const { loading, usuario } = useUser();
-  
+
   const getRoles = () => {
     if (!usuario) return "";
     const roles: string[] = [];
@@ -12,7 +12,7 @@ export default function HeaderClient() {
     if (usuario.esProfesor === true) roles.push("Profesor");
     return roles.length > 0 ? roles.join(" / ") : "";
   };
-  
+
   const rolesText = getRoles();
 
   return (
@@ -22,16 +22,23 @@ export default function HeaderClient() {
           <Link href="/">AIDA</Link>
         </h1>
 
-        <nav className="text-sm text-gray-600">
+        <div className="text-sm text-gray-600 text-right">
           {loading && "Cargando..."}
           {!loading && usuario && (
-            <>
-              Bienvenido, {usuario.username}
-              {rolesText && ` — ${rolesText}`}
-            </>
+            <div className="flex flex-col">
+              <span>
+                Bienvenido,{" "}
+                <span className="font-semibold text-gray-900">
+                  {usuario.username}
+                </span>
+              </span>
+              {rolesText && (
+                <span className="text-xs text-gray-500">{rolesText}</span>
+              )}
+            </div>
           )}
           {!loading && !usuario && "Invitado"}
-        </nav>
+        </div>
       </div>
     </header>
   );

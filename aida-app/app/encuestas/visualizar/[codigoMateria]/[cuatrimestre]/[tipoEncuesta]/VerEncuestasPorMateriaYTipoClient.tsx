@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { apiClient } from "@/apiClient/apiClient";
-import RespuestaEncuestaDesplegable from "@/components/respuestasEncuestaDesplegable";
+import RespuestaEncuestaDesplegable from "@/components/encuestas/visualizarEncuestas/respuestasEncuestaDesplegable";
 
 const tipoEncuestaLabels: Record<"materia" | "profesores" | "alumnos", string> =
   {

@@ -4,17 +4,28 @@ import { Alumno } from "@/types/alumno";
 type FilaTablaProps = {
   alumno: Alumno;
   onEliminar: (lu: string) => Promise<boolean>;
-  onActualizar: (lu: string, nombres: string, apellido: string) => Promise<boolean>;
+  onActualizar: (
+    lu: string,
+    nombres: string,
+    apellido: string
+  ) => Promise<boolean>;
 };
 
 export default function FilaTabla({
   alumno,
   onEliminar,
-  onActualizar
+  onActualizar,
 }: FilaTablaProps) {
   const [eliminando, setEliminando] = useState(false);
-  const [editando, setEditando] = useState<{ campo: 'lu' | 'nombres' | 'apellido' | null; valor: string }>({ campo: null, valor: '' });
-  const [valores, setValores] = useState({ lu: alumno.lu || '', nombres: alumno.nombres || '', apellido: alumno.apellido || '' });
+  const [editando, setEditando] = useState<{
+    campo: "lu" | "nombres" | "apellido" | null;
+    valor: string;
+  }>({ campo: null, valor: "" });
+  const [valores, setValores] = useState({
+    lu: alumno.lu || "",
+    nombres: alumno.nombres || "",
+    apellido: alumno.apellido || "",
+  });
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -36,13 +47,21 @@ export default function FilaTabla({
   };
 
   useEffect(() => {
-    setValores({ lu: alumno.lu || '', nombres: alumno.nombres || '', apellido: alumno.apellido || '' });
+    setValores({
+      lu: alumno.lu || "",
+      nombres: alumno.nombres || "",
+      apellido: alumno.apellido || "",
+    });
   }, [alumno]);
 
   const handleEliminar = async () => {
     if (!alumno.lu) return;
-    
-    if (!confirm(`¿Estás seguro de que deseas eliminar al alumno ${alumno.nombres} ${alumno.apellido} (LU: ${alumno.lu})?`)) {
+
+    if (
+      !confirm(
+        `¿Estás seguro de que deseas eliminar al alumno ${alumno.nombres} ${alumno.apellido} (LU: ${alumno.lu})?`
+      )
+    ) {
       return;
     }
 
@@ -51,13 +70,17 @@ export default function FilaTabla({
     setEliminando(false);
   };
 
-  const handleIniciarEdicion = (campo: 'lu' | 'nombres' | 'apellido') => {
+  const handleIniciarEdicion = (campo: "lu" | "nombres" | "apellido") => {
     setEditando({ campo, valor: valores[campo] });
   };
 
   const handleCancelarEdicion = () => {
-    setEditando({ campo: null, valor: '' });
-    setValores({ lu: alumno.lu || '', nombres: alumno.nombres || '', apellido: alumno.apellido || '' });
+    setEditando({ campo: null, valor: "" });
+    setValores({
+      lu: alumno.lu || "",
+      nombres: alumno.nombres || "",
+      apellido: alumno.apellido || "",
+    });
   };
 
   const handleGuardarEdicion = async () => {
@@ -66,7 +89,7 @@ export default function FilaTabla({
     }
 
     const valorTrimmed = editando.valor.trim();
-    
+
     // Si el valor está vacío o no cambió, cancelar
     if (!valorTrimmed || valorTrimmed === valores[editando.campo]) {
       handleCancelarEdicion();
@@ -74,12 +97,16 @@ export default function FilaTabla({
     }
 
     const nuevosValores = { ...valores, [editando.campo]: valorTrimmed };
-    
+
     try {
-      const exito = await onActualizar(nuevosValores.lu, nuevosValores.nombres, nuevosValores.apellido);
+      const exito = await onActualizar(
+        nuevosValores.lu,
+        nuevosValores.nombres,
+        nuevosValores.apellido
+      );
       if (exito) {
         setValores(nuevosValores);
-        setEditando({ campo: null, valor: '' });
+        setEditando({ campo: null, valor: "" });
       } else {
         handleCancelarEdicion();
       }
@@ -89,16 +116,20 @@ export default function FilaTabla({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleGuardarEdicion();
-    } else if (e.key === 'Escape') {
+    } else if (e.key === "Escape") {
       handleCancelarEdicion();
     }
   };
 
-  const renderCeldaEditable = (campo: 'lu' | 'nombres' | 'apellido', valor: string, claseBase: string) => {
+  const renderCeldaEditable = (
+    campo: "lu" | "nombres" | "apellido",
+    valor: string,
+    claseBase: string
+  ) => {
     const estaEditando = editando.campo === campo;
-    
+
     if (estaEditando) {
       return (
         <input
@@ -109,7 +140,7 @@ export default function FilaTabla({
           onBlur={handleGuardarEdicion}
           onKeyDown={handleKeyDown}
           className={`${claseBase} border-2 border-blue-500 rounded px-1 bg-white focus:outline-none`}
-          style={{ minWidth: '100px', width: '100%' }}
+          style={{ minWidth: "100px", width: "100%" }}
         />
       );
     }
@@ -128,13 +159,13 @@ export default function FilaTabla({
   return (
     <tr className="hover:bg-blue-50 transition-colors duration-150">
       <td className="px-1 py-3 text-xs font-medium text-gray-900 whitespace-nowrap">
-        {renderCeldaEditable('lu', valores.lu, 'text-xs')}
+        {renderCeldaEditable("lu", valores.lu, "text-xs")}
       </td>
       <td className="px-2 py-3 text-sm text-gray-700">
-        {renderCeldaEditable('nombres', valores.nombres, 'text-sm')}
+        {renderCeldaEditable("nombres", valores.nombres, "text-sm")}
       </td>
       <td className="px-2 py-3 text-sm text-gray-700">
-        {renderCeldaEditable('apellido', valores.apellido, 'text-sm')}
+        {renderCeldaEditable("apellido", valores.apellido, "text-sm")}
       </td>
       <td className="px-2 py-3 text-sm text-gray-700 break-words">
         {alumno.titulo || "-"}
@@ -153,13 +184,40 @@ export default function FilaTabla({
           title="Eliminar alumno"
         >
           {eliminando ? (
-            <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            <svg
+              className="animate-spin h-4 w-4 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
             </svg>
           ) : (
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              />
             </svg>
           )}
         </button>

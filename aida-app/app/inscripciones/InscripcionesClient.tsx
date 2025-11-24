@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { TablaMaterias } from "@/components/tablaMaterias";
+import { TablaMaterias } from "@/components/materias/tablaMaterias";
 import LoadingScreen from "@/components/loadingScreen";
 import ErrorScreen from "@/components/errorScreen";
 import { apiClient } from "@/apiClient/apiClient";

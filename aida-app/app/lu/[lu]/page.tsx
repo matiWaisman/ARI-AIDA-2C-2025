@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import CargarCertificado from "@/components/cargarCertificado";
+import CargarCertificado from "@/components/certificados/cargarCertificado";
 
 type Props = {
   // Next puede pasar params como Promise en algunas versiones

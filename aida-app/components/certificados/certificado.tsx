@@ -7,14 +7,19 @@ type CertificadoProps = {
   fecha: string;
 };
 
-export default function Certificado({ lu, nombre, titulo, fecha }: CertificadoProps) {
+export default function Certificado({
+  lu,
+  nombre,
+  titulo,
+  fecha,
+}: CertificadoProps) {
   return (
     <>
       <style jsx>{`
-        @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@300;400&display=swap');
+        @import url("https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@300;400&display=swap");
 
         body {
-          font-family: 'Open Sans', sans-serif;
+          font-family: "Open Sans", sans-serif;
           background-color: #eaeaea;
           margin: 0;
           padding: 20px;
@@ -67,7 +72,7 @@ export default function Certificado({ lu, nombre, titulo, fecha }: CertificadoPr
         }
 
         .university-name {
-          font-family: 'Merriweather', serif;
+          font-family: "Merriweather", serif;
           font-size: 28px;
           font-weight: 700;
           color: #1a2b47;
@@ -81,7 +86,7 @@ export default function Certificado({ lu, nombre, titulo, fecha }: CertificadoPr
 
         .certificate-title {
           text-align: center;
-          font-family: 'Merriweather', serif;
+          font-family: "Merriweather", serif;
           font-size: 30px;
           font-weight: bold;
           color: #1a2b47;
@@ -171,7 +176,9 @@ export default function Certificado({ lu, nombre, titulo, fecha }: CertificadoPr
           </div>
         </div>
 
-        <div className="certificate-title">Certificado de Título en Trámite</div>
+        <div className="certificate-title">
+          Certificado de Título en Trámite
+        </div>
 
         <div className="certificate-body">
           <p>El/la abajo firmante certifica que:</p>
@@ -197,8 +204,8 @@ export default function Certificado({ lu, nombre, titulo, fecha }: CertificadoPr
 
           <p>
             Ha completado satisfactoriamente todos los requisitos académicos
-            correspondientes a la carrera y se encuentra en trámite la expedición
-            de su título oficial.
+            correspondientes a la carrera y se encuentra en trámite la
+            expedición de su título oficial.
           </p>
           <p>
             Se expide el presente certificado a solicitud del interesado para
@@ -211,7 +218,9 @@ export default function Certificado({ lu, nombre, titulo, fecha }: CertificadoPr
         <div className="signature-area">
           <div className="signature-box">
             <div className="signature-line"></div>
-            <div className="signature-label">Firma de la Autoridad Competente</div>
+            <div className="signature-label">
+              Firma de la Autoridad Competente
+            </div>
           </div>
 
           <div className="signature-box">

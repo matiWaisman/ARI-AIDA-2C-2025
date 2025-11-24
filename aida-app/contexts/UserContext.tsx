@@ -14,7 +14,7 @@ import { Usuario } from "@/types/usuario";
 
 interface UserContextType {
   usuario: Usuario | null;
-  setUsuario: (usuario: Usuario) => void;
+  setUsuario: (usuario: Usuario | null) => void;
   loading: boolean;
   checkSession: () => Promise<void>;
 }

@@ -3,7 +3,7 @@
 import FilaAlumnoDeMateria from "./filaAlumnoDeMateria";
 
 type TablaAlumnosDeMateriaProps = {
-  alumnos: {lu: string; nombres: string; apellido: string; nota: number}[];
+  alumnos: { lu: string; nombres: string; apellido: string; nota: number }[];
   codigoMateria: string;
   cuatrimestre: string;
   onPonerNota: (
@@ -22,7 +22,10 @@ export default function TablaAlumnosDeMateria({
 }: TablaAlumnosDeMateriaProps) {
   return (
     <div className="shadow-lg rounded-lg overflow-hidden">
-      <table className="w-full bg-white border border-gray-200" style={{ tableLayout: "fixed" }}>
+      <table
+        className="w-full bg-white border border-gray-200"
+        style={{ tableLayout: "fixed" }}
+      >
         <colgroup>
           <col className="w-[30%]" />
           <col className="w-[30%]" />

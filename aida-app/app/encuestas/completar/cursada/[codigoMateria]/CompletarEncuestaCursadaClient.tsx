@@ -6,18 +6,27 @@ import LoadingScreen from "@/components/loadingScreen";
 import ErrorScreen from "@/components/errorScreen";
 import { apiClient } from "@/apiClient/apiClient";
 import { useUser } from "@/contexts/UserContext";
-import EncuestaDesplegable from "@/components/encuestaDesplegable";
-import { preguntasCompañeros, preguntasProfesores, preguntasMateria } from "@/app/encuestas/preguntas";
-import { useEncuestasPersonas, useEncuestaMateria } from "@/features/completarEncuestasFeature";
+import EncuestaDesplegable from "@/components/encuestas/completarEncuestas/encuestaDesplegable";
+import {
+  preguntasCompañeros,
+  preguntasProfesores,
+  preguntasMateria,
+} from "@/app/encuestas/preguntas";
+import {
+  useEncuestasPersonas,
+  useEncuestaMateria,
+} from "@/features/completarEncuestasFeature";
 
 type Props = {
   codigoMateria: string;
 };
 
-export default function CompletarEncuestaCursadaClient({ codigoMateria }: Props) {
+export default function CompletarEncuestaCursadaClient({
+  codigoMateria,
+}: Props) {
   const searchParams = useSearchParams();
   const router = useRouter();
-  
+
   const nombreMateria = searchParams.get("nombreMateria") || codigoMateria;
   const cuatrimestre = searchParams.get("cuatrimestre") || "2C2025";
   const { usuario } = useUser();
@@ -68,7 +77,7 @@ export default function CompletarEncuestaCursadaClient({ codigoMateria }: Props)
           method: "POST",
           body: JSON.stringify({
             codigoMateria,
-            cuatrimestre
+            cuatrimestre,
           }),
         });
         setProfesores(profesoresResponse);
@@ -84,7 +93,6 @@ export default function CompletarEncuestaCursadaClient({ codigoMateria }: Props)
     }
   }, [codigoMateria, usuario, cuatrimestre]);
 
-
   const handleEnviarTodo = async () => {
     setEnviando(true);
     setError(null);
@@ -92,9 +100,21 @@ export default function CompletarEncuestaCursadaClient({ codigoMateria }: Props)
     try {
       const luEncuestado = usuario!.lu;
 
-      await encuestasCompañeros.enviarEncuestas(luEncuestado, codigoMateria, cuatrimestre);
-      await encuestasProfesores.enviarEncuestas(luEncuestado, codigoMateria, cuatrimestre);
-      await encuestaMateria.enviarEncuesta(luEncuestado, codigoMateria, cuatrimestre);
+      await encuestasCompañeros.enviarEncuestas(
+        luEncuestado,
+        codigoMateria,
+        cuatrimestre
+      );
+      await encuestasProfesores.enviarEncuestas(
+        luEncuestado,
+        codigoMateria,
+        cuatrimestre
+      );
+      await encuestaMateria.enviarEncuesta(
+        luEncuestado,
+        codigoMateria,
+        cuatrimestre
+      );
 
       alert("Encuesta completada exitosamente");
       router.push("/encuestas/completar");
@@ -136,12 +156,18 @@ export default function CompletarEncuestaCursadaClient({ codigoMateria }: Props)
             return (
               <EncuestaDesplegable
                 key={compañero.lu}
-                titulo={`${compañero.nombres || ""} ${compañero.apellido || ""} (LU: ${compañero.lu})`.trim()}
+                titulo={`${compañero.nombres || ""} ${
+                  compañero.apellido || ""
+                } (LU: ${compañero.lu})`.trim()}
                 preguntas={preguntasCompañeros}
                 respuestasIniciales={respuesta?.respuestas}
                 comentarioInicial={respuesta?.comentario}
                 onRespuestasChange={(respuestas, comentario) =>
-                  encuestasCompañeros.actualizarRespuesta(compañero.lu, respuestas, comentario)
+                  encuestasCompañeros.actualizarRespuesta(
+                    compañero.lu,
+                    respuestas,
+                    comentario
+                  )
                 }
               />
             );
@@ -171,12 +197,18 @@ export default function CompletarEncuestaCursadaClient({ codigoMateria }: Props)
             return (
               <EncuestaDesplegable
                 key={profesor.lu}
-                titulo={`${profesor.nombres || ""} ${profesor.apellido || ""} (LU: ${profesor.lu})`.trim()}
+                titulo={`${profesor.nombres || ""} ${
+                  profesor.apellido || ""
+                } (LU: ${profesor.lu})`.trim()}
                 preguntas={preguntasProfesores}
                 respuestasIniciales={respuesta?.respuestas}
                 comentarioInicial={respuesta?.comentario}
                 onRespuestasChange={(respuestas, comentario) =>
-                  encuestasProfesores.actualizarRespuesta(profesor.lu, respuestas, comentario)
+                  encuestasProfesores.actualizarRespuesta(
+                    profesor.lu,
+                    respuestas,
+                    comentario
+                  )
                 }
               />
             );
@@ -186,7 +218,9 @@ export default function CompletarEncuestaCursadaClient({ codigoMateria }: Props)
 
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-gray-800">Encuesta a la materia</h2>
+          <h2 className="text-xl font-semibold text-gray-800">
+            Encuesta a la materia
+          </h2>
           <button
             onClick={encuestaMateria.completarAleatorio}
             className="px-4 py-2 bg-sky-400 hover:bg-sky-500 active:bg-sky-600 text-white text-sm font-medium rounded-lg transition-colors"
@@ -225,4 +259,3 @@ export default function CompletarEncuestaCursadaClient({ codigoMateria }: Props)
     </div>
   );
 }
-
