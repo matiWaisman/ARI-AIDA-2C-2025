@@ -80,5 +80,5 @@ app.use("/app", requireLogin, encuestasRouter);
   
 
 app.listen(port, () => {
-  console.log(`💦🍆  Backend se esta corriendo 😲 ...en http://localhost:${port}/app/`);
+  console.log(`Backend se esta corriendo en http://localhost:${port}/app/`);
 });
