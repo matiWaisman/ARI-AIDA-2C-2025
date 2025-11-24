@@ -179,7 +179,7 @@ export class Business {
     }
 
     async obtenerEncustasDeProfesorEnMateriaYCuatri(codigoMateria: string, cuatrimestre: string) {
-        return this.encuestasRepo.obtenerEncustasDeProfesorEnMateriaYCuatri(codigoMateria, cuatrimestre);
+        return this.encuestasRepo.obtenerEncuestasDeProfesorEnMateriaYCuatri(codigoMateria, cuatrimestre);
     }
 
     async obtenerEncuestasDeAlumnosEnMateriaYCuatri(codigoMateria: string, cuatrimestre: string) {

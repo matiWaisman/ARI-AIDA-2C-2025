@@ -127,7 +127,7 @@ INSERT INTO aida.materias (codigoMateria, nombreMateria)
 VALUES ('BD101', 'Bases de Datos');
 
 INSERT INTO aida.dicta (luProfesor, codigoMateria, cuatrimestre)
-VALUES ('25/18', 'BD101', '2C-2025');
+VALUES ('25/18', 'BD101', '2C2025');
 
 INSERT INTO aida.entidadUniversitaria (lu, apellido, nombres)
 VALUES ('30/22', 'García', 'Lucía');
@@ -136,7 +136,7 @@ INSERT INTO aida.alumnos (lu, titulo, titulo_en_tramite, egreso)
 VALUES ('30/22', NULL, NULL, NULL);
 
 INSERT INTO aida.cursa (luAlumno, codigoMateria, cuatrimestre, nota)
-VALUES ('30/22', 'BD101', '2C-2025', NULL);
+VALUES ('30/22', 'BD101', '2C2025', NULL);
 
 SELECT m.nombreMateria, m.codigoMateria, e.nombres, e.apellido, d.cuatrimestre
 	FROM aida.materias m 

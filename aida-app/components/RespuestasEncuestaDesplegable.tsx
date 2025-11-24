@@ -1,22 +1,25 @@
 "use client";
 
 import { useState } from "react";
+import { preguntasCompañeros, preguntasProfesores, preguntasMateria } from "@/app/encuestas/preguntas";
 
 export default function RespuestaEncuestaDesplegable({
   encuesta,
+  tipoEncuesta
 }: {
   encuesta: {
     nombreEncuestado: string;
     resultados: number[];
     comentarios: string[];
   };
+  tipoEncuesta: "materia" | "profesores" | "alumnos";
 }) {
   const [abierto, setAbierto] = useState(false);
+  const format = (n: number) => Number(n.toFixed(2)).toString();
 
   return (
     <div className="border border-gray-200 rounded-lg shadow-sm bg-white mb-4 overflow-hidden transition-shadow hover:shadow-md">
       
-      {/* HEADER */}
       <button
         onClick={() => setAbierto(!abierto)}
         className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 transition-all duration-200 group"
@@ -44,39 +47,63 @@ export default function RespuestaEncuestaDesplegable({
         </div>
       </button>
 
-      {/* CONTENIDO */}
       <div
         className={`overflow-hidden transition-all duration-300 ease-in-out ${
           abierto ? "max-h-[5000px] opacity-100" : "max-h-0 opacity-0"
         }`}
       >
         <div className="px-6 py-4 border-t border-gray-200 space-y-6">
-          
+
           {encuesta.resultados.map((valor, index) => (
             <div
               key={index}
               className="p-4 bg-gray-50 rounded-lg border border-gray-200"
             >
-              {/* Título de la pregunta */}
               <div className="flex justify-between items-center mb-2">
                 <span className="text-gray-800 font-medium">
-                  Pregunta {index + 1}
+                  {tipoEncuesta === "materia" &&
+                    (
+                      preguntasMateria[index]
+                    )
+                  }
+                  {tipoEncuesta === "alumnos" &&
+                    (
+                      preguntasCompañeros[index]
+                    )
+                  }
+                  {tipoEncuesta === "profesores" &&
+                    (
+                      preguntasProfesores[index]
+                    )
+                  }
                 </span>
 
                 <span className="text-sky-600 font-bold text-lg">
-                  {valor ?? "-"}
+                   {valor != null ? format(valor) : "-"}{" "} <span className="text-gray-500 text-base">/5</span>
                 </span>
               </div>
-
-              {/* Comentario correspondiente */}
-              {encuesta.comentarios[index] &&
-                encuesta.comentarios[index].trim() !== "" && (
-                  <div className="mt-2 p-3 bg-white border border-gray-300 rounded-md text-gray-700 whitespace-pre-line">
-                    {encuesta.comentarios[index]}
-                  </div>
-                )}
             </div>
           ))}
+
+          {/* Comentarios al final */}
+          {encuesta.comentarios.length > 0 && (
+            <div className="mt-6">
+              <h3 className="text-gray-800 font-semibold mb-2">Comentarios</h3>
+
+              <div className="space-y-3">
+                {encuesta.comentarios.map((c, i) =>
+                  c.trim() !== "" ? (
+                    <div
+                      key={i}
+                      className="p-3 bg-white border border-gray-300 rounded-md text-gray-700 whitespace-pre-line"
+                    >
+                      {c}
+                    </div>
+                  ) : null
+                )}
+              </div>
+            </div>
+          )}
 
         </div>
       </div>

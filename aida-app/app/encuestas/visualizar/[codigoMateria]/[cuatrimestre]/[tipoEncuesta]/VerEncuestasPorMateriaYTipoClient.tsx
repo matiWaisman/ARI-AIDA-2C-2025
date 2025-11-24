@@ -33,9 +33,24 @@ export default function VerEncuestasPorMateriaYTipoClient({
             }
         
         }
+
+        cargarRespuestasEncuesta();
+
     }, [codigoMateria, cuatrimestre, tipoEncuesta]);
     
-    encuestas.map((encuesta:  {nombreEncuestado: string, resultados: number[], comentarios: string[]}) => {
-        return <RespuestaEncuestaDesplegable encuesta={encuesta}/>
-    })
+    return (
+        <>
+            {loading && <p>Cargando...</p>}
+            {error && <p className="text-red-500">{error}</p>}
+
+            {encuestas.length === 0 && !loading && (
+            <p className="text-gray-500">No hay encuestas completas</p>
+            )}
+
+            {encuestas.map((encuesta, index) => (
+            <RespuestaEncuestaDesplegable key={index} encuesta={encuesta} tipoEncuesta={tipoEncuesta} />
+            ))}
+        </>
+    );
+
 }

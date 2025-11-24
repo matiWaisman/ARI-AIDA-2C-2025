@@ -19,7 +19,7 @@ export default function CompletarEncuestaCursadaClient({ codigoMateria }: Props)
   const router = useRouter();
   
   const nombreMateria = searchParams.get("nombreMateria") || codigoMateria;
-  const cuatrimestre = searchParams.get("cuatrimestre") || "2C-2025";
+  const cuatrimestre = searchParams.get("cuatrimestre") || "2C2025";
   const { usuario } = useUser();
 
   const [loading, setLoading] = useState(true);

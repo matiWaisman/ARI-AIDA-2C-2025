@@ -181,7 +181,7 @@ export class MateriaController {
     const { client, business } =
       await MateriaController._createDbClientAndInitializeBusiness();
 
-    const alumnos = await business.obtenerAlumnosDeMateriaConNota(codigoMateria, cuatrimestre);
+    const alumnos = await business.obtenerAlumnosDeMateriaConNota(codigoMateria as string, cuatrimestre as string);
     res.status(200).json(alumnos);
     await client.end();
   }
