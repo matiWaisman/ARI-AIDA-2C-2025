@@ -33,7 +33,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     usuarioRef.current = usuario;
   }, [usuario]);
 
-  const checkSessionRef = useRef<() => Promise<void>>();
+  const checkSessionRef = useRef<(() => Promise<void>) | undefined>(undefined);
 
   const checkSession = useCallback(async () => {
     const usuarioAnterior = usuarioRef.current;
