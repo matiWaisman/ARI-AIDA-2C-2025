@@ -33,6 +33,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
     usuarioRef.current = usuario;
   }, [usuario]);
 
+  const checkSessionRef = useRef<() => Promise<void>>();
+
   const checkSession = useCallback(async () => {
     const usuarioAnterior = usuarioRef.current;
 
@@ -62,9 +64,16 @@ export function UserProvider({ children }: { children: ReactNode }) {
     }
   }, [router, pathname, usuario]);
 
+  checkSessionRef.current = checkSession;
+
+  const hasCheckedSession = useRef(false);
+
   useEffect(() => {
-    checkSession();
-  }, [checkSession]);
+    if (!hasCheckedSession.current) {
+      hasCheckedSession.current = true;
+      checkSessionRef.current?.();
+    }
+  }, []);
 
   return (
     <UserContext.Provider
