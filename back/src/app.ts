@@ -55,14 +55,13 @@ app.use(
       const normalizedOrigin = normalizeOrigin(origin);
       const normalizedAllowed = allowedOrigins.map(normalizeOrigin);
 
-      // Log para debugging (solo en desarrollo)
-      if (process.env.NODE_ENV !== "production") {
-        console.log("CORS check - Origin recibido:", origin);
-        console.log("CORS check - Origins permitidos:", normalizedAllowed);
-      }
+      // Log para debugging (siempre, para poder debuggear en producción)
+      console.log("CORS check - Origin recibido:", origin);
+      console.log("CORS check - Origins permitidos:", normalizedAllowed);
 
       // Si el origin está en la lista permitida, permitirlo
       if (normalizedAllowed.includes(normalizedOrigin)) {
+        console.log("CORS permitido para:", origin);
         return callback(null, true);
       }
 
@@ -93,16 +92,21 @@ declare module "express-session" {
   }
 }
 
+// Detectar si estamos en producción (Render siempre usa HTTPS)
+const isProduction =
+  process.env.NODE_ENV === "production" || process.env.RENDER;
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "mi_secreto",
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === "production", // HTTPS en producción
+      secure: isProduction, // HTTPS en producción (Render siempre usa HTTPS)
       httpOnly: true,
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // "none" necesario para CORS cross-origin en producción
+      sameSite: isProduction ? "none" : "lax", // "none" necesario para CORS cross-origin en producción
       maxAge: 1000 * 60 * 60 * 24,
+      domain: undefined, // No especificar domain para que funcione cross-origin
     },
   })
 );
