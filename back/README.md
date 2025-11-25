@@ -1,4 +1,4 @@
-Arquitectura de AIDA
+## Arquitectura de AIDA
 En este proyecto intentamos seguir una arquitectura en capas, la idea detrás de esto es separar el código en módulos de responsabilidades, facilitando el mantenimiento y la escalabilidad.
 En este caso en particular lo separamos en 3 capas:
 
