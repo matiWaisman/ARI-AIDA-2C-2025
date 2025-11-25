@@ -46,7 +46,7 @@ Hay fragmentos de código que, para no estropear la codebase, fuimos removiendo 
   - En el back la lógica del logueo está en el router `/back/infrastructure/http/routes/routes-user.ts`.
 - Clase 8: se encuentra en `/back/infrastructure/db/alumno-repository.ts`.
 - Clase 9: se agregó lógica en `/back/infrastructure/db/db-client.ts` para diferenciar si leer la base de datos local o la subida en la nube.
-- Clase 10: la página se encuentra andando en:
+- Clase 10: El frontend se encuentra andando en: https://aida-app.onrender.com/, el back en: https://back-aida.onrender.com/.
 - Clase 11:
 
 ## Funcionalidad agregada

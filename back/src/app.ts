@@ -39,6 +39,11 @@ if (process.env.FRONTEND_URL) {
   allowedOrigins.push(...frontendUrls);
 }
 
+// Normalizar URLs para comparación (remover trailing slash)
+const normalizeOrigin = (origin: string): string => {
+  return origin.endsWith("/") ? origin.slice(0, -1) : origin;
+};
+
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -47,10 +52,25 @@ app.use(
         return callback(null, true);
       }
 
+      const normalizedOrigin = normalizeOrigin(origin);
+      const normalizedAllowed = allowedOrigins.map(normalizeOrigin);
+
+      // Log para debugging (solo en desarrollo)
+      if (process.env.NODE_ENV !== "production") {
+        console.log("CORS check - Origin recibido:", origin);
+        console.log("CORS check - Origins permitidos:", normalizedAllowed);
+      }
+
       // Si el origin está en la lista permitida, permitirlo
-      if (allowedOrigins.includes(origin)) {
+      if (normalizedAllowed.includes(normalizedOrigin)) {
         return callback(null, true);
       }
+
+      // Log del error para debugging
+      console.error(
+        `CORS bloqueado - Origin: ${origin} no está en la lista permitida:`,
+        normalizedAllowed
+      );
 
       // Rechazar origins no permitidos
       callback(new Error("Not allowed by CORS"));

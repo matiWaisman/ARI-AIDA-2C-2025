@@ -41,8 +41,8 @@ El backend requiere las siguientes variables de entorno para funcionar correctam
 - `PGPORT`= Puerto de PostgreSQL (ej: 5432)
 - `PGDATABASE`= Nombre de la base de datos a utilizar
 - `REQUIRE_LOGIN`= Si es 'true', obliga a iniciar sesión antes de usar la app
-- `FRONTEND_URL`= URL del frontend para  que no se bloqueen las requests por CORS 
-- `SESSION_SECRET`= Secreto para las sesiones 
+- `FRONTEND_URL`= URL del frontend para que no se bloqueen las requests por CORS
+- `SESSION_SECRET`= Secreto para las sesiones
 
 ## CÓMO LEVANTAR EL PROYECTO LOCALMENTE:
 
