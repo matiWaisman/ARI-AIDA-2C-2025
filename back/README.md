@@ -35,14 +35,26 @@ La App envía la respuesta devuelta al front.
 
 El backend requiere las siguientes variables de entorno para funcionar correctamente. Creá un archivo `local-sets.env` en la raíz del proyecto `back/` con las variables:
 
+**Para desarrollo local (base de datos local):**
+
 - `PGUSER`= Usuario de la base de datos PostgreSQL
 - `PGPASSWORD`= Contraseña del usuario de PostgreSQL
 - `PGHOST`= Host donde corre PostgreSQL (ej: localhost)
 - `PGPORT`= Puerto de PostgreSQL (ej: 5432)
 - `PGDATABASE`= Nombre de la base de datos a utilizar
+- `PRODUCTION_DB`= 'false' para usar la base local
+
+**Para producción (Supabase):**
+
+- `PRODUCTION_DB`= 'true' para usar Supabase
+- `DATABASE_URL`= Connection string completo de Supabase.
+
+**Otras variables:**
+
 - `REQUIRE_LOGIN`= Si es 'true', obliga a iniciar sesión antes de usar la app
-- `FRONTEND_URL`= URL del frontend para que no se bloqueen las requests por CORS
+- `FRONTEND_URL`= URL del frontend para que no se bloqueen las requests por CORS (puede ser múltiple separado por comas)
 - `SESSION_SECRET`= Secreto para las sesiones
+
 
 ## CÓMO LEVANTAR EL PROYECTO LOCALMENTE:
 
