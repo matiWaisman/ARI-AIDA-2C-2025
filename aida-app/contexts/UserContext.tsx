@@ -48,19 +48,19 @@ export function UserProvider({ children }: { children: ReactNode }) {
         err?.status ||
         (err instanceof Error && err.message.includes("401") ? 401 : null);
       if (statusCode === 401 && pathname !== "/register") {
-        if (!usuarioAnterior) {
+        if (!usuarioAnterior && !usuario) {
           router.push("/login");
           setUsuario(null);
         }
       } else {
-        if (!usuarioAnterior) {
+        if (!usuarioAnterior && !usuario) {
           setUsuario(null);
         }
       }
     } finally {
       setLoading(false);
     }
-  }, [router, pathname]);
+  }, [router, pathname, usuario]);
 
   useEffect(() => {
     checkSession();

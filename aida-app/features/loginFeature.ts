@@ -26,11 +26,10 @@ export function LoginFeature() {
 
       if (response.usuario) {
         setUsuario(response.usuario);
+        router.push("/");
+      } else {
+        setError("No se recibió información del usuario");
       }
-
-      await checkSession();
-
-      router.push("/");
     } catch (err) {
       if (err instanceof Error) setError(err.message);
       else setError("Error desconocido");
