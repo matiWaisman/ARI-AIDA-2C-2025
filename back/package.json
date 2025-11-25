@@ -5,8 +5,9 @@
   "type": "module",
   "main": "src/app.ts",
   "scripts": {
-    "start": "node --import tsx src/app.ts",
+    "start": "NODE_ENV=production node --import tsx src/app.ts",
     "dev": "nodemon --watch src --ext ts --exec \"node --import tsx src/app.ts\"",
+    "build": "echo \"Backend: no build step, TypeScript se ejecuta con tsx en tiempo de ejecución\"",
     "db:init": "psql -U aida_admin -d aida_db -f infrastructure/db/create-db.sql && psql -U aida_admin -d aida_db -f infrastructure/db/create-schema.sql",
     "db:shell": "psql -U aida_admin -d aida_db"
   },

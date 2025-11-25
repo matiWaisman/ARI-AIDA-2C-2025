@@ -1,6 +1,6 @@
 # AIDA App - Frontend
 
-Para ejecutar la aplicación primero instalá las dependencias con `npm i`, y después arrancá el frontend con `npm start`.
+Para ejecutar la aplicación primero instalá las dependencias con `npm i`. Después, según si estás desarrollando o corriendo en producción, podés usar distintos comandos.
 
 El front está separado en:
 
@@ -19,3 +19,18 @@ El frontend requiere las siguientes variables de entorno para funcionar correcta
 
 - `API_BASE`: URL del backend.  
   Si no se define esta variable, el frontend va a usar `http://localhost:3000/app` por defecto.
+
+## Cómo ejecutar solo el frontend:
+
+Si querés correr únicamente el frontend sin levantar todo el proyecto:
+
+- **Desarrollo:**
+  - Ubicate en la carpeta `/aida-app`.
+  - Instalá las dependencias con `npm install`.
+  - Levantá el servidor de desarrollo de Next con `npm run dev`.
+
+- **Producción:**
+  - Ubicate en la carpeta `/aida-app`.
+  - Instalá las dependencias con `npm install`.
+  - Generá el build optimizado con `npm run build`.
+  - Levantá el servidor de Next en modo producción con `npm start`.
