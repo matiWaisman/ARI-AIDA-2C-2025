@@ -1,22 +1,22 @@
-  "use client";
+"use client";
 
-  import { useState } from "react";
-  import { useRouter } from "next/navigation";
-  import { apiClient } from "@/apiClient/apiClient";
-  import { useUser } from "@/contexts/UserContext";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { apiClient } from "@/apiClient/apiClient";
+import { useUser } from "@/contexts/UserContext";
 
-  export function LoginFeature() {
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
-    const router = useRouter();
-    const { setUsuario } = useUser();
+export function LoginFeature() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const { setUsuario, checkSession } = useUser();
 
-    async function handleLogin(e: React.FormEvent) {
-      e.preventDefault();
-      setError("");
-      setLoading(true);
+  async function handleLogin(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
     try {
       const response = await apiClient("/login", {
@@ -24,20 +24,28 @@
         body: JSON.stringify({ username, password }),
       });
 
-       if (response.usuario) {
-          setUsuario(response.usuario);
-        }
-        
-        await new Promise(resolve => setTimeout(resolve, 100));
-        
-        router.push("/");
-      } catch (err) {
-        if (err instanceof Error) setError(err.message);
-        else setError("Error desconocido");
-      } finally {
-        setLoading(false);
+      if (response.usuario) {
+        setUsuario(response.usuario);
       }
-    }
 
-    return { username, password, setUsername, setPassword, handleLogin, error, loading };
+      await checkSession();
+
+      router.push("/");
+    } catch (err) {
+      if (err instanceof Error) setError(err.message);
+      else setError("Error desconocido");
+    } finally {
+      setLoading(false);
+    }
   }
+
+  return {
+    username,
+    password,
+    setUsername,
+    setPassword,
+    handleLogin,
+    error,
+    loading,
+  };
+}

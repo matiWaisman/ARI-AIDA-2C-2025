@@ -31,7 +31,6 @@ const allowedOrigins = [
   "http://127.0.0.1:8080",
 ];
 
-// Agregar URLs del frontend desde variables de entorno (puede ser una o varias separadas por coma)
 if (process.env.FRONTEND_URL) {
   const frontendUrls = process.env.FRONTEND_URL.split(",").map((url) =>
     url.trim()
@@ -39,7 +38,6 @@ if (process.env.FRONTEND_URL) {
   allowedOrigins.push(...frontendUrls);
 }
 
-// Normalizar URLs para comparación (remover trailing slash)
 const normalizeOrigin = (origin: string): string => {
   return origin.endsWith("/") ? origin.slice(0, -1) : origin;
 };
@@ -47,7 +45,6 @@ const normalizeOrigin = (origin: string): string => {
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Permitir requests sin origin (como Postman, curl, etc.) en desarrollo
       if (!origin) {
         return callback(null, true);
       }
@@ -55,23 +52,10 @@ app.use(
       const normalizedOrigin = normalizeOrigin(origin);
       const normalizedAllowed = allowedOrigins.map(normalizeOrigin);
 
-      // Log para debugging (siempre, para poder debuggear en producción)
-      console.log("CORS check - Origin recibido:", origin);
-      console.log("CORS check - Origins permitidos:", normalizedAllowed);
-
-      // Si el origin está en la lista permitida, permitirlo
       if (normalizedAllowed.includes(normalizedOrigin)) {
-        console.log("CORS permitido para:", origin);
         return callback(null, true);
       }
 
-      // Log del error para debugging
-      console.error(
-        `CORS bloqueado - Origin: ${origin} no está en la lista permitida:`,
-        normalizedAllowed
-      );
-
-      // Rechazar origins no permitidos
       callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
@@ -93,20 +77,22 @@ declare module "express-session" {
 }
 
 // Detectar si estamos en producción (Render siempre usa HTTPS)
-const isProduction =
-  process.env.NODE_ENV === "production" || process.env.RENDER;
+const isProduction = Boolean(
+  process.env.NODE_ENV === "production" || process.env.RENDER
+);
 
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "mi_secreto",
     resave: false,
     saveUninitialized: false,
+    name: "connect.sid",
     cookie: {
-      secure: isProduction, // HTTPS en producción (Render siempre usa HTTPS)
+      secure: isProduction,
       httpOnly: true,
-      sameSite: isProduction ? "none" : "lax", // "none" necesario para CORS cross-origin en producción
+      sameSite: isProduction ? "none" : "lax",
       maxAge: 1000 * 60 * 60 * 24,
-      domain: undefined, // No especificar domain para que funcione cross-origin
+      path: "/",
     },
   })
 );

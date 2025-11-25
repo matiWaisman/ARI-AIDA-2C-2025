@@ -44,11 +44,10 @@ export function UserProvider({ children }: { children: ReactNode }) {
         router.push("/login");
       }
     } catch (err: any) {
-      if (
-        err instanceof Error &&
-        err.message.includes("401") &&
-        pathname !== "/register"
-      ) {
+      const statusCode =
+        err?.status ||
+        (err instanceof Error && err.message.includes("401") ? 401 : null);
+      if (statusCode === 401 && pathname !== "/register") {
         if (!usuarioAnterior) {
           router.push("/login");
           setUsuario(null);
