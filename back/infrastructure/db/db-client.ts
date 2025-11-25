@@ -12,14 +12,10 @@ export function createDbClient() {
       throw new Error("CONNECTION_STRING_DB no está definida");
     }
 
-    let finalConnectionString = connectionString.trim();
-    if (!finalConnectionString.includes("sslmode=")) {
-      const separator = finalConnectionString.includes("?") ? "&" : "?";
-      finalConnectionString = `${finalConnectionString}${separator}sslmode=require`;
-    }
-
+    // Para Supabase, configuramos SSL directamente en el objeto Client
+    // No agregamos sslmode a la connection string para evitar conflictos
     return new Client({
-      connectionString: finalConnectionString,
+      connectionString: connectionString.trim(),
       ssl: {
         rejectUnauthorized: false,
       },
