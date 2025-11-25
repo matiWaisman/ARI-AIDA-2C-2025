@@ -1,5 +1,5 @@
 export const preguntasCompañeros: string[] = [
-  "Huele bien.",
+  "No interrumpe en clase.",
   "Sus acotaciones a la clase aportan.",
   "Hace buenos chistes.",
   "Tiene aura.",
