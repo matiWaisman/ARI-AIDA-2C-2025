@@ -67,7 +67,7 @@ Los principales lugares del código donde se puede ver la implementación de las
 
 - Frontend:
   - Páginas y flujo principal en `/aida-app/app/encuestas`.
-  - Componentes reutilizables en `aida-app/components/encuestas`.
+  - Componentes en `aida-app/components/encuestas`.
   - Feature en `aida-app/features/completarEncuestasFeature.ts`.
 - Backend:
   - Tablas relacionadas con encuestas definidas en `back/infrastructure/db/create-schema.sql`.
