@@ -1,4 +1,8 @@
-import express, { type Request, type Response, type NextFunction } from "express";
+import express, {
+  type Request,
+  type Response,
+  type NextFunction,
+} from "express";
 import cors from "cors";
 import session from "express-session";
 import dotenv from "dotenv";
@@ -12,7 +16,8 @@ import { encuestasRouter } from "../infrastructure/http/routes/routes-encuestas.
 dotenv.config({ path: "./local-sets.env" });
 
 // Variable de entorno para controlar si el login es obligatorio
-const REQUIRE_LOGIN = process.env.REQUIRE_LOGIN === "true" || process.env.REQUIRE_LOGIN === "1";
+const REQUIRE_LOGIN =
+  process.env.REQUIRE_LOGIN === "true" || process.env.REQUIRE_LOGIN === "1";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -26,15 +31,32 @@ const allowedOrigins = [
   "http://127.0.0.1:8080",
 ];
 
+// Agregar URLs del frontend desde variables de entorno (puede ser una o varias separadas por coma)
 if (process.env.FRONTEND_URL) {
-  allowedOrigins.push(process.env.FRONTEND_URL);
+  const frontendUrls = process.env.FRONTEND_URL.split(",").map((url) =>
+    url.trim()
+  );
+  allowedOrigins.push(...frontendUrls);
 }
 
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      // Permitir requests sin origin (como Postman, curl, etc.) en desarrollo
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      // Si el origin está en la lista permitida, permitirlo
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      // Rechazar origins no permitidos
+      callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
@@ -72,12 +94,11 @@ function requireLogin(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
-app.use("/app", userRouter); 
-app.use("/app", requireLogin, materiaRouter)
+app.use("/app", userRouter);
+app.use("/app", requireLogin, materiaRouter);
 app.use("/app", requireLogin, alumnoRouter);
 app.use("/app", requireLogin, cursaRouter);
 app.use("/app", requireLogin, encuestasRouter);
-  
 
 app.listen(port, () => {
   console.log(`Backend se esta corriendo en http://localhost:${port}/app/`);

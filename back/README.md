@@ -1,4 +1,5 @@
 ## Arquitectura de AIDA
+
 En este proyecto intentamos seguir una arquitectura en capas, la idea detrás de esto es separar el código en módulos de responsabilidades, facilitando el mantenimiento y la escalabilidad.
 En este caso en particular lo separamos en 3 capas:
 
@@ -40,6 +41,8 @@ El backend requiere las siguientes variables de entorno para funcionar correctam
 - `PGPORT`= Puerto de PostgreSQL (ej: 5432)
 - `PGDATABASE`= Nombre de la base de datos a utilizar
 - `REQUIRE_LOGIN`= Si es 'true', obliga a iniciar sesión antes de usar la app
+- `FRONTEND_URL`= URL del frontend para  que no se bloqueen las requests por CORS 
+- `SESSION_SECRET`= Secreto para las sesiones 
 
 ## CÓMO LEVANTAR EL PROYECTO LOCALMENTE:
 
@@ -54,11 +57,12 @@ Para la siguiente secuencia de pasos se asume que ya se forkéo el proyecto y se
 - Correr desde la terminal el siguiente comando: `npm run start`.
   Si todo se instaló correctamente, deberías poder acceder a la página localmente desde `localhost:8080` y al backend desde `localhost:3000`.
 
-## Cómo ejecutar solo el backend 
+## Cómo ejecutar solo el backend
 
 Si querés correr únicamente el backend sin levantar todo el proyecto:
 
 - Desarrollo:
+
   - Ubicate en la carpeta `/back`.
   - Instalá las dependencias con `npm install`
   - Levantá el servidor en modo desarrollo con `npm run dev`

@@ -17,14 +17,15 @@ El front está separado en:
 
 El frontend requiere las siguientes variables de entorno para funcionar correctamente. Creá un archivo `local-sets.env` en la raíz del proyecto `aida-app/` con las variables:
 
-- `API_BASE`: URL del backend.  
-  Si no se define esta variable, el frontend va a usar `http://localhost:3000/app` por defecto.
+- `NEXT_PUBLIC_API_BASE`: URL del backend.  
+  Esta variable es obligatorio definirla si no no va a levantar el front.
 
 ## Cómo ejecutar solo el frontend:
 
 Si querés correr únicamente el frontend sin levantar todo el proyecto:
 
 - **Desarrollo:**
+
   - Ubicate en la carpeta `/aida-app`.
   - Instalá las dependencias con `npm install`.
   - Levantá el servidor de desarrollo de Next con `npm run dev`.
