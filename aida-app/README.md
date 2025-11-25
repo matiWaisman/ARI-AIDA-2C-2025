@@ -1,8 +1,21 @@
 # AIDA App - Frontend
 
+Para ejecutar la aplicación primero instalá las dependencias con `npm i`, y después arrancá el frontend con `npm start`.
+
+El front está separado en:
+
+- `/public` tiene cosas del setup de Next, como el gran icono de la página.
+- `/types` tiene definidos algunos tipos que usamos dentro del front.
+- `/.next` tiene archivos y configuraciones internas de Next que no tocamos.
+- `/apiClient` tiene el archivo `apiClient.ts`. Nos sirve para configurar una única vez cómo le pegamos al backend, como la sesión, y que en el resto de los lugares solo haya que pasarle el path y las opciones específicas de cada request.
+- En `/app/pagina` está, para cada ruta, su página correspondiente. Un beneficio de usar Next es que no nos tenemos que preocupar por setear las rutas: Next se encarga solo a partir de las carpetas y archivos que creemos. En las páginas que se separan en `page.tsx` y `XClient.tsx`, el `page.tsx` hace de “entrypoint” y se ejecuta del lado del servidor, y el `XClient.tsx` es el componente que corre en el cliente y puede usar cosas como `useState`, `useEffect`, etc.
+- `components` tiene algunos componentes que reutilizamos en el front. Los que están en la carpeta root se usan en varios lados, y los que están en subcarpetas suelen usarse solo en las páginas relacionadas con esa carpeta.
+- En `/contexts` está el único `useContext` que definimos, que tiene los datos del usuario que está logueado. Sirve para poder obtener datos como su nombre o sus roles en cualquier lugar de la página.
+- En `/features` hay pedazos de funcionalidad concreta que se usan en algunos componentes o páginas, como por ejemplo la lógica del login o de completar las encuestas.
+
 ## Variables de Entorno
 
-El frontend requiere las siguientes variables de entorno para funcionar correctamente. Crea un archivo `local-sets.env` en la raíz del proyecto `aida-app/` con las variables:
+El frontend requiere las siguientes variables de entorno para funcionar correctamente. Creá un archivo `local-sets.env` en la raíz del proyecto `aida-app/` con las variables:
 
-`API_BASE`: URL del backend.
-Si no se define esta variable, el frontend usará `http://localhost:3000/app` por defecto.
+- `API_BASE`: URL del backend.  
+  Si no se define esta variable, el frontend va a usar `http://localhost:3000/app` por defecto.

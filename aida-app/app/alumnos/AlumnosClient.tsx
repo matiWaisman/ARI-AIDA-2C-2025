@@ -5,16 +5,17 @@ import Tabla from "@/components/alumnos/tabla";
 import { apiClient } from "@/apiClient/apiClient";
 import LoadingScreen from "@/components/loadingScreen";
 import ErrorScreen from "@/components/errorScreen";
+import { Alumno } from "@/types/alumno";
 
 export default function AlumnosClient({
   alumnos,
   error,
 }: {
-  alumnos: any[];
+  alumnos: Alumno[];
   error: string | null;
 }) {
   const [loading, setLoading] = useState(true);
-  const [lista, setLista] = useState(alumnos);
+  const [lista, setLista] = useState<Alumno[]>(alumnos);
   useEffect(() => {
     setLista(alumnos);
   }, [alumnos]);

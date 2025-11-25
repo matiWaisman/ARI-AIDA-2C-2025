@@ -13,16 +13,13 @@ export default function AlumnosDeMateriaClient({
   cuatrimestre,
   error,
 }: {
-  alumnos: { lu: string; nombres: string; apellido: string; nota: number }[];
+  alumnos: (Alumno & { nota: number })[];
   codigoMateria: string;
   cuatrimestre: string;
   error: string | null;
 }) {
   const [loading, setLoading] = useState(true);
-  const [lista, setLista] =
-    useState<{ lu: string; nombres: string; apellido: string; nota: number }[]>(
-      alumnos
-    );
+  const [lista, setLista] = useState<(Alumno & { nota: number })[]>(alumnos);
   const [actionError, setActionError] = useState<string | null>(null);
 
   useEffect(() => {

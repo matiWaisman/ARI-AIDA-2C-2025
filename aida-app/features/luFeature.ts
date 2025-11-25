@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { apiClient } from "@/apiClient/apiClient";
+import { Alumno } from "@/types/alumno";
 
 export function useLuFeature() {
   const [lu, setLu] = useState("");
-  const [alumno, setAlumno] = useState<any | null>(null);
+  const [alumno, setAlumno] = useState<Alumno | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -16,7 +17,7 @@ export function useLuFeature() {
     setAlumno(null);
 
     try {
-      const res = await apiClient(`/lu?LU=${encodeURIComponent(lu)}`, {
+      const res: Alumno = await apiClient(`/lu?LU=${encodeURIComponent(lu)}`, {
         method: "GET",
       });
       setAlumno(res);

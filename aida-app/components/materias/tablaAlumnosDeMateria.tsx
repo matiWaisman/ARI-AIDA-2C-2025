@@ -1,9 +1,10 @@
 "use client";
 
 import FilaAlumnoDeMateria from "./filaAlumnoDeMateria";
+import { Alumno } from "@/types/alumno";
 
 type TablaAlumnosDeMateriaProps = {
-  alumnos: { lu: string; nombres: string; apellido: string; nota: number }[];
+  alumnos: (Alumno & { nota: number })[];
   codigoMateria: string;
   cuatrimestre: string;
   onPonerNota: (

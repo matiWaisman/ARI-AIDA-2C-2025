@@ -16,6 +16,7 @@ import {
   useEncuestasPersonas,
   useEncuestaMateria,
 } from "@/features/completarEncuestasFeature";
+import { Alumno } from "@/types/alumno";
 
 type Props = {
   codigoMateria: string;
@@ -33,7 +34,7 @@ export default function CompletarEncuestaCursadaClient({
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [compañeros, setCompañeros] = useState<any[]>([]);
+  const [compañeros, setCompañeros] = useState<Alumno[]>([]);
   const [profesores, setProfesores] = useState<any[]>([]);
   const [enviando, setEnviando] = useState(false);
 
@@ -63,7 +64,7 @@ export default function CompletarEncuestaCursadaClient({
         return;
       }
       try {
-        const compañerosResponse = await apiClient("/materias/alumnos", {
+        const compañerosResponse: Alumno[] = await apiClient("/materias/alumnos", {
           method: "POST",
           body: JSON.stringify({
             codigoMateria,

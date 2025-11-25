@@ -3,10 +3,11 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiClient } from "@/apiClient/apiClient";
+import { Usuario } from "@/types/usuario";
 
 export function menuFeature() {
   const [loading, setLoading] = useState(true);
-  const [usuario, setUsuario] = useState<any>(null);
+  const [usuario, setUsuario] = useState<Usuario | null>(null);
   const router = useRouter();
 
   useEffect(() => {

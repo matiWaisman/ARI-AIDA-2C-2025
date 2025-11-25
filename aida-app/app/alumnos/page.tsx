@@ -5,10 +5,11 @@ import { apiClient } from "@/apiClient/apiClient";
 import AlumnosClient from "./AlumnosClient";
 import { useUser } from "@/contexts/UserContext";
 import ErrorScreen from "@/components/errorScreen";
+import { Alumno } from "@/types/alumno";
 
 export default function AlumnosPage() {
   const { usuario, loading } = useUser();
-  const [alumnos, setAlumnos] = useState([]);
+  const [alumnos, setAlumnos] = useState<Alumno[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {

@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { apiClient } from "@/apiClient/apiClient";
+import { Alumno } from "@/types/alumno";
 
 export type RespuestaEncuesta = {
   respuestas: number[];
@@ -30,7 +31,9 @@ export function useEncuestasPersonas({
   endpoint,
   tipoEncuesta,
 }: UseEncuestasPersonasOptions) {
-  const [respuestas, setRespuestas] = useState<Map<string, RespuestaEncuestaConLu>>(new Map());
+  const [respuestas, setRespuestas] = useState<
+    Map<string, RespuestaEncuestaConLu>
+  >(new Map());
 
   const actualizarRespuesta = useCallback(
     (lu: string, respuestasArray: number[], comentario: string) => {
@@ -93,12 +96,18 @@ export function useEncuestasPersonas({
   };
 }
 
-export function useEncuestaMateria({ numPreguntas, endpoint }: UseEncuestaMateriaOptions) {
+export function useEncuestaMateria({
+  numPreguntas,
+  endpoint,
+}: UseEncuestaMateriaOptions) {
   const [respuesta, setRespuesta] = useState<RespuestaEncuesta | null>(null);
 
-  const actualizarRespuesta = useCallback((respuestasArray: number[], comentario: string) => {
-    setRespuesta({ respuestas: respuestasArray, comentario });
-  }, []);
+  const actualizarRespuesta = useCallback(
+    (respuestasArray: number[], comentario: string) => {
+      setRespuesta({ respuestas: respuestasArray, comentario });
+    },
+    []
+  );
 
   const generarPuntajeAleatorio = () => Math.floor(Math.random() * 5) + 1;
 
@@ -138,4 +147,3 @@ export function useEncuestaMateria({ numPreguntas, endpoint }: UseEncuestaMateri
     enviarEncuesta,
   };
 }
-

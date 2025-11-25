@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { Alumno } from "@/types/alumno";
 
 type Props = {
-  alumno: { lu: string; nombres: string; apellido: string; nota: number };
+  alumno: Alumno & { nota: number };
   codigoMateria: string;
   cuatrimestre: string;
   onPonerNota: (

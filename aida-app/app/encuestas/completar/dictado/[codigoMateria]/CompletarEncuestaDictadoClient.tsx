@@ -9,6 +9,7 @@ import { useUser } from "@/contexts/UserContext";
 import EncuestaDesplegable from "@/components/encuestas/completarEncuestas/encuestaDesplegable";
 import { preguntasCompañeros } from "@/app/encuestas/preguntas";
 import { useEncuestasPersonas } from "@/features/completarEncuestasFeature";
+import { Alumno } from "@/types/alumno";
 
 type Props = {
   codigoMateria: string;
@@ -26,7 +27,7 @@ export default function CompletarEncuestaDictadoClient({
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [alumnos, setAlumnos] = useState<any[]>([]);
+  const [alumnos, setAlumnos] = useState<Alumno[]>([]);
   const [enviando, setEnviando] = useState(false);
 
   const encuestasAlumnos = useEncuestasPersonas({
@@ -43,7 +44,7 @@ export default function CompletarEncuestaDictadoClient({
         return;
       }
       try {
-        const alumnosResponse = await apiClient("/materias/alumnos", {
+        const alumnosResponse: Alumno[] = await apiClient("/materias/alumnos", {
           method: "POST",
           body: JSON.stringify({
             codigoMateria,
