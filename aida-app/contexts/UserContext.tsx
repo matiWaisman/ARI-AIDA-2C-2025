@@ -6,6 +6,7 @@ import {
   useEffect,
   useState,
   useCallback,
+  useRef,
   ReactNode,
 } from "react";
 import { useRouter, usePathname } from "next/navigation";
@@ -26,8 +27,15 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
+  const usuarioRef = useRef<Usuario | null>(null);
+
+  useEffect(() => {
+    usuarioRef.current = usuario;
+  }, [usuario]);
 
   const checkSession = useCallback(async () => {
+    const usuarioAnterior = usuarioRef.current;
+
     try {
       const data = await apiClient("/session");
       setUsuario(data.usuario || null);
@@ -41,12 +49,14 @@ export function UserProvider({ children }: { children: ReactNode }) {
         err.message.includes("401") &&
         pathname !== "/register"
       ) {
-        setUsuario((currentUsuario) => {
-          if (!currentUsuario) {
-            router.push("/login");
-          }
-          return currentUsuario;
-        });
+        if (!usuarioAnterior) {
+          router.push("/login");
+          setUsuario(null);
+        }
+      } else {
+        if (!usuarioAnterior) {
+          setUsuario(null);
+        }
       }
     } finally {
       setLoading(false);
