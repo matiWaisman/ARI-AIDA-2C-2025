@@ -1,8 +1,7 @@
 import { Client } from "pg";
 import type { Alumno, AlumnosDict } from "../../domain/entity/alumno.ts";
 import { insertAlumnos } from "./database-operations.ts";
-import { readCsv } from '../files/read-csv.ts';
-
+import { readCsv } from "../files/read-csv.ts";
 
 export class AlumnoRepository {
   constructor(private client: Client) {}
@@ -34,8 +33,7 @@ export class AlumnoRepository {
   }
 
   async getAlumnoConLU(lu: string): Promise<Alumno | undefined> {
-    const query = 
-    `SELECT a.lu, eu.nombres, eu.apellido
+    const query = `SELECT a.lu, eu.nombres, eu.apellido
       FROM aida.alumnos a
       INNER JOIN aida.entidadUniversitaria eu ON a.lu = eu.lu
       WHERE a.titulo IS NOT NULL AND a.lu = $1`;
@@ -51,19 +49,34 @@ export class AlumnoRepository {
     return alumnos[0];
   }
 
-  async crearEntidadUniversitaria(lu:string, apellido:string, nombres:string) {
-    await this.client.query(`
+  async crearEntidadUniversitaria(
+    lu: string,
+    apellido: string,
+    nombres: string
+  ) {
+    await this.client.query(
+      `
       INSERT INTO aida.entidadUniversitaria (lu, apellido, nombres)
       VALUES ($1, $2, $3);
-    `, [lu, apellido, nombres]);
+    `,
+      [lu, apellido, nombres]
+    );
   }
 
-  async crearAlumnoCompleto(lu:string, titulo:string, titulo_en_tramite:string, egreso:string) {
-    const result = await this.client.query(`
+  async crearAlumnoCompleto(
+    lu: string,
+    titulo: string,
+    titulo_en_tramite: string,
+    egreso: string
+  ) {
+    const result = await this.client.query(
+      `
       INSERT INTO aida.alumnos (lu, titulo, titulo_en_tramite, egreso)
       VALUES ($1, $2, $3, $4)
       RETURNING *;
-    `, [lu, titulo, titulo_en_tramite, egreso]);
+    `,
+      [lu, titulo, titulo_en_tramite, egreso]
+    );
 
     return result.rows[0];
   }
@@ -81,14 +94,18 @@ export class AlumnoRepository {
         RETURNING *;
       `;
       const result = await this.client.query<Alumno>(queryInsertarAlumnoNuevo, [
-        lu
+        lu,
       ]);
       const res = result.rows[0];
       return res;
     }
-  }    
+  }
 
-  async updateAlumno(LU: string, name: string, lastName: string): Promise<Alumno | undefined> {
+  async updateAlumno(
+    LU: string,
+    name: string,
+    lastName: string
+  ): Promise<Alumno | undefined> {
     const alumno = await this.existeAlumno("AND lu = $1", [LU]);
     if (!alumno) {
       return undefined;
@@ -99,33 +116,42 @@ export class AlumnoRepository {
         WHERE lu = $1
         RETURNING *;
     `;
-    const result = await this.client.query<Alumno>(queryUpdateAlumnoExistente, [LU, lastName, name]);
+    const result = await this.client.query<Alumno>(queryUpdateAlumnoExistente, [
+      LU,
+      lastName,
+      name,
+    ]);
     const res = result.rows[0];
     return res;
   }
 
   async deleteAlumno(LU: string): Promise<boolean> {
-      const alumno = await this.existeAlumno("AND lu = $1", [LU]);
-      if (!alumno) {
-        return false;
-      }
-      const queryDeleteAlumno: string = `
+    const alumno = await this.existeAlumno("AND lu = $1", [LU]);
+    if (!alumno) {
+      return false;
+    }
+    const queryDeleteAlumno: string = `
         DELETE FROM aida.alumnos
           WHERE lu = $1;
       `;
-      const result =  await this.client.query(queryDeleteAlumno, [LU]);
-      return result? true: false;
-    }
+    const result = await this.client.query(queryDeleteAlumno, [LU]);
+    return result ? true : false;
+  }
 
-  async cargarAlumnosFromCSV( FilePath: string){
-    const client = new Client({ connectionString: process.env.DATABASE_URL });
+  async cargarAlumnosFromCSV(FilePath: string) {
+    const client = new Client({
+      connectionString: process.env.DATABASE_URL,
+      ssl: {
+        rejectUnauthorized: false,
+      },
+    });
     await client.connect();
     await insertAlumnos(client, FilePath);
     await client.end();
-  };
+  }
 
-  async alumnoCompletoCarrera(LU:string){
-   const query1 = `
+  async alumnoCompletoCarrera(LU: string) {
+    const query1 = `
      SELECT NOT EXISTS (
          SELECT 1
          FROM aida.materias m
@@ -136,27 +162,27 @@ export class AlumnoRepository {
                AND c.codigoMateria = m.codigoMateria
                AND c.nota > 4
          )
-     ) AS completo;`
-     ;
-   const result = await this.client.query(query1, [LU]);
-   if (!result.rows[0]) {
-     throw new Error("La consulta no devolvió ninguna fila");
-   }
-   if(result.rows[0].completo){
-     const query2 = `
+     ) AS completo;`;
+    const result = await this.client.query(query1, [LU]);
+    if (!result.rows[0]) {
+      throw new Error("La consulta no devolvió ninguna fila");
+    }
+    if (result.rows[0].completo) {
+      const query2 = `
        UPDATE aida.alumnos
        SET titulo_en_tramite = CURRENT_DATE
        WHERE lu = $1;
-       `
-     await this.client.query(query2, [LU]);
-   }
-  
-   return result.rows[0].completo;
-}
+       `;
+      await this.client.query(query2, [LU]);
+    }
 
+    return result.rows[0].completo;
+  }
 
   async getAllAsDict(): Promise<AlumnosDict> {
-    const result = await this.client.query<Alumno>("SELECT * FROM aida.alumnos");
+    const result = await this.client.query<Alumno>(
+      "SELECT * FROM aida.alumnos"
+    );
     const dict: AlumnosDict = {};
     for (const row of result.rows) {
       dict[row.lu] = row;
@@ -173,7 +199,10 @@ export class AlumnoRepository {
     const listaDeLus = alumnos.map((a) => a.lu);
 
     const queryFiltrarExistentes = `SELECT lu FROM aida.alumnos WHERE lu = ANY($1)`;
-    const existentes = await this.client.query<{ lu: string }>(queryFiltrarExistentes, [listaDeLus]);
+    const existentes = await this.client.query<{ lu: string }>(
+      queryFiltrarExistentes,
+      [listaDeLus]
+    );
     const lusExistentes = existentes.rows.map((a) => a.lu);
 
     const queryInsert = `
@@ -195,5 +224,4 @@ export class AlumnoRepository {
       }
     }
   }
-
 }

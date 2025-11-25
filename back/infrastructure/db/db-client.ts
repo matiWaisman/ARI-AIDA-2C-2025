@@ -20,6 +20,9 @@ export function createDbClient() {
 
     return new Client({
       connectionString: finalConnectionString,
+      ssl: {
+        rejectUnauthorized: false,
+      },
     });
   }
 
