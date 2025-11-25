@@ -27,9 +27,16 @@ export class UserController {
       return res.status(500).json({ message: "No se pudo obtener el LU del usuario" });
     }
     req.session.usuario = { id: user.id, username: user.username, esAlumno: esAlumno, esProfesor: esProfesor, lu: lu};
-    req.session.save(() => {
-      res.json({ message: "Login exitoso", usuario: req.session.usuario });
+    await new Promise<void>((resolve, reject) => {
+      req.session.save((err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
     });
+    res.json({ message: "Login exitoso", usuario: req.session.usuario });
     await client.end();
   }
 

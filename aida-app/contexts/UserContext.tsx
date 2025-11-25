@@ -41,7 +41,12 @@ export function UserProvider({ children }: { children: ReactNode }) {
         err.message.includes("401") &&
         pathname !== "/register"
       ) {
-        router.push("/login");
+        setUsuario((currentUsuario) => {
+          if (!currentUsuario) {
+            router.push("/login");
+          }
+          return currentUsuario;
+        });
       }
     } finally {
       setLoading(false);

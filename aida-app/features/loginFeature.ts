@@ -11,7 +11,7 @@
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const router = useRouter();
-    const { checkSession } = useUser();
+    const { setUsuario } = useUser();
 
     async function handleLogin(e: React.FormEvent) {
       e.preventDefault();
@@ -19,12 +19,17 @@
       setLoading(true);
 
     try {
-      await apiClient("/login", {
+      const response = await apiClient("/login", {
         method: "POST",
         body: JSON.stringify({ username, password }),
       });
 
-        await checkSession();
+       if (response.usuario) {
+          setUsuario(response.usuario);
+        }
+        
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
         router.push("/");
       } catch (err) {
         if (err instanceof Error) setError(err.message);
