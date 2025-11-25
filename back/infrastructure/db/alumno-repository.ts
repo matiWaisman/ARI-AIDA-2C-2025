@@ -139,12 +139,37 @@ export class AlumnoRepository {
   }
 
   async cargarAlumnosFromCSV(FilePath: string) {
-    const client = new Client({
-      connectionString: process.env.DATABASE_URL,
-      ssl: {
-        rejectUnauthorized: false,
-      },
-    });
+    const enProduccion = process.env.PRODUCTION_DB === "true";
+    let client: Client;
+
+    if (enProduccion) {
+      const connectionString = process.env.CONNECTION_STRING_DB;
+      if (!connectionString) {
+        throw new Error("CONNECTION_STRING_DB no está definida");
+      }
+
+      let finalConnectionString = connectionString.trim();
+      if (!finalConnectionString.includes("sslmode=")) {
+        const separator = finalConnectionString.includes("?") ? "&" : "?";
+        finalConnectionString = `${finalConnectionString}${separator}sslmode=require`;
+      }
+
+      client = new Client({
+        connectionString: finalConnectionString,
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      });
+    } else {
+      client = new Client({
+        user: process.env.PGUSER,
+        password: process.env.PGPASSWORD,
+        host: process.env.PGHOST,
+        port: Number(process.env.PGPORT) || 5432,
+        database: process.env.PGDATABASE,
+      });
+    }
+
     await client.connect();
     await insertAlumnos(client, FilePath);
     await client.end();

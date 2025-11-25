@@ -7,9 +7,9 @@ export function createDbClient() {
   const enProduccion = process.env.PRODUCTION_DB === "true";
 
   if (enProduccion) {
-    const connectionString = process.env.DATABASE_URL;
+    const connectionString = process.env.CONNECTION_STRING_DB;
     if (!connectionString) {
-      throw new Error("DATABASE_URL no está definida");
+      throw new Error("CONNECTION_STRING_DB no está definida");
     }
 
     let finalConnectionString = connectionString.trim();

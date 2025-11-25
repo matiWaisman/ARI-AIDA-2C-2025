@@ -47,14 +47,13 @@ El backend requiere las siguientes variables de entorno para funcionar correctam
 **Para producción (Supabase):**
 
 - `PRODUCTION_DB`= 'true' para usar Supabase
-- `DATABASE_URL`= Connection string completo de Supabase.
+- `CONNECTION_STRING_DB`= Connection string completo de Supabase.
 
 **Otras variables:**
 
 - `REQUIRE_LOGIN`= Si es 'true', obliga a iniciar sesión antes de usar la app
 - `FRONTEND_URL`= URL del frontend para que no se bloqueen las requests por CORS (puede ser múltiple separado por comas)
 - `SESSION_SECRET`= Secreto para las sesiones
-
 
 ## CÓMO LEVANTAR EL PROYECTO LOCALMENTE:
 
