@@ -7,6 +7,12 @@
     "start:back": "cd back && npm start",
     "start:front": "cd aida-app && npm start",
     "install:all": "npm install && cd back && npm install && cd ../aida-app && npm install",
+    "build": "npm run build:back && npm run build:front",
+    "build:back": "cd back && npm run build",
+    "build:front": "cd aida-app && npm run build",
+    "test": "npm run test:back && npm run test:front",
+    "test:back": "cd back && npm test",
+    "test:front": "cd aida-app && npm test",
     "dev": "concurrently \"npm run dev:back\" \"npm run dev:front\"",
     "dev:back": "cd back && npm run dev",
     "dev:front": "cd aida-app && npm run dev"

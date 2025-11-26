@@ -1,0 +1,24 @@
+name: MiPrimerWorkflow
+
+on:
+  push:
+    branches:
+      - "*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Bajar el repositorio
+        run: |
+          git clone https://github.com/matiWaisman/ARI-AIDA-2C-2025.git
+          cd ARI-AIDA-2C-2025
+
+      - name: Compilar aplicacion
+        run: |
+          npm run install:all
+          npm run build
+
+      - name: Correr los tests
+        run: |
+          npm run test
