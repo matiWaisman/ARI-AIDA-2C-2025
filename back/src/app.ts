@@ -56,16 +56,16 @@ app.use(
     saveUninitialized: false,
     name: "connect.sid",
     cookie: {
-      secure: isProduction,
+      secure: true,
       httpOnly: true,
-      sameSite: isProduction ? "none" : "lax",
+      sameSite: "none",
       maxAge: 1000 * 60 * 60 * 24,
       path: "/",
     },
   })
 );
 
-// Ajusta cookies según el origen: localhost (HTTP) usa secure:false, HTTPS usa secure:true
+// Ajusta cookies según el origen: cross-origin requiere sameSite:"none"
 app.use((req, res, next) => {
   const origin = req.headers.origin;
   const isLocalhost = Boolean(
@@ -75,20 +75,35 @@ app.use((req, res, next) => {
   );
   const isHttps = Boolean(origin && origin.startsWith("https://"));
 
-  if ((isLocalhost || isHttps) && req.session && req.sessionID) {
+  if (isLocalhost || isHttps) {
     const originalJson = res.json;
     const originalEnd = res.end;
     const originalSend = res.send;
 
     const adjustCookie = () => {
-      res.clearCookie("connect.sid", { path: "/" });
-      res.cookie("connect.sid", req.sessionID, {
-        secure: isHttps,
-        httpOnly: true,
-        sameSite: isHttps ? "none" : "lax",
-        maxAge: 1000 * 60 * 60 * 24,
-        path: "/",
-      });
+      if (req.session && req.sessionID) {
+        res.clearCookie("connect.sid", { path: "/" });
+        if (isLocalhost) {
+          // Localhost HTTP a Render HTTPS: sameSite:"none" con secure:false
+          // Nota: navegadores modernos pueden rechazar esto, pero es necesario para cross-origin
+          res.cookie("connect.sid", req.sessionID, {
+            secure: false,
+            httpOnly: true,
+            sameSite: "none",
+            maxAge: 1000 * 60 * 60 * 24,
+            path: "/",
+          });
+        } else if (isHttps) {
+          // HTTPS a HTTPS cross-origin: secure:true y sameSite:"none"
+          res.cookie("connect.sid", req.sessionID, {
+            secure: true,
+            httpOnly: true,
+            sameSite: "none",
+            maxAge: 1000 * 60 * 60 * 24,
+            path: "/",
+          });
+        }
+      }
     };
 
     res.json = function (body?: any) {
