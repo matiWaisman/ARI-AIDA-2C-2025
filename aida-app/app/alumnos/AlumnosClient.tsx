@@ -73,7 +73,7 @@ export default function AlumnosClient({
     apellido: string
   ) => {
     try {
-      await apiFetch(`/alumnos/update`, {
+      await apiClient(`/alumnos/update`, {
         method: "POST",
         body: JSON.stringify({ lu, nombres, apellido }),
       });

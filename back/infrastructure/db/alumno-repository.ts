@@ -49,13 +49,18 @@ export class AlumnoRepository {
     return result.rows[0];
   }
 
-  async getAlumnoConFechaDeseada(fecha: string): Promise<Alumno | undefined> {
-    const alumnos = await this.getAlumnos(
-      "AND titulo_en_tramite IS NOT NULL AND titulo_en_tramite = $1 ORDER BY titulo_en_tramite LIMIT 1",
-      [fecha]
-    );
-    return alumnos[0];
-  }
+async getAlumnoConFechaDeseada(fecha: string): Promise<Alumno | undefined> {
+  const sql = `
+    SELECT *
+    FROM aida.alumnos a
+    INNER JOIN aida.entidadUniversitaria eu ON a.lu = eu.lu
+    WHERE a.titulo_en_tramite::date = $1::date
+    LIMIT 1
+  `;
+  const result = await this.client.query(sql, [fecha]);
+  return result.rows[0];
+}
+
 
   async crearEntidadUniversitaria(
     lu: string,
