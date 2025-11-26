@@ -10,9 +10,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Bajar el repositorio
-        run: |
-          git clone https://github.com/matiWaisman/ARI-AIDA-2C-2025.git
-          cd ARI-AIDA-2C-2025
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
 
       - name: Compilar aplicacion
         run: |

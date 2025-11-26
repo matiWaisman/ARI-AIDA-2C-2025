@@ -1,3 +1,4 @@
 node_modules/
 local-sets.env
 out/
+test-workflow.sh
