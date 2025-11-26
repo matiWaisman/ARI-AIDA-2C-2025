@@ -82,10 +82,30 @@ app.use((req, res, next) => {
 
     const adjustCookie = () => {
       if (req.session && req.sessionID) {
+        // Limpiar todas las posibles variaciones de la cookie
+        res.clearCookie("connect.sid", {
+          path: "/",
+          secure: true,
+          sameSite: "none",
+        });
+        res.clearCookie("connect.sid", {
+          path: "/",
+          secure: false,
+          sameSite: "none",
+        });
+        res.clearCookie("connect.sid", {
+          path: "/",
+          secure: true,
+          sameSite: "lax",
+        });
+        res.clearCookie("connect.sid", {
+          path: "/",
+          secure: false,
+          sameSite: "lax",
+        });
         res.clearCookie("connect.sid", { path: "/" });
+
         if (isLocalhost) {
-          // Localhost HTTP a Render HTTPS: sameSite:"none" con secure:false
-          // Nota: navegadores modernos pueden rechazar esto, pero es necesario para cross-origin
           res.cookie("connect.sid", req.sessionID, {
             secure: false,
             httpOnly: true,
@@ -94,7 +114,6 @@ app.use((req, res, next) => {
             path: "/",
           });
         } else if (isHttps) {
-          // HTTPS a HTTPS cross-origin: secure:true y sameSite:"none"
           res.cookie("connect.sid", req.sessionID, {
             secure: true,
             httpOnly: true,
