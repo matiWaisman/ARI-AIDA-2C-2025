@@ -1,37 +1,52 @@
-import express, {
-  type Request,
-  type Response,
-  type NextFunction,
-} from "express";
+import express from "express";
+import type { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import session from "express-session";
 import dotenv from "dotenv";
-import { alumnoRouter } from "../infrastructure/http/routes/routes-alumno.ts";
-import { UserController } from "../application/controllers/controller-user.ts";
-import { userRouter } from "../infrastructure/http/routes/routes-user.ts";
-import { cursaRouter } from "../infrastructure/http/routes/routes-cursa.ts";
-import { materiaRouter } from "../infrastructure/http/routes/routes-materia.ts";
-import { encuestasRouter } from "../infrastructure/http/routes/routes-encuestas.ts";
+
+import { alumnoRouter } from "../infrastructure/http/routes/routes-alumno.js";
+import { userRouter } from "../infrastructure/http/routes/routes-user.js";
+import { cursaRouter } from "../infrastructure/http/routes/routes-cursa.js";
+import { materiaRouter } from "../infrastructure/http/routes/routes-materia.js";
+import { encuestasRouter } from "../infrastructure/http/routes/routes-encuestas.js";
 
 dotenv.config({ path: "./local-sets.env" });
-
-const REQUIRE_LOGIN =
-  process.env.REQUIRE_LOGIN === "true" || process.env.REQUIRE_LOGIN === "1";
 
 const app = express();
 const port = process.env.PORT || 3000;
 
+const REQUIRE_LOGIN =
+  process.env.REQUIRE_LOGIN === "true" || process.env.REQUIRE_LOGIN === "1";
+
+const isProduction = Boolean(
+  process.env.NODE_ENV === "production" || process.env.RENDER
+);
+
+if (isProduction) {
+  app.set("trust proxy", 1);
+}
+
+const allowedOrigins = [
+  "http://localhost:8080",
+  "https://aida-app.onrender.com",
+];
+
+const corsOptions: cors.CorsOptions = {
+  origin: (
+    origin: string | undefined,
+    callback: (err: Error | null, allow?: boolean) => void
+  ) => {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error("Origen no permitido por CORS"));
+  },
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-app.use(
-  cors({
-    origin: true,
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
 
 declare module "express-session" {
   interface SessionData {
@@ -45,82 +60,23 @@ declare module "express-session" {
   }
 }
 
-const isProduction = Boolean(
-  process.env.NODE_ENV === "production" || process.env.RENDER
-);
+const sessionCookieConfig: session.CookieOptions = {
+  httpOnly: true,
+  maxAge: 1000 * 60 * 60 * 24,
+  path: "/",
+  secure: isProduction,
+  sameSite: isProduction ? "none" : "lax",
+};
 
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || "mi_secreto",
+    secret: process.env.SESSION_SECRET || "default_secret",
     resave: false,
     saveUninitialized: false,
     name: "connect.sid",
-    cookie: {
-      secure: true,
-      httpOnly: true,
-      sameSite: "none",
-      maxAge: 1000 * 60 * 60 * 24,
-      path: "/",
-    },
+    cookie: sessionCookieConfig,
   })
 );
-
-// Ajusta cookies para HTTPS origins: cross-origin requiere sameSite:"none" con secure:true
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  const isHttps = Boolean(origin && origin.startsWith("https://"));
-
-  // Solo ajustar cookies para HTTPS origins (frontend en Render)
-  // Para localhost HTTP → Render HTTPS no hay solución con cookies tradicionales
-  if (isHttps) {
-    const originalJson = res.json;
-    const originalEnd = res.end;
-    const originalSend = res.send;
-
-    const adjustCookie = () => {
-      if (req.session && req.sessionID) {
-        // Limpiar posibles variaciones de la cookie
-        res.clearCookie("connect.sid", {
-          path: "/",
-          secure: true,
-          sameSite: "none",
-        });
-        res.clearCookie("connect.sid", {
-          path: "/",
-          secure: true,
-          sameSite: "lax",
-        });
-        res.clearCookie("connect.sid", { path: "/" });
-
-        // Establecer cookie correcta para HTTPS cross-origin
-        res.cookie("connect.sid", req.sessionID, {
-          secure: true,
-          httpOnly: true,
-          sameSite: "none",
-          maxAge: 1000 * 60 * 60 * 24,
-          path: "/",
-        });
-      }
-    };
-
-    res.json = function (body?: any) {
-      adjustCookie();
-      return originalJson.call(this, body);
-    };
-
-    res.send = function (body?: any) {
-      adjustCookie();
-      return originalSend.call(this, body);
-    };
-
-    res.end = function (chunk?: any, encoding?: any) {
-      adjustCookie();
-      return originalEnd.call(this, chunk, encoding);
-    };
-  }
-
-  next();
-});
 
 function requireLogin(req: Request, res: Response, next: NextFunction) {
   if (!req.session?.usuario && REQUIRE_LOGIN) {
@@ -136,5 +92,9 @@ app.use("/app", requireLogin, cursaRouter);
 app.use("/app", requireLogin, encuestasRouter);
 
 app.listen(port, () => {
-  console.log(`Backend se esta corriendo en http://localhost:${port}/app/`);
+  console.log(
+    `Backend corriendo en http://localhost:${port}/app/ (env: ${
+      isProduction ? "PROD" : "DEV"
+    })`
+  );
 });
