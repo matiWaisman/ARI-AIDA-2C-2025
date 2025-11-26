@@ -23,14 +23,22 @@ export class AlumnoRepository {
     );
   }
 
-  async getAlumnos(where: string, params: any[] = []): Promise<Alumno[]> {
-    const query = `
-      SELECT * 
-        FROM aida.alumnos a
-        INNER JOIN aida.entidadUniversitaria eu ON a.lu = eu.lu`;
-    const result = await this.client.query<Alumno>(query, params);
-    return result.rows;
-  }
+  async getAlumnos(where: string = "", params: any[] = []): Promise<Alumno[]> {
+  const query = `
+    SELECT * 
+    FROM aida.alumnos a
+    INNER JOIN aida.entidadUniversitaria eu ON a.lu = eu.lu
+    WHERE 1 = 1
+    ${where}
+  `;
+
+  console.log("QUERY:", query);
+  console.log("PARAMS:", params);
+
+  const result = await this.client.query<Alumno>(query, params);
+  return result.rows;
+}
+
 
   async getAlumnoConLU(lu: string): Promise<Alumno | undefined> {
     const query = `SELECT a.lu, eu.nombres, eu.apellido

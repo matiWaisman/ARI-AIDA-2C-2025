@@ -54,7 +54,6 @@ export class AlumnoController {
     await client.end();
   }
 
-
   static async cargarDatosEnAlumnos(req: Request, res: Response) {
     const file = req.file;
     if (!file) {

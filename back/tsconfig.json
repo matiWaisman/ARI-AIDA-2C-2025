@@ -3,12 +3,16 @@
     "module": "nodenext",
     "target": "esnext",
     "moduleResolution": "NodeNext",
+
     "strict": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,   // 👈 NECESARIO PARA EXPRESS 4 + NODE NEXT
+
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
+
     "skipLibCheck": true,
     "sourceMap": true,
     "declaration": true,
@@ -16,8 +20,9 @@
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
 
-    // Para poder importar archivos .ts con extensión
-    "allowImportingTsExtensions": true,
+    "types": ["node"],                      // 👈 evita error "Cannot find type definition for 'node'"
+
+    "allowImportingTsExtensions": true,     // ya lo tenías
     "noEmit": true
   }
 }
