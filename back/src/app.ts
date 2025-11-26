@@ -1,43 +1,52 @@
-import express, { type Request, type Response, type NextFunction } from "express";
+import express from "express";
+import type { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import session from "express-session";
 import dotenv from "dotenv";
-import { alumnoRouter } from "../infrastructure/http/routes/routes-alumno.ts";
-import { UserController } from "../application/controllers/controller-user.ts";
-import { userRouter } from "../infrastructure/http/routes/routes-user.ts";
-import { cursaRouter } from "../infrastructure/http/routes/routes-cursa.ts";
-import { materiaRouter } from "../infrastructure/http/routes/routes-materia.ts";
-import { encuestasRouter } from "../infrastructure/http/routes/routes-encuestas.ts";
+
+import { alumnoRouter } from "../infrastructure/http/routes/routes-alumno.js";
+import { userRouter } from "../infrastructure/http/routes/routes-user.js";
+import { cursaRouter } from "../infrastructure/http/routes/routes-cursa.js";
+import { materiaRouter } from "../infrastructure/http/routes/routes-materia.js";
+import { encuestasRouter } from "../infrastructure/http/routes/routes-encuestas.js";
 
 dotenv.config({ path: "./local-sets.env" });
-
-// Variable de entorno para controlar si el login es obligatorio
-const REQUIRE_LOGIN = process.env.REQUIRE_LOGIN === "true" || process.env.REQUIRE_LOGIN === "1";
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+const REQUIRE_LOGIN =
+  process.env.REQUIRE_LOGIN === "true" || process.env.REQUIRE_LOGIN === "1";
 
-const allowedOrigins = [
-  "http://localhost:3000",
-  "http://localhost:8080",
-  "http://127.0.0.1:8080",
-];
+const isProduction = Boolean(
+  process.env.NODE_ENV === "production" || process.env.RENDER
+);
 
-if (process.env.FRONTEND_URL) {
-  allowedOrigins.push(process.env.FRONTEND_URL);
+if (isProduction) {
+  app.set("trust proxy", 1);
 }
 
-app.use(
-  cors({
-    origin: allowedOrigins,
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+const allowedOrigins = [
+  "http://localhost:8080",
+  "https://aida-app.onrender.com",
+];
+
+const corsOptions: cors.CorsOptions = {
+  origin: (
+    origin: string | undefined,
+    callback: (err: Error | null, allow?: boolean) => void
+  ) => {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error("Origen no permitido por CORS"));
+  },
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 declare module "express-session" {
   interface SessionData {
@@ -51,17 +60,21 @@ declare module "express-session" {
   }
 }
 
+const sessionCookieConfig: session.CookieOptions = {
+  httpOnly: true,
+  maxAge: 1000 * 60 * 60 * 24,
+  path: "/",
+  secure: isProduction,
+  sameSite: isProduction ? "none" : "lax",
+};
+
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || "mi_secreto",
+    secret: process.env.SESSION_SECRET || "default_secret",
     resave: false,
     saveUninitialized: false,
-    cookie: {
-      secure: process.env.NODE_ENV === "production", // HTTPS en producción
-      httpOnly: true,
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // "none" necesario para CORS cross-origin en producción
-      maxAge: 1000 * 60 * 60 * 24,
-    },
+    name: "connect.sid",
+    cookie: sessionCookieConfig,
   })
 );
 
@@ -72,13 +85,16 @@ function requireLogin(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
-app.use("/app", userRouter); 
-app.use("/app", requireLogin, materiaRouter)
+app.use("/app", userRouter);
+app.use("/app", requireLogin, materiaRouter);
 app.use("/app", requireLogin, alumnoRouter);
 app.use("/app", requireLogin, cursaRouter);
 app.use("/app", requireLogin, encuestasRouter);
-  
 
 app.listen(port, () => {
-  console.log(`Backend se esta corriendo en http://localhost:${port}/app/`);
+  console.log(
+    `Backend corriendo en http://localhost:${port}/app/ (env: ${
+      isProduction ? "PROD" : "DEV"
+    })`
+  );
 });

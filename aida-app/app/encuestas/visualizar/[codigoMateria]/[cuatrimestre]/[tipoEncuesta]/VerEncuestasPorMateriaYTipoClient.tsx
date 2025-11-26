@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import { apiClient } from "@/apiClient/apiClient";
 import RespuestaEncuestaDesplegable from "@/components/encuestas/visualizarEncuestas/respuestasEncuestaDesplegable";
 
-const tipoEncuestaLabels: Record<"materia" | "profesores" | "alumnos", string> =
+const tipoEncuestaLabels: Record<"materia" | "profesor" | "alumno", string> =
   {
     materia: "Resultados de las encuestas de la Materia",
-    profesores: "Resultados de las encuestas de Profesores",
-    alumnos: "Resultados de las encuestas de Alumnos",
+    profesor: "Resultados de las encuestas de Profesores",
+    alumno: "Resultados de las encuestas de Alumnos",
   };
 
 export default function VerEncuestasPorMateriaYTipoClient({
@@ -19,7 +19,7 @@ export default function VerEncuestasPorMateriaYTipoClient({
 }: {
   codigoMateria: string;
   cuatrimestre: string;
-  tipoEncuesta: "materia" | "profesores" | "alumnos";
+  tipoEncuesta: "materia" | "profesor" | "alumno";
   nombreMateria: string;
 }) {
   const [loading, setLoading] = useState(true);

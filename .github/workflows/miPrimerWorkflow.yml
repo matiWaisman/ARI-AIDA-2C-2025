@@ -1,0 +1,44 @@
+name: MiPrimerWorkflow
+
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Bajar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Compilar aplicacion
+        env:
+          NEXT_PUBLIC_API_BASE: https://back-aida.onrender.com/app
+        run: |
+          npm run install:all
+          npm run build
+
+      - name: Correr los tests
+        run: |
+          npm run test
+
+  job2:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: DEPLOYMENT
+    steps:
+      - name: Disparar deploy (GET del back)
+        run: curl "${{ secrets.URL_DEPLOYMENT_BACK }}"
+      - name: Disparar deploy (GET del front)
+        run: curl "${{ secrets.URL_DEPLOYMENT_FRONT }}" 

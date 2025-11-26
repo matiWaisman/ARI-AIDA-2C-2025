@@ -6,6 +6,7 @@ import {
   useEffect,
   useState,
   useCallback,
+  useRef,
   ReactNode,
 } from "react";
 import { useRouter, usePathname } from "next/navigation";
@@ -26,8 +27,17 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
+  const usuarioRef = useRef<Usuario | null>(null);
+
+  useEffect(() => {
+    usuarioRef.current = usuario;
+  }, [usuario]);
+
+  const checkSessionRef = useRef<(() => Promise<void>) | undefined>(undefined);
 
   const checkSession = useCallback(async () => {
+    const usuarioAnterior = usuarioRef.current;
+
     try {
       const data = await apiClient("/session");
       setUsuario(data.usuario || null);
@@ -36,21 +46,34 @@ export function UserProvider({ children }: { children: ReactNode }) {
         router.push("/login");
       }
     } catch (err: any) {
-      if (
-        err instanceof Error &&
-        err.message.includes("401") &&
-        pathname !== "/register"
-      ) {
-        router.push("/login");
+      const statusCode =
+        err?.status ||
+        (err instanceof Error && err.message.includes("401") ? 401 : null);
+      if (statusCode === 401 && pathname !== "/register") {
+        if (!usuarioAnterior && !usuario) {
+          router.push("/login");
+          setUsuario(null);
+        }
+      } else {
+        if (!usuarioAnterior && !usuario) {
+          setUsuario(null);
+        }
       }
     } finally {
       setLoading(false);
     }
-  }, [router, pathname]);
+  }, [router, pathname, usuario]);
+
+  checkSessionRef.current = checkSession;
+
+  const hasCheckedSession = useRef(false);
 
   useEffect(() => {
-    checkSession();
-  }, [checkSession]);
+    if (!hasCheckedSession.current) {
+      hasCheckedSession.current = true;
+      checkSessionRef.current?.();
+    }
+  }, []);
 
   return (
     <UserContext.Provider

@@ -1,21 +1,27 @@
-import { Client } from 'pg';
-import dotenv from 'dotenv';
+import { Client } from "pg";
+import dotenv from "dotenv";
 
-dotenv.config({ path: './local-sets.env' });
+dotenv.config({ path: "./local-sets.env" });
 
 export function createDbClient() {
-  const enProduccion = process.env.PRODUCTION_DB === 'true';
-  
+  const enProduccion = process.env.PRODUCTION_DB === "true";
+
   if (enProduccion) {
     const connectionString = process.env.CONNECTION_STRING_DB;
     if (!connectionString) {
-      throw new Error('No se encuentra el connection string a la base');
+      throw new Error("CONNECTION_STRING_DB no está definida");
     }
+
+    // Para Supabase, configuramos SSL directamente en el objeto Client
+    // No agregamos sslmode a la connection string para evitar conflictos
     return new Client({
-      connectionString: connectionString,
+      connectionString: connectionString.trim(),
+      ssl: {
+        rejectUnauthorized: false,
+      },
     });
   }
-  
+
   return new Client({
     user: process.env.PGUSER,
     password: process.env.PGPASSWORD,

@@ -1,4 +1,5 @@
 ## Arquitectura de AIDA
+
 En este proyecto intentamos seguir una arquitectura en capas, la idea detrás de esto es separar el código en módulos de responsabilidades, facilitando el mantenimiento y la escalabilidad.
 En este caso en particular lo separamos en 3 capas:
 
@@ -34,12 +35,25 @@ La App envía la respuesta devuelta al front.
 
 El backend requiere las siguientes variables de entorno para funcionar correctamente. Creá un archivo `local-sets.env` en la raíz del proyecto `back/` con las variables:
 
+**Para desarrollo local (base de datos local):**
+
 - `PGUSER`= Usuario de la base de datos PostgreSQL
 - `PGPASSWORD`= Contraseña del usuario de PostgreSQL
 - `PGHOST`= Host donde corre PostgreSQL (ej: localhost)
 - `PGPORT`= Puerto de PostgreSQL (ej: 5432)
 - `PGDATABASE`= Nombre de la base de datos a utilizar
+- `PRODUCTION_DB`= 'false' para usar la base local
+
+**Para producción (Supabase):**
+
+- `PRODUCTION_DB`= 'true' para usar Supabase
+- `CONNECTION_STRING_DB`= Connection string completo de Supabase.
+
+**Otras variables:**
+
 - `REQUIRE_LOGIN`= Si es 'true', obliga a iniciar sesión antes de usar la app
+- `FRONTEND_URL`= URL del frontend para que no se bloqueen las requests por CORS (puede ser múltiple separado por comas)
+- `SESSION_SECRET`= Secreto para las sesiones
 
 ## CÓMO LEVANTAR EL PROYECTO LOCALMENTE:
 
@@ -53,3 +67,20 @@ Para la siguiente secuencia de pasos se asume que ya se forkéo el proyecto y se
 - Correr desde la terminal el siguiente comando: `cd ..`.
 - Correr desde la terminal el siguiente comando: `npm run start`.
   Si todo se instaló correctamente, deberías poder acceder a la página localmente desde `localhost:8080` y al backend desde `localhost:3000`.
+
+## Cómo ejecutar solo el backend
+
+Si querés correr únicamente el backend sin levantar todo el proyecto:
+
+- Desarrollo:
+
+  - Ubicate en la carpeta `/back`.
+  - Instalá las dependencias con `npm install`
+  - Levantá el servidor en modo desarrollo con `npm run dev`
+
+- Producción:
+  - Ubicate en la carpeta `/back`.
+  - Instalá las dependencias con `npm install`.
+  - Levantá el servidor en modo producción con `npm start`
+
+El script `npm start` setea `NODE_ENV=production` y arranca el `src/app.ts`.

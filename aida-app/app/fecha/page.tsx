@@ -1,25 +1,25 @@
-\"use client\";
+"use client";
 
-import Formulario from \"@/components/formulario\";
-import { useUser } from \"@/contexts/UserContext\";
-import LoadingScreen from \"@/components/loadingScreen\";
-import ErrorScreen from \"@/components/errorScreen\";
+import Formulario from "@/components/formulario";
+import { useUser } from "@/contexts/UserContext";
+import LoadingScreen from "@/components/loadingScreen";
+import ErrorScreen from "@/components/errorScreen";
 
 export default function Fecha() {
   const { usuario, loading } = useUser();
 
-  if (loading) return <LoadingScreen mensaje=\"Cargando usuario...\" />;
+  if (loading) return <LoadingScreen mensaje="Cargando usuario..." />;
   if (!usuario || usuario.esProfesor !== true) {
-    return <ErrorScreen error=\"No tenés permisos para acceder a esta página.\" />;
+    return <ErrorScreen error="No tenés permisos para acceder a esta página." />;
   }
 
   return (
     <Formulario
-      title=\"Obtener el certificado de título en trámite\"
-      nombreLabel=\"Fecha del trámite\"
-      inputType=\"date\"
-      nombreInput=\"fecha\"
-      hrefCertificado=\"/fecha\"
+      title="Obtener el certificado de título en trámite"
+      nombreLabel="Fecha del trámite"
+      inputType="date"
+      nombreInput="fecha"
+      hrefCertificado="/fecha"
     />
   );
 }

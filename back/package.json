@@ -5,8 +5,10 @@
   "type": "module",
   "main": "src/app.ts",
   "scripts": {
-    "start": "node --import tsx src/app.ts",
+    "start": "NODE_ENV=production node --import tsx src/app.ts",
     "dev": "nodemon --watch src --ext ts --exec \"node --import tsx src/app.ts\"",
+    "build": "echo \"Backend: no build step, TypeScript se ejecuta con tsx en tiempo de ejecución\"",
+    "test": "node --import tsx tests/tests.test.ts",
     "db:init": "psql -U aida_admin -d aida_db -f infrastructure/db/create-db.sql && psql -U aida_admin -d aida_db -f infrastructure/db/create-schema.sql",
     "db:shell": "psql -U aida_admin -d aida_db"
   },
@@ -20,7 +22,9 @@
     "express-session": "^1.18.2",
     "multer": "^2.0.2",
     "pg": "^8.16.3",
-    "readline": "^1.3.0"
+    "postgres": "^3.4.7",
+    "readline": "^1.3.0",
+    "tsx": "^4.7.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
@@ -32,7 +36,6 @@
     "@types/pg": "^8.15.5",
     "http-server": "^14.1.1",
     "nodemon": "^3.1.4",
-    "ts-node": "^10.9.2",
-    "tsx": "^4.7.0"
+    "ts-node": "^10.9.2"
   }
 }

@@ -19,8 +19,8 @@ export default function VerEncuestasPorMateriaClient({
 
     const menuOptions: Map<string, [string, string]> = new Map([
         ["Encuestas de la Materia", [`/encuestas/visualizar/${codigoMateria}/${cuatrimestre}/materia?nombreMateria=${encodeURIComponent(nombreMateria)}`, "Encuestas de la Materia"]],
-        ["Encuestas de los Profesores", [`/encuestas/visualizar/${codigoMateria}/${cuatrimestre}/profesores?nombreMateria=${encodeURIComponent(nombreMateria)}`, "Encuestas de los Profesores"]],
-        ["Encuestas de los Alumnos", [`/encuestas/visualizar/${codigoMateria}/${cuatrimestre}/alumnos?nombreMateria=${encodeURIComponent(nombreMateria)}`, "Encuestas de los Alumnos"]],
+        ["Encuestas de los Profesores", [`/encuestas/visualizar/${codigoMateria}/${cuatrimestre}/profesor?nombreMateria=${encodeURIComponent(nombreMateria)}`, "Encuestas de los Profesores"]],
+        ["Encuestas de los Alumnos", [`/encuestas/visualizar/${codigoMateria}/${cuatrimestre}/alumno?nombreMateria=${encodeURIComponent(nombreMateria)}`, "Encuestas de los Alumnos"]],
     ]);
 
     if (loading) return <LoadingScreen mensaje="Cargando menú..." />;

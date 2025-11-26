@@ -16,7 +16,7 @@ export default function RespuestaEncuestaDesplegable({
     resultados: number[];
     comentarios: string[];
   };
-  tipoEncuesta: "materia" | "profesores" | "alumnos";
+  tipoEncuesta: "materia" | "profesor" | "alumno";
 }) {
   const [abierto, setAbierto] = useState(false);
   const format = (n: number) => Number(n.toFixed(2)).toString();
@@ -64,8 +64,8 @@ export default function RespuestaEncuestaDesplegable({
               <div className="flex justify-between items-start gap-4 mb-2">
                 <span className="text-gray-800 font-medium flex-1 min-w-0">
                   {tipoEncuesta === "materia" && preguntasMateria[index]}
-                  {tipoEncuesta === "alumnos" && preguntasCompañeros[index]}
-                  {tipoEncuesta === "profesores" && preguntasProfesores[index]}
+                  {tipoEncuesta === "alumno" && preguntasCompañeros[index]}
+                  {tipoEncuesta === "profesor" && preguntasProfesores[index]}
                 </span>
 
                 <span className="text-sky-600 font-bold text-lg flex-shrink-0 whitespace-nowrap">
@@ -76,7 +76,6 @@ export default function RespuestaEncuestaDesplegable({
             </div>
           ))}
 
-          {/* Comentarios al final */}
           {encuesta.comentarios.length > 0 && (
             <div className="mt-6">
               <h3 className="text-gray-800 font-semibold mb-2">Comentarios</h3>
