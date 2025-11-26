@@ -65,40 +65,34 @@ app.use(
   })
 );
 
-// Intercepta res.cookie para asegurar configuración correcta en HTTPS cross-origin
+// Ajusta cookies para HTTPS origins: cross-origin requiere sameSite:"none" con secure:true
 app.use((req, res, next) => {
   const origin = req.headers.origin;
   const isHttps = Boolean(origin && origin.startsWith("https://"));
 
+  // Solo ajustar cookies para HTTPS origins (frontend en Render)
+  // Para localhost HTTP → Render HTTPS no hay solución con cookies tradicionales
   if (isHttps) {
-    const originalCookie = res.cookie;
-    
-    // Interceptar res.cookie para asegurar que connect.sid siempre tenga la configuración correcta
-    res.cookie = function (name: string, value: string, options?: any) {
-      if (name === "connect.sid" && options) {
-        // Forzar configuración correcta para HTTPS cross-origin
-        options.secure = true;
-        options.sameSite = "none";
-        options.httpOnly = true;
-        options.path = "/";
-        if (!options.maxAge) {
-          options.maxAge = 1000 * 60 * 60 * 24;
-        }
-      }
-      return originalCookie.call(this, name, value, options);
-    };
-
-    // También interceptar métodos de respuesta para re-ajustar cookies si es necesario
     const originalJson = res.json;
     const originalEnd = res.end;
     const originalSend = res.send;
 
     const adjustCookie = () => {
       if (req.session && req.sessionID) {
-        // Limpiar todas las posibles variaciones
+        // Limpiar posibles variaciones de la cookie
+        res.clearCookie("connect.sid", {
+          path: "/",
+          secure: true,
+          sameSite: "none",
+        });
+        res.clearCookie("connect.sid", {
+          path: "/",
+          secure: true,
+          sameSite: "lax",
+        });
         res.clearCookie("connect.sid", { path: "/" });
-        
-        // Establecer cookie correcta
+
+        // Establecer cookie correcta para HTTPS cross-origin
         res.cookie("connect.sid", req.sessionID, {
           secure: true,
           httpOnly: true,
