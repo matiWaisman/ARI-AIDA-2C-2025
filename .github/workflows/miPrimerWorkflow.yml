@@ -18,6 +18,8 @@ jobs:
           node-version: "20"
 
       - name: Compilar aplicacion
+        env:
+          NEXT_PUBLIC_API_BASE: https://back-aida.onrender.com/app
         run: |
           npm run install:all
           npm run build
