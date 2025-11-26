@@ -33,6 +33,10 @@ const allowedOrigins = [
   "https://aida-app.onrender.com",
 ];
 
+allowedOrigins.push("https://aida-backend.onrender.com"); // tu backend
+allowedOrigins.push("https://aida-app.onrender.com");     // tu frontend
+allowedOrigins.push("*"); // Solo para debug, no para prod
+
 
 const corsOptions: cors.CorsOptions = {
   origin: (
