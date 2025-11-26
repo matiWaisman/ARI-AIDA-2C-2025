@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - "*"
+  pull_request:
+    branches:
+      - "*"
 
 jobs:
   build:
@@ -27,3 +30,11 @@ jobs:
       - name: Correr los tests
         run: |
           npm run test
+
+  job2:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log mensaje
+        run: echo "andando"
