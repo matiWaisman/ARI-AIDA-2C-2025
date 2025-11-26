@@ -26,41 +26,44 @@ if (isProduction) {
   app.set("trust proxy", 1);
 }
 
-/* -------------------------------------------
-   🔥 CORS ARREGLADO PARA RENDER + LOCALHOST
-------------------------------------------- */
+const allowedOrigins = [
+  "http://localhost:8080",
+  "http://localhost:3000",
+  "http://localhost:5173",
+  "https://aida-app.onrender.com",
+];
+
 const corsOptions: cors.CorsOptions = {
-  origin: (origin, callback) => {
+  origin: (
+    origin: string | undefined,
+    callback: (err: Error | null, allow?: boolean) => void
+  ) => {
     if (!origin) return callback(null, true);
-
-    // permitir todos los deploys de Render
-    if (origin.endsWith(".onrender.com")) return callback(null, true);
-
-    // permitir localhost en desarrollo
-    if (origin.startsWith("http://localhost")) return callback(null, true);
-
-    return callback(new Error("Origen no permitido por CORS: " + origin));
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error("Origen no permitido por CORS"));
   },
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
 };
+corsOptions.allowedHeaders = ["Content-Type", "Authorization"];
+corsOptions.methods = ["GET", "POST", "PUT", "DELETE", "OPTIONS"];
 
-// manejar preflight OPTIONS globalmente
-app.options("*", cors(corsOptions));
+app.use((req, res, next) => {
+  if (req.method === "OPTIONS") {
+    res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    return res.sendStatus(200);
+  }
+  next();
+});
 
-// usar cors en todas las rutas
+
 app.use(cors(corsOptions));
 
-/* -------------------------------------------
-              BODY PARSERS
-------------------------------------------- */
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-/* -------------------------------------------
-           CONFIG SESSION + COOKIE
-------------------------------------------- */
 declare module "express-session" {
   interface SessionData {
     usuario?: {
@@ -91,9 +94,6 @@ app.use(
   })
 );
 
-/* -------------------------------------------
-          MIDDLEWARE DE LOGIN
-------------------------------------------- */
 function requireLogin(req: Request, res: Response, next: NextFunction) {
   if (!req.session?.usuario && REQUIRE_LOGIN) {
     return res.status(401).json({ message: "Usuario no autenticado" });
@@ -101,18 +101,12 @@ function requireLogin(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
-/* -------------------------------------------
-               ROUTERS
-------------------------------------------- */
 app.use("/app", userRouter);
 app.use("/app", requireLogin, materiaRouter);
 app.use("/app", requireLogin, alumnoRouter);
 app.use("/app", requireLogin, cursaRouter);
 app.use("/app", requireLogin, encuestasRouter);
 
-/* -------------------------------------------
-                START SERVER
-------------------------------------------- */
 app.listen(port, () => {
   console.log(
     `Backend corriendo en http://localhost:${port}/app/ (env: ${
@@ -120,5 +114,3 @@ app.listen(port, () => {
     })`
   );
 });
-
-export default app;
