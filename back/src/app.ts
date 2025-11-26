@@ -65,24 +65,21 @@ app.use(
   })
 );
 
-// Ajusta cookies según el origen: cross-origin requiere sameSite:"none"
+// Ajusta cookies para HTTPS origins: cross-origin requiere sameSite:"none" con secure:true
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  const isLocalhost = Boolean(
-    origin &&
-      (origin.startsWith("http://localhost") ||
-        origin.startsWith("http://127.0.0.1"))
-  );
   const isHttps = Boolean(origin && origin.startsWith("https://"));
 
-  if (isLocalhost || isHttps) {
+  // Solo ajustar cookies para HTTPS origins (frontend en Render)
+  // Para localhost HTTP → Render HTTPS no hay solución con cookies tradicionales
+  if (isHttps) {
     const originalJson = res.json;
     const originalEnd = res.end;
     const originalSend = res.send;
 
     const adjustCookie = () => {
       if (req.session && req.sessionID) {
-        // Limpiar todas las posibles variaciones de la cookie
+        // Limpiar posibles variaciones de la cookie
         res.clearCookie("connect.sid", {
           path: "/",
           secure: true,
@@ -90,38 +87,19 @@ app.use((req, res, next) => {
         });
         res.clearCookie("connect.sid", {
           path: "/",
-          secure: false,
-          sameSite: "none",
-        });
-        res.clearCookie("connect.sid", {
-          path: "/",
           secure: true,
-          sameSite: "lax",
-        });
-        res.clearCookie("connect.sid", {
-          path: "/",
-          secure: false,
           sameSite: "lax",
         });
         res.clearCookie("connect.sid", { path: "/" });
 
-        if (isLocalhost) {
-          res.cookie("connect.sid", req.sessionID, {
-            secure: false,
-            httpOnly: true,
-            sameSite: "none",
-            maxAge: 1000 * 60 * 60 * 24,
-            path: "/",
-          });
-        } else if (isHttps) {
-          res.cookie("connect.sid", req.sessionID, {
-            secure: true,
-            httpOnly: true,
-            sameSite: "none",
-            maxAge: 1000 * 60 * 60 * 24,
-            path: "/",
-          });
-        }
+        // Establecer cookie correcta para HTTPS cross-origin
+        res.cookie("connect.sid", req.sessionID, {
+          secure: true,
+          httpOnly: true,
+          sameSite: "none",
+          maxAge: 1000 * 60 * 60 * 24,
+          path: "/",
+        });
       }
     };
 
