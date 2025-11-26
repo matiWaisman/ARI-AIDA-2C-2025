@@ -138,38 +138,12 @@ export class AlumnoRepository {
     return result ? true : false;
   }
 
-  async cargarAlumnosFromCSV(FilePath: string) {
-    const enProduccion = process.env.PRODUCTION_DB === "true";
-    let client: Client;
-
-    if (enProduccion) {
-      const connectionString = process.env.CONNECTION_STRING_DB;
-      if (!connectionString) {
-        throw new Error("CONNECTION_STRING_DB no está definida");
-      }
-
-      // Para Supabase, configuramos SSL directamente en el objeto Client
-      // No agregamos sslmode a la connection string para evitar conflictos
-      client = new Client({
-        connectionString: connectionString.trim(),
-        ssl: {
-          rejectUnauthorized: false,
-        },
-      });
-    } else {
-      client = new Client({
-        user: process.env.PGUSER,
-        password: process.env.PGPASSWORD,
-        host: process.env.PGHOST,
-        port: Number(process.env.PGPORT) || 5432,
-        database: process.env.PGDATABASE,
-      });
-    }
-
+  async cargarAlumnosFromCSV( FilePath: string){
+    const client = new Client({ connectionString: process.env.DATABASE_URL });
     await client.connect();
     await insertAlumnos(client, FilePath);
     await client.end();
-  }
+  };
 
   async alumnoCompletoCarrera(LU: string) {
     const query1 = `

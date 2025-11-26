@@ -47,7 +47,8 @@ const queryInsertarAlumnoNuevo: string = `
 `;
 
 export async function insertAlumnos(client: Client, fileAlumnosPath: string): Promise<void> {
-    const alumnos = await readCsv(fileAlumnosPath);  
+  console.log("Llegue hasta aca");  
+  const alumnos = await readCsv(fileAlumnosPath);  
     console.log("Datos leídos del CSV:");
     const listaDeLus = alumnos.map(alumno => alumno.lu);
     console.log(listaDeLus);  
