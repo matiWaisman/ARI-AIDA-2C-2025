@@ -55,6 +55,7 @@ export class AlumnoController {
   }
 
   static async cargarDatosEnAlumnos(req: Request, res: Response) {
+    console.log("Llegue a cargarDatosEnAlumnos");
     const file = req.file;
     if (!file) {
       return res.status(400).json({ error: "No se envió ningún archivo CSV." });
