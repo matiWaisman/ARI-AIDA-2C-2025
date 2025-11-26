@@ -25,39 +25,10 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const allowedOrigins = [
-  "http://localhost:3000",
-  "http://localhost:8080",
-  "http://127.0.0.1:8080",
-];
-
-if (process.env.FRONTEND_URL) {
-  const frontendUrls = process.env.FRONTEND_URL.split(",").map((url) =>
-    url.trim()
-  );
-  allowedOrigins.push(...frontendUrls);
-}
-
-const normalizeOrigin = (origin: string): string => {
-  return origin.endsWith("/") ? origin.slice(0, -1) : origin;
-};
-
+// Configuración de CORS para permitir requests de cualquier origen
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (!origin) {
-        return callback(null, true);
-      }
-
-      const normalizedOrigin = normalizeOrigin(origin);
-      const normalizedAllowed = allowedOrigins.map(normalizeOrigin);
-
-      if (normalizedAllowed.includes(normalizedOrigin)) {
-        return callback(null, true);
-      }
-
-      callback(new Error("Not allowed by CORS"));
-    },
+    origin: true, // Permite cualquier origen
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
