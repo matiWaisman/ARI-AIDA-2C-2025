@@ -317,13 +317,13 @@ export class EncuestasRepository {
       AVG(respuesta10) AS respuesta10,
       AVG(respuesta11) AS respuesta11,
       AVG(respuesta12) AS respuesta12
-    FROM aida.encuestaAProfesor e
-    INNER JOIN aida.entidadUniversitaria eu ON e.luEvaluado = eu.lu
-    WHERE e.codigoMateria = '${codigoMateria}'
-      AND e.cuatrimestre = '${cuatrimestre}'
-    GROUP BY e.codigoMateria, e.cuatrimestre, e.luEvaluado, eu.nombres, eu.apellido
-  `);
-
+      FROM aida.encuestaAProfesor e
+      INNER JOIN aida.entidadUniversitaria eu ON e.luEvaluado = eu.lu
+      WHERE e.codigoMateria = '${codigoMateria}'
+        AND e.cuatrimestre = '${cuatrimestre}'
+      GROUP BY e.codigoMateria, e.cuatrimestre, e.luEvaluado, eu.nombres, eu.apellido
+    `);
+    
     const resultadosFinales = [];
 
     for (const row of promedios.rows) {
@@ -337,7 +337,7 @@ export class EncuestasRepository {
             AND comentario IS NOT NULL
             AND comentario <> ''
         `,
-        [row.luEvaluado, codigoMateria, cuatrimestre]
+        [row.luevaluado, codigoMateria, cuatrimestre]
       );
 
       resultadosFinales.push({
@@ -396,7 +396,7 @@ export class EncuestasRepository {
             AND comentario IS NOT NULL
             AND comentario <> ''
         `,
-        [row.luEvaluado, codigoMateria, cuatrimestre]
+        [row.luevaluado, codigoMateria, cuatrimestre]
       );
 
       resultadosFinales.push({

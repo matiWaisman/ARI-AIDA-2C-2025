@@ -76,7 +76,6 @@ export default function RespuestaEncuestaDesplegable({
             </div>
           ))}
 
-          {/* Comentarios al final */}
           {encuesta.comentarios.length > 0 && (
             <div className="mt-6">
               <h3 className="text-gray-800 font-semibold mb-2">Comentarios</h3>
