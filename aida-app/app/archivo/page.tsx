@@ -5,6 +5,7 @@ import { apiFetch } from "@/utils/api";
 import { useUser } from "@/contexts/UserContext";
 import LoadingScreen from "@/components/loadingScreen";
 import ErrorScreen from "@/components/errorScreen";
+import { apiClient } from "@/apiClient/apiClient";
 
 export default function Archivo() {
   const { usuario, loading } = useUser();

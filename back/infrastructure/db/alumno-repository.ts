@@ -146,12 +146,17 @@ export class AlumnoRepository {
     return result ? true : false;
   }
 
-  async cargarAlumnosFromCSV( FilePath: string){
-    const client = new Client({ connectionString: process.env.DATABASE_URL });
-    await client.connect();
-    await insertAlumnos(client, FilePath);
-    await client.end();
-  };
+async cargarAlumnosFromCSV(filePath: string) {
+  const client = new Client({ connectionString: process.env.DATABASE_URL });
+  await client.connect();
+  await insertAlumnos(client, filePath);
+  await client.end();
+}
+
+async cargarDatosEnAlumnos(filePath: string) {
+  return this.cargarAlumnosFromCSV(filePath);
+}
+
 
   async alumnoCompletoCarrera(LU: string) {
     const query1 = `
