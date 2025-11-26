@@ -36,5 +36,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - name: Log mensaje
-        run: echo "andando"
+      - name: Disparar deploy (GET del back)
+        run: curl "${{ secrets.URL_DEPLOYMENT_BACK }}"
+      - name: Disparar deploy (GET del front)
+        run: curl "${{ secrets.URL_DEPLOYMENT_FRONT }}" 
