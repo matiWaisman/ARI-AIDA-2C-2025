@@ -7,7 +7,7 @@ export class AlumnoRepository {
   constructor(private client: Client) {}
 
   async existeAlumno(where: string, params: any[] = []): Promise<boolean> {
-    const query = `SELECT 1 FROM aida.alumnos WHERE titulo IS NOT NULL ${where} LIMIT 1`;
+    const query = `SELECT 1 FROM aida.alumnos WHERE 1 = 1 ${where} LIMIT 1`;
     const result = await this.client.query(query, params);
     return result.rows.length > 0;
   }
