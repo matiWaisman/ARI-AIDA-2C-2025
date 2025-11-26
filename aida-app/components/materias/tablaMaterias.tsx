@@ -35,7 +35,7 @@ export function TablaMaterias({
   if (Materias.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
-        No hay materias disponibles para inscribirse
+        No hay materias disponibles
       </div>
     );
   }
