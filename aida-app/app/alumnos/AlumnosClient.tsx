@@ -6,6 +6,7 @@ import { apiClient } from "@/apiClient/apiClient";
 import LoadingScreen from "@/components/loadingScreen";
 import ErrorScreen from "@/components/errorScreen";
 import { Alumno } from "@/types/alumno";
+import { apiFetch } from "@/utils/api";
 
 export default function AlumnosClient({
   alumnos,
@@ -72,7 +73,7 @@ export default function AlumnosClient({
     apellido: string
   ) => {
     try {
-      await apiClient(`/alumnos/update`, {
+      await apiFetch(`/alumnos/update`, {
         method: "POST",
         body: JSON.stringify({ lu, nombres, apellido }),
       });
