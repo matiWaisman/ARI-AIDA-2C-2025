@@ -15,7 +15,6 @@ import { encuestasRouter } from "../infrastructure/http/routes/routes-encuestas.
 
 dotenv.config({ path: "./local-sets.env" });
 
-// Variable de entorno para controlar si el login es obligatorio
 const REQUIRE_LOGIN =
   process.env.REQUIRE_LOGIN === "true" || process.env.REQUIRE_LOGIN === "1";
 
@@ -25,10 +24,9 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Configuración de CORS para permitir requests de cualquier origen
 app.use(
   cors({
-    origin: true, // Permite cualquier origen
+    origin: true,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -47,7 +45,6 @@ declare module "express-session" {
   }
 }
 
-// Detectar si estamos en producción (Render siempre usa HTTPS)
 const isProduction = Boolean(
   process.env.NODE_ENV === "production" || process.env.RENDER
 );
@@ -67,6 +64,51 @@ app.use(
     },
   })
 );
+
+// Ajusta cookies según el origen: localhost (HTTP) usa secure:false, HTTPS usa secure:true
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  const isLocalhost = Boolean(
+    origin &&
+      (origin.startsWith("http://localhost") ||
+        origin.startsWith("http://127.0.0.1"))
+  );
+  const isHttps = Boolean(origin && origin.startsWith("https://"));
+
+  if ((isLocalhost || isHttps) && req.session && req.sessionID) {
+    const originalJson = res.json;
+    const originalEnd = res.end;
+    const originalSend = res.send;
+
+    const adjustCookie = () => {
+      res.clearCookie("connect.sid", { path: "/" });
+      res.cookie("connect.sid", req.sessionID, {
+        secure: isHttps,
+        httpOnly: true,
+        sameSite: isHttps ? "none" : "lax",
+        maxAge: 1000 * 60 * 60 * 24,
+        path: "/",
+      });
+    };
+
+    res.json = function (body?: any) {
+      adjustCookie();
+      return originalJson.call(this, body);
+    };
+
+    res.send = function (body?: any) {
+      adjustCookie();
+      return originalSend.call(this, body);
+    };
+
+    res.end = function (chunk?: any, encoding?: any) {
+      adjustCookie();
+      return originalEnd.call(this, chunk, encoding);
+    };
+  }
+
+  next();
+});
 
 function requireLogin(req: Request, res: Response, next: NextFunction) {
   if (!req.session?.usuario && REQUIRE_LOGIN) {
