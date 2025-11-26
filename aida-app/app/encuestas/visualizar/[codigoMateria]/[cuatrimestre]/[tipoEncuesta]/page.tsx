@@ -19,18 +19,11 @@ export default function VerEncuestasPorMateriaYTipoPage({
   const searchParams = useSearchParams();
   const nombreMateria = searchParams.get("nombreMateria") || "";
 
-  const tipoEncuestaMapeado: "materia" | "profesores" | "alumnos" =
-    tipoEncuesta === "profesor"
-      ? "profesores"
-      : tipoEncuesta === "alumno"
-        ? "alumnos"
-        : "materia";
-
   return (
     <VerEncuestasPorMateriaYTipoClient
       codigoMateria={codigoMateria}
       cuatrimestre={cuatrimestre}
-      tipoEncuesta={tipoEncuestaMapeado}
+      tipoEncuesta={tipoEncuesta}
       nombreMateria={nombreMateria}
     />
   );
