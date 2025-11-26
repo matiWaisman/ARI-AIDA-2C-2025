@@ -35,6 +35,8 @@ jobs:
     needs: build
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    environment:
+      name: DEPLOYMENT
     steps:
       - name: Disparar deploy (GET del back)
         run: curl "${{ secrets.URL_DEPLOYMENT_BACK }}"
