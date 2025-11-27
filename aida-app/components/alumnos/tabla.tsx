@@ -27,19 +27,19 @@ export default function Tabla({
   onActualizar,
 }: TablaProps) {
   return (
-    <div className="shadow-lg rounded-lg overflow-hidden">
+    <div className="shadow-lg rounded-lg overflow-hidden overflow-x-auto">
       <table
-        className="w-full bg-white border border-gray-200"
-        style={{ tableLayout: "fixed" }}
+        className="min-w-full bg-white border border-gray-200"
+        style={{ tableLayout: "auto", width: "100%" }}
       >
         <colgroup>
-          <col className="w-[6%]" />
-          <col className="w-[14%]" />
-          <col className="w-[14%]" />
-          <col className="w-[22%]" />
-          <col className="w-[12%]" />
-          <col className="w-[10%]" />
-          <col className="w-[12%]" />
+          <col style={{ minWidth: "80px", width: "8%" }} />
+          <col style={{ minWidth: "120px", width: "14%" }} />
+          <col style={{ minWidth: "120px", width: "14%" }} />
+          <col style={{ minWidth: "200px", width: "22%" }} />
+          <col style={{ minWidth: "140px", width: "14%" }} />
+          <col style={{ minWidth: "140px", width: "14%" }} />
+          <col style={{ minWidth: "80px", width: "8%" }} />
         </colgroup>
         <thead className="bg-gray-100">
           <tr>

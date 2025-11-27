@@ -35,14 +35,26 @@ export default function FilaTabla({
     }
   }, [editando.campo]);
 
-  // Formatear fecha si existe
   const formatearFecha = (fecha: string | null | undefined): string => {
     if (!fecha) return "-";
     try {
-      const date = new Date(fecha);
-      return date.toLocaleDateString("es-AR");
+      const fechaStr = String(fecha);
+      const fechaParte = fechaStr.split("T")[0].split(" ")[0];
+      const partes = fechaParte.split("-");
+      if (partes.length === 3) {
+        const [año, mes, dia] = partes;
+        return `${dia}/${mes}/${año}`;
+      }
+      const date = new Date(fechaStr);
+      if (!isNaN(date.getTime())) {
+        const dia = String(date.getDate()).padStart(2, "0");
+        const mes = String(date.getMonth() + 1).padStart(2, "0");
+        const año = date.getFullYear();
+        return `${dia}/${mes}/${año}`;
+      }
+      return fechaStr;
     } catch {
-      return fecha;
+      return String(fecha);
     }
   };
 
@@ -170,10 +182,10 @@ export default function FilaTabla({
       <td className="px-2 py-3 text-sm text-gray-700 break-words">
         {alumno.titulo || "-"}
       </td>
-      <td className="px-2 py-3 text-sm text-gray-700 whitespace-nowrap">
+      <td className="px-2 py-3 text-sm text-gray-700 whitespace-nowrap min-w-[140px]">
         {formatearFecha(alumno.titulo_en_tramite)}
       </td>
-      <td className="px-2 py-3 text-sm text-gray-700 whitespace-nowrap">
+      <td className="px-2 py-3 text-sm text-gray-700 whitespace-nowrap min-w-[140px]">
         {formatearFecha(alumno.egreso)}
       </td>
       <td className="px-2 py-3 text-sm text-center whitespace-nowrap">
