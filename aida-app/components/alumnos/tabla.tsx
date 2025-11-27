@@ -27,19 +27,19 @@ export default function Tabla({
   onActualizar,
 }: TablaProps) {
   return (
-    <div className="shadow-lg rounded-lg overflow-hidden">
+    <div className="shadow-lg rounded-lg overflow-hidden w-full">
       <table
         className="w-full bg-white border border-gray-200"
-        style={{ tableLayout: "fixed" }}
+        style={{ tableLayout: "fixed", width: "100%" }}
       >
         <colgroup>
-          <col className="w-[6%]" />
-          <col className="w-[14%]" />
-          <col className="w-[14%]" />
-          <col className="w-[22%]" />
-          <col className="w-[12%]" />
-          <col className="w-[10%]" />
-          <col className="w-[12%]" />
+          <col style={{ width: "8%" }} />
+          <col style={{ width: "13%" }} />
+          <col style={{ width: "13%" }} />
+          <col style={{ width: "20%" }} />
+          <col style={{ width: "13%" }} />
+          <col style={{ width: "13%" }} />
+          <col style={{ width: "12%" }} />
         </colgroup>
         <thead className="bg-gray-100">
           <tr>
@@ -61,7 +61,7 @@ export default function Tabla({
             <th className="px-2 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
               Egreso
             </th>
-            <th className="px-2 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
+            <th className="px-3 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
               Acciones
             </th>
           </tr>

@@ -73,3 +73,10 @@ Los principales lugares del código donde se puede ver la implementación de las
   - Tablas relacionadas con encuestas definidas en [./back/infrastructure/db/create-schema.sql](./back/infrastructure/db/create-schema.sql).
   - Queries en [./back/infrastructure/db/encuestas-repository.ts](./back/infrastructure/db/encuestas-repository.ts).
   - Endpoints en [./back/application/controllers/controller-encuestas.ts](./back/application/controllers/controller-encuestas.ts) y [./back/infrastructure/http/routes/routes-encuestas.ts](./back/infrastructure/http/routes/routes-encuestas.ts).
+
+## Instrucciones para levantar el proyecto
+Se encuentran en [./back/README.md](./back/README.md) y [./aida-app/README.md](./aida-app/README.md). Todos los comandos, como `build` o `run dev` tienen un comando desde root para ejecutar tanto back como front a la vez con un solo comando, para eso revisar [./package.json](./package.json). 
+
+<p align="center">
+  <img src="assets/chiqui.gif" alt="chiqui" />
+</p>

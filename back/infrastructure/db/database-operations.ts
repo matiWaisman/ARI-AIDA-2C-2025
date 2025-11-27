@@ -26,43 +26,62 @@ export async function deleteAlumnos(client: Client): Promise<void> {
     console.log(res.command, res.rowCount);
 }
 
-// ===== INSERT ALUMNOS FUNCTIONS =====
+// ===== QUERIES =====
 
-const queryFiltrarAlumnosNuevos: string = `
-  SELECT lu
-    FROM aida.alumnos
-    WHERE lu = ANY($1);
-  `;
-
-const queryUpdateAlumnoExistente: string = `
+// Solo existen estas columnas en alumnos:
+const queryUpdateAlumno = `
   UPDATE aida.alumnos
-    SET lu = $1, apellido = $2, nombres = $3, titulo = $4, titulo_en_tramite = $5, egreso = $6
+    SET titulo = $2, titulo_en_tramite = $3, egreso = $4
     WHERE lu = $1;
-`
+`;
 
-const queryInsertarAlumnoNuevo: string = `
-  INSERT INTO aida.alumnos 
-    (lu, apellido, nombres, titulo, titulo_en_tramite, egreso) 
-  VALUES ($1, $2, $3, $4, $5, $6)
+const queryInsertAlumno = `
+  INSERT INTO aida.alumnos (lu, titulo, titulo_en_tramite, egreso)
+  VALUES ($1, $2, $3, $4);
+`;
+
+// apellido y nombres van en entidadUniversitaria
+const queryUpsertEntidadUniversitaria = `
+  INSERT INTO aida.entidadUniversitaria (lu, apellido, nombres)
+  VALUES ($1, $2, $3)
+  ON CONFLICT (lu)
+  DO UPDATE SET apellido = EXCLUDED.apellido, nombres = EXCLUDED.nombres;
+`;
+
+const querySelectAlumnosExistentes = `
+  SELECT lu FROM aida.alumnos WHERE lu = ANY($1);
 `;
 
 export async function insertAlumnos(client: Client, fileAlumnosPath: string): Promise<void> {
-    const alumnos = await readCsv(fileAlumnosPath);  
-    console.log("Datos leídos del CSV:");
-    const listaDeLus = alumnos.map(alumno => alumno.lu);
-    console.log(listaDeLus);  
+  console.log("Leyendo CSV de alumnos…");
+  const alumnos = await readCsv(fileAlumnosPath);
 
-    const lusRepetidos = await client.query(queryFiltrarAlumnosNuevos, [listaDeLus]);
-    console.log("LUs repetidos en la base de datos:");
-    const listaDeLusRepetidos = lusRepetidos.rows.map(instanciaAlumno => instanciaAlumno.lu);
-    console.log(listaDeLusRepetidos)
-    for (const alumno of alumnos) {
-      var res;
-      if (listaDeLusRepetidos.some(alumnoRepetido => alumnoRepetido === alumno.lu)) {
-        res = await client.query(queryUpdateAlumnoExistente, Object.values(alumno))
-      } else {
-        res = await client.query(queryInsertarAlumnoNuevo, Object.values(alumno));
-      }
-      console.log(res.command, res.rowCount);
+  const listaDeLus = alumnos.map(a => a.lu);
+  const lusRepetidosRes = await client.query(querySelectAlumnosExistentes, [listaDeLus]);
+  const lusRepetidos = lusRepetidosRes.rows.map(r => r.lu);
+
+  for (const alumno of alumnos) {
+    // 1) Primero apellido + nombres → entidadUniversitaria
+    await client.query(
+      queryUpsertEntidadUniversitaria,
+      [alumno.lu, alumno.apellido, alumno.nombres]
+    );
+
+    // 2) Luego insertar/actualizar datos de alumnos
+    const paramsAlumno = [
+      alumno.lu,
+      alumno.titulo,
+      alumno.titulo_en_tramite,
+      alumno.egreso
+    ];
+
+    let res;
+    if (lusRepetidos.includes(alumno.lu)) {
+      res = await client.query(queryUpdateAlumno, paramsAlumno);
+    } else {
+      res = await client.query(queryInsertAlumno, paramsAlumno);
     }
+
+    console.log(res.command, res.rowCount, alumno.lu);
+  }
 }

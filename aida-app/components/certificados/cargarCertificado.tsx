@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Alumno } from "@/types/alumno";
 import Certificado from "./certificado";
 import { apiClient } from "@/apiClient/apiClient";
+import { apiFetch } from "@/utils/api";
 
 type CargarCertificadoProps = {
   endpointPath: string;

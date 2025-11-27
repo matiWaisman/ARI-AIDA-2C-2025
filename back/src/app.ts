@@ -28,6 +28,8 @@ if (isProduction) {
 
 const allowedOrigins = [
   "http://localhost:8080",
+  "http://localhost:3000",
+  "http://localhost:5173",
   "https://aida-app.onrender.com",
 ];
 
@@ -42,6 +44,20 @@ const corsOptions: cors.CorsOptions = {
   },
   credentials: true,
 };
+corsOptions.allowedHeaders = ["Content-Type", "Authorization"];
+corsOptions.methods = ["GET", "POST", "PUT", "DELETE", "OPTIONS"];
+
+app.use((req, res, next) => {
+  if (req.method === "OPTIONS") {
+    res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    return res.sendStatus(200);
+  }
+  next();
+});
+
 
 app.use(cors(corsOptions));
 

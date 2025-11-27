@@ -65,7 +65,7 @@ Para la siguiente secuencia de pasos se asume que ya se forkéo el proyecto y se
 - Correr desde la terminal el siguiente comando: `npm run db:init`.
   Esto inicializa la base de datos y va a pedir la contraseña definida en el `.env`.
 - Correr desde la terminal el siguiente comando: `cd ..`.
-- Correr desde la terminal el siguiente comando: `npm run start`.
+- Correr desde la terminal el siguiente comando: `npm run dev`.
   Si todo se instaló correctamente, deberías poder acceder a la página localmente desde `localhost:8080` y al backend desde `localhost:3000`.
 
 ## Cómo ejecutar solo el backend

@@ -35,13 +35,13 @@ export function TablaMaterias({
   if (Materias.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
-        No hay materias disponibles para inscribirse
+        No hay materias disponibles
       </div>
     );
   }
 
   return (
-    <div className="w-full overflow-x-auto">
+    <div className="w-full overflow-hidden">
       <table className="w-full border-collapse border border-gray-300 bg-white rounded-lg shadow-sm">
         <thead>
           <tr className="bg-gray-50 border-b border-gray-300">

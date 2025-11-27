@@ -8,13 +8,13 @@ type Props = {
 };
 
 export default function CertificadoPage({ params }: Props) {
-  const { fecha } = React.use(params);
+  const resolved = React.use(params);
+return (
+  <CargarCertificado
+    endpointPath="alumnos/fecha"
+    paramName="fecha"
+    paramValue={resolved.fecha}
+  />
+);
 
-  return (
-    <CargarCertificado
-      endpointPath="/alumnos/fecha"
-      paramName="fecha"
-      paramValue={fecha}
-    />
-  );
 }

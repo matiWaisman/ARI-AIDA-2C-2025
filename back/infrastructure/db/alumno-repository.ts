@@ -7,7 +7,7 @@ export class AlumnoRepository {
   constructor(private client: Client) {}
 
   async existeAlumno(where: string, params: any[] = []): Promise<boolean> {
-    const query = `SELECT 1 FROM aida.alumnos WHERE titulo IS NOT NULL ${where} LIMIT 1`;
+    const query = `SELECT 1 FROM aida.alumnos WHERE 1 = 1 ${where} LIMIT 1`;
     const result = await this.client.query(query, params);
     return result.rows.length > 0;
   }
@@ -23,30 +23,42 @@ export class AlumnoRepository {
     );
   }
 
-  async getAlumnos(where: string, params: any[] = []): Promise<Alumno[]> {
+  async getAlumnos(where: string = "", params: any[] = []): Promise<Alumno[]> {
     const query = `
-      SELECT * 
-        FROM aida.alumnos a
-        INNER JOIN aida.entidadUniversitaria eu ON a.lu = eu.lu`;
+      SELECT a.lu, a.titulo, a.titulo_en_tramite, a.egreso,
+             eu.apellido, eu.nombres
+      FROM aida.alumnos a
+      INNER JOIN aida.entidadUniversitaria eu ON a.lu = eu.lu
+      WHERE 1 = 1
+      ${where}
+    `;
+
     const result = await this.client.query<Alumno>(query, params);
     return result.rows;
   }
 
   async getAlumnoConLU(lu: string): Promise<Alumno | undefined> {
-    const query = `SELECT a.lu, eu.nombres, eu.apellido
+    const query = `
+      SELECT a.lu, a.titulo, a.titulo_en_tramite, a.egreso,
+             eu.apellido, eu.nombres
       FROM aida.alumnos a
       INNER JOIN aida.entidadUniversitaria eu ON a.lu = eu.lu
-      WHERE a.titulo IS NOT NULL AND a.lu = $1`;
+      WHERE a.titulo IS NOT NULL AND a.lu = $1
+    `;
     const result = await this.client.query(query, [lu]);
     return result.rows[0];
   }
 
   async getAlumnoConFechaDeseada(fecha: string): Promise<Alumno | undefined> {
-    const alumnos = await this.getAlumnos(
-      "AND titulo_en_tramite IS NOT NULL AND titulo_en_tramite = $1 ORDER BY titulo_en_tramite LIMIT 1",
-      [fecha]
-    );
-    return alumnos[0];
+    const sql = `
+    SELECT *
+    FROM aida.alumnos a
+    INNER JOIN aida.entidadUniversitaria eu ON a.lu = eu.lu
+    WHERE a.titulo_en_tramite::date = $1::date
+    LIMIT 1
+  `;
+    const result = await this.client.query(sql, [fecha]);
+    return result.rows[0];
   }
 
   async crearEntidadUniversitaria(
@@ -56,9 +68,12 @@ export class AlumnoRepository {
   ) {
     await this.client.query(
       `
-      INSERT INTO aida.entidadUniversitaria (lu, apellido, nombres)
-      VALUES ($1, $2, $3);
-    `,
+        INSERT INTO aida.entidadUniversitaria (lu, apellido, nombres)
+        VALUES ($1, $2, $3)
+        ON CONFLICT (lu)
+        DO UPDATE SET apellido = EXCLUDED.apellido,
+                      nombres = EXCLUDED.nombres;
+      `,
       [lu, apellido, nombres]
     );
   }
@@ -71,10 +86,10 @@ export class AlumnoRepository {
   ) {
     const result = await this.client.query(
       `
-      INSERT INTO aida.alumnos (lu, titulo, titulo_en_tramite, egreso)
-      VALUES ($1, $2, $3, $4)
-      RETURNING *;
-    `,
+        INSERT INTO aida.alumnos (lu, titulo, titulo_en_tramite, egreso)
+        VALUES ($1, $2, $3, $4)
+        RETURNING *;
+      `,
       [lu, titulo, titulo_en_tramite, egreso]
     );
 
@@ -84,21 +99,18 @@ export class AlumnoRepository {
   async crearAlumno(lu: string): Promise<Alumno | undefined> {
     const existeAlumno = await this.hayAlumnoConLu(lu);
     if (existeAlumno) {
-      const res = await this.getAlumnoConLU(lu);
-      return res;
-    } else {
-      const queryInsertarAlumnoNuevo: string = `
-        INSERT INTO aida.alumnos  
-          (lu) 
-        VALUES ($1)
-        RETURNING *;
-      `;
-      const result = await this.client.query<Alumno>(queryInsertarAlumnoNuevo, [
-        lu,
-      ]);
-      const res = result.rows[0];
-      return res;
+      return this.getAlumnoConLU(lu);
     }
+
+    const queryInsertarAlumnoNuevo = `
+      INSERT INTO aida.alumnos (lu)
+      VALUES ($1)
+      RETURNING *;
+    `;
+    const result = await this.client.query<Alumno>(queryInsertarAlumnoNuevo, [
+      lu,
+    ]);
+    return result.rows[0];
   }
 
   async updateAlumno(
@@ -110,90 +122,95 @@ export class AlumnoRepository {
     if (!alumno) {
       return undefined;
     }
-    const queryUpdateAlumnoExistente: string = `
-      UPDATE aida.alumnos
-        SET apellido = $2, nombres = $3
-        WHERE lu = $1
-        RETURNING *;
+
+    // Se actualiza entidadUniversitaria, NO alumnos
+    const queryUpdateEntidad = `
+      UPDATE aida.entidadUniversitaria
+      SET apellido = $2, nombres = $3
+      WHERE lu = $1
+      RETURNING *;
     `;
-    const result = await this.client.query<Alumno>(queryUpdateAlumnoExistente, [
+    const result = await this.client.query(queryUpdateEntidad, [
       LU,
       lastName,
       name,
     ]);
-    const res = result.rows[0];
-    return res;
+
+    return result.rows[0];
   }
 
   async deleteAlumno(LU: string): Promise<boolean> {
     const alumno = await this.existeAlumno("AND lu = $1", [LU]);
-    if (!alumno) {
-      return false;
-    }
-    const queryDeleteAlumno: string = `
-        DELETE FROM aida.alumnos
-          WHERE lu = $1;
-      `;
-    const result = await this.client.query(queryDeleteAlumno, [LU]);
-    return result ? true : false;
+    if (!alumno) return false;
+
+    await this.client.query(`DELETE FROM aida.cursa WHERE luAlumno = $1`, [LU]);
+
+    await this.client.query(
+      `DELETE FROM aida.encuestaAAlumno WHERE luEncuestado = $1 OR luEvaluado = $1`,
+      [LU]
+    );
+
+    await this.client.query(
+      `DELETE FROM aida.encuestaAMateria WHERE luEncuestado = $1`,
+      [LU]
+    );
+
+    await this.client.query(
+      `DELETE FROM aida.encuestaAProfesor WHERE luEncuestado = $1 OR luEvaluado = $1`,
+      [LU]
+    );
+
+    await this.client.query(`DELETE FROM aida.usuarios WHERE lu = $1`, [LU]);
+
+    await this.client.query(`DELETE FROM aida.profesor WHERE lu = $1`, [LU]);
+
+    await this.client.query(`DELETE FROM aida.alumnos WHERE lu = $1`, [LU]);
+
+    await this.client.query(
+      `DELETE FROM aida.entidadUniversitaria WHERE lu = $1`,
+      [LU]
+    );
+
+    return true;
   }
 
-  async cargarAlumnosFromCSV(FilePath: string) {
-    const enProduccion = process.env.PRODUCTION_DB === "true";
-    let client: Client;
-
-    if (enProduccion) {
-      const connectionString = process.env.CONNECTION_STRING_DB;
-      if (!connectionString) {
-        throw new Error("CONNECTION_STRING_DB no está definida");
-      }
-
-      // Para Supabase, configuramos SSL directamente en el objeto Client
-      // No agregamos sslmode a la connection string para evitar conflictos
-      client = new Client({
-        connectionString: connectionString.trim(),
-        ssl: {
-          rejectUnauthorized: false,
-        },
-      });
-    } else {
-      client = new Client({
-        user: process.env.PGUSER,
-        password: process.env.PGPASSWORD,
-        host: process.env.PGHOST,
-        port: Number(process.env.PGPORT) || 5432,
-        database: process.env.PGDATABASE,
-      });
-    }
-
+  async cargarAlumnosFromCSV(filePath: string) {
+    const client = new Client({ connectionString: process.env.DATABASE_URL });
     await client.connect();
-    await insertAlumnos(client, FilePath);
+    await insertAlumnos(client, filePath);
     await client.end();
+  }
+
+  async cargarDatosEnAlumnos(filePath: string) {
+    return this.cargarAlumnosFromCSV(filePath);
   }
 
   async alumnoCompletoCarrera(LU: string) {
     const query1 = `
-     SELECT NOT EXISTS (
-         SELECT 1
-         FROM aida.materias m
-         WHERE NOT EXISTS (
-             SELECT 1
-             FROM aida.cursa c
-             WHERE c.luAlumno = $1
-               AND c.codigoMateria = m.codigoMateria
-               AND c.nota > 4
-         )
-     ) AS completo;`;
+      SELECT NOT EXISTS (
+          SELECT 1
+          FROM aida.materias m
+          WHERE NOT EXISTS (
+              SELECT 1
+              FROM aida.cursa c
+              WHERE c.luAlumno = $1
+                AND c.codigoMateria = m.codigoMateria
+                AND c.nota > 4
+          )
+      ) AS completo;
+    `;
     const result = await this.client.query(query1, [LU]);
+
     if (!result.rows[0]) {
       throw new Error("La consulta no devolvió ninguna fila");
     }
+
     if (result.rows[0].completo) {
       const query2 = `
-       UPDATE aida.alumnos
-       SET titulo_en_tramite = CURRENT_DATE
-       WHERE lu = $1;
-       `;
+        UPDATE aida.alumnos
+        SET titulo_en_tramite = CURRENT_DATE
+        WHERE lu = $1;
+      `;
       await this.client.query(query2, [LU]);
     }
 
@@ -201,18 +218,25 @@ export class AlumnoRepository {
   }
 
   async getAllAsDict(): Promise<AlumnosDict> {
-    const result = await this.client.query<Alumno>(
-      "SELECT * FROM aida.alumnos"
-    );
+    const query = `
+      SELECT a.lu, a.titulo, a.titulo_en_tramite, a.egreso,
+             eu.apellido, eu.nombres
+      FROM aida.alumnos a
+      INNER JOIN aida.entidadUniversitaria eu ON a.lu = eu.lu
+    `;
+
+    const result = await this.client.query<Alumno>(query);
     const dict: AlumnosDict = {};
+
     for (const row of result.rows) {
       dict[row.lu] = row;
     }
+
     return dict;
   }
 
   async deleteAll(): Promise<void> {
-    const result = await this.client.query("DELETE FROM aida.alumnos");
+    await this.client.query("DELETE FROM aida.alumnos");
   }
 
   async bulkInsertOrUpdateFromCSV(filePath: string): Promise<void> {
@@ -226,22 +250,52 @@ export class AlumnoRepository {
     );
     const lusExistentes = existentes.rows.map((a) => a.lu);
 
-    const queryInsert = `
-      INSERT INTO aida.alumnos (lu, apellido, nombres, titulo, titulo_en_tramite, egreso)
-      VALUES ($1, $2, $3, $4, $5, $6)
+    // CORREGIDO: los datos personales van a entidadUniversitaria
+    const queryUpsertEntidad = `
+      INSERT INTO aida.entidadUniversitaria (lu, apellido, nombres)
+      VALUES ($1, $2, $3)
+      ON CONFLICT (lu)
+      DO UPDATE SET apellido = EXCLUDED.apellido,
+                    nombres = EXCLUDED.nombres;
     `;
-    const queryUpdate = `
+
+    const queryInsertAlumno = `
+      INSERT INTO aida.alumnos (lu, titulo, titulo_en_tramite, egreso)
+      VALUES ($1, $4, $5, $6)
+    `;
+
+    const queryUpdateAlumno = `
       UPDATE aida.alumnos
-      SET apellido = $2, nombres = $3, titulo = $4, titulo_en_tramite = $5, egreso = $6
+      SET titulo = $4, titulo_en_tramite = $5, egreso = $6
       WHERE lu = $1
     `;
 
     for (const alumno of alumnos) {
-      const params = Object.values(alumno);
+      // apellido y nombres → entidadUniversitaria
+      await this.client.query(queryUpsertEntidad, [
+        alumno.lu,
+        alumno.apellido,
+        alumno.nombres,
+      ]);
+
       if (lusExistentes.includes(alumno.lu)) {
-        await this.client.query(queryUpdate, params);
+        await this.client.query(queryUpdateAlumno, [
+          alumno.lu,
+          alumno.apellido,
+          alumno.nombres,
+          alumno.titulo,
+          alumno.titulo_en_tramite,
+          alumno.egreso,
+        ]);
       } else {
-        await this.client.query(queryInsert, params);
+        await this.client.query(queryInsertAlumno, [
+          alumno.lu,
+          alumno.apellido,
+          alumno.nombres,
+          alumno.titulo,
+          alumno.titulo_en_tramite,
+          alumno.egreso,
+        ]);
       }
     }
   }

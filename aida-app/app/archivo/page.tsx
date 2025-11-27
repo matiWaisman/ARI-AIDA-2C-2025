@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { apiClient } from "@/apiClient/apiClient";
+import { apiFetch } from "@/utils/api";
 import { useUser } from "@/contexts/UserContext";
 import LoadingScreen from "@/components/loadingScreen";
 import ErrorScreen from "@/components/errorScreen";
+import { apiClient } from "@/apiClient/apiClient";
 
 export default function Archivo() {
   const { usuario, loading } = useUser();
@@ -23,13 +24,22 @@ export default function Archivo() {
       const formData = new FormData();
       formData.append("archivo", file);
       try {
-        await apiClient("/cargarCSV", {
+        const res = await apiFetch("/alumnos/cargarCSV", {
           method: "POST",
-          body: formData as any,
+          credentials: "include",
+          body: formData,
         });
 
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          const message =
+            (err && (err.error || err.message)) || `Error ${res.status}`;
+          throw new Error(message);
+        }
+
+        const result = await res.json();
         setStatus("success");
-        setMessage("Datos cargados correctamente");
+        setMessage(result.message || "Datos cargados correctamente");
       } catch (err: any) {
         setStatus("error");
         setMessage(err?.message || "Error de red o del servidor");
