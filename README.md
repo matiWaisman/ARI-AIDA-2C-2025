@@ -75,7 +75,7 @@ Los principales lugares del código donde se puede ver la implementación de las
   - Endpoints en [./back/application/controllers/controller-encuestas.ts](./back/application/controllers/controller-encuestas.ts) y [./back/infrastructure/http/routes/routes-encuestas.ts](./back/infrastructure/http/routes/routes-encuestas.ts).
 
 ## Instrucciones para levantar el proyecto
-Se encuentran en [./back/README.md](./back/README.md) y [./aida-app/README.md](./aida-app/README.md). Todos los comandos, como `buils` o `run dev` tienen un comando desde root para ejecutar tanto back como front a la vez con un solo comando, para eso revisar [./package.json](./package.json). 
+Se encuentran en [./back/README.md](./back/README.md) y [./aida-app/README.md](./aida-app/README.md). Todos los comandos, como `build` o `run dev` tienen un comando desde root para ejecutar el comando tanto back como front a la vez con un solo comando, para eso revisar [./package.json](./package.json). 
 
 <p align="center">
   <img src="assets/chiqui.gif" alt="chiqui" />
