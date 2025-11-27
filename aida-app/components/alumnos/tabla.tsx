@@ -27,19 +27,19 @@ export default function Tabla({
   onActualizar,
 }: TablaProps) {
   return (
-    <div className="shadow-lg rounded-lg overflow-hidden overflow-x-auto">
+    <div className="shadow-lg rounded-lg overflow-hidden w-full">
       <table
-        className="min-w-full bg-white border border-gray-200"
-        style={{ tableLayout: "auto", width: "100%" }}
+        className="w-full bg-white border border-gray-200"
+        style={{ tableLayout: "fixed", width: "100%" }}
       >
         <colgroup>
-          <col style={{ minWidth: "80px", width: "8%" }} />
-          <col style={{ minWidth: "120px", width: "14%" }} />
-          <col style={{ minWidth: "120px", width: "14%" }} />
-          <col style={{ minWidth: "200px", width: "22%" }} />
-          <col style={{ minWidth: "140px", width: "14%" }} />
-          <col style={{ minWidth: "140px", width: "14%" }} />
-          <col style={{ minWidth: "80px", width: "8%" }} />
+          <col style={{ width: "8%" }} />
+          <col style={{ width: "13%" }} />
+          <col style={{ width: "13%" }} />
+          <col style={{ width: "20%" }} />
+          <col style={{ width: "13%" }} />
+          <col style={{ width: "13%" }} />
+          <col style={{ width: "12%" }} />
         </colgroup>
         <thead className="bg-gray-100">
           <tr>
@@ -61,7 +61,7 @@ export default function Tabla({
             <th className="px-2 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
               Egreso
             </th>
-            <th className="px-2 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
+            <th className="px-3 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
               Acciones
             </th>
           </tr>

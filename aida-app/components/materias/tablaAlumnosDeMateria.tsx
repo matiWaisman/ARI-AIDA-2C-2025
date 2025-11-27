@@ -22,18 +22,8 @@ export default function TablaAlumnosDeMateria({
   onPonerNota,
 }: TablaAlumnosDeMateriaProps) {
   return (
-    <div className="shadow-lg rounded-lg overflow-hidden">
-      <table
-        className="w-full bg-white border border-gray-200"
-        style={{ tableLayout: "fixed" }}
-      >
-        <colgroup>
-          <col className="w-[30%]" />
-          <col className="w-[30%]" />
-          <col className="w-[30%]" />
-          <col className="w-[10%]" />
-        </colgroup>
-
+    <div className="w-full shadow-lg rounded-lg overflow-hidden">
+      <table className="w-full bg-white border border-gray-200">
         <thead className="bg-gray-100">
           <tr>
             <th className="px-2 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">

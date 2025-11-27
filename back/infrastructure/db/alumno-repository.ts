@@ -49,18 +49,17 @@ export class AlumnoRepository {
     return result.rows[0];
   }
 
-async getAlumnoConFechaDeseada(fecha: string): Promise<Alumno | undefined> {
-  const sql = `
+  async getAlumnoConFechaDeseada(fecha: string): Promise<Alumno | undefined> {
+    const sql = `
     SELECT *
     FROM aida.alumnos a
     INNER JOIN aida.entidadUniversitaria eu ON a.lu = eu.lu
     WHERE a.titulo_en_tramite::date = $1::date
     LIMIT 1
   `;
-  const result = await this.client.query(sql, [fecha]);
-  return result.rows[0];
-}
-
+    const result = await this.client.query(sql, [fecha]);
+    return result.rows[0];
+  }
 
   async crearEntidadUniversitaria(
     lu: string,
@@ -144,16 +143,34 @@ async getAlumnoConFechaDeseada(fecha: string): Promise<Alumno | undefined> {
     const alumno = await this.existeAlumno("AND lu = $1", [LU]);
     if (!alumno) return false;
 
-    const queryDeleteAlumno = `
-      DELETE FROM aida.alumnos
-      WHERE lu = $1;
-    `;
-    const queryDeleteEntidad = `
-      DELETE FROM aida.entidadUniversitaria
-      WHERE lu = $1;
-    `;
-    await this.client.query(queryDeleteAlumno, [LU]);
-    await this.client.query(queryDeleteEntidad, [LU]);
+    await this.client.query(`DELETE FROM aida.cursa WHERE luAlumno = $1`, [LU]);
+
+    await this.client.query(
+      `DELETE FROM aida.encuestaAAlumno WHERE luEncuestado = $1 OR luEvaluado = $1`,
+      [LU]
+    );
+
+    await this.client.query(
+      `DELETE FROM aida.encuestaAMateria WHERE luEncuestado = $1`,
+      [LU]
+    );
+
+    await this.client.query(
+      `DELETE FROM aida.encuestaAProfesor WHERE luEncuestado = $1 OR luEvaluado = $1`,
+      [LU]
+    );
+
+    await this.client.query(`DELETE FROM aida.usuarios WHERE lu = $1`, [LU]);
+
+    await this.client.query(`DELETE FROM aida.profesor WHERE lu = $1`, [LU]);
+
+    await this.client.query(`DELETE FROM aida.alumnos WHERE lu = $1`, [LU]);
+
+    await this.client.query(
+      `DELETE FROM aida.entidadUniversitaria WHERE lu = $1`,
+      [LU]
+    );
+
     return true;
   }
 
@@ -258,7 +275,7 @@ async getAlumnoConFechaDeseada(fecha: string): Promise<Alumno | undefined> {
       await this.client.query(queryUpsertEntidad, [
         alumno.lu,
         alumno.apellido,
-        alumno.nombres
+        alumno.nombres,
       ]);
 
       if (lusExistentes.includes(alumno.lu)) {

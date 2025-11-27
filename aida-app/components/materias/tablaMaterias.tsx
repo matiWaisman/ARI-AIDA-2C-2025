@@ -41,7 +41,7 @@ export function TablaMaterias({
   }
 
   return (
-    <div className="w-full overflow-x-auto">
+    <div className="w-full overflow-hidden">
       <table className="w-full border-collapse border border-gray-300 bg-white rounded-lg shadow-sm">
         <thead>
           <tr className="bg-gray-50 border-b border-gray-300">

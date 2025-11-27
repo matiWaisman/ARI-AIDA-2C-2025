@@ -93,7 +93,7 @@ export default function AlumnosClient({
   if (error) return <ErrorScreen error={error} />;
 
   return (
-    <div className="w-full px-12 py-8">
+    <div className="w-full px-6 py-8">
       {actionError && (
         <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded">
           {actionError}
