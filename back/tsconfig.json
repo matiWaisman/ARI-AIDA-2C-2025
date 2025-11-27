@@ -20,9 +20,9 @@
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
 
-    "types": ["node"],                      // 👈 evita error "Cannot find type definition for 'node'"
+    "types": ["node"],                     
 
-    "allowImportingTsExtensions": true,     // ya lo tenías
+    "allowImportingTsExtensions": true,     
     "noEmit": true
   }
 }
