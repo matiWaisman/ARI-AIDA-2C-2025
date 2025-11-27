@@ -148,9 +148,12 @@ async getAlumnoConFechaDeseada(fecha: string): Promise<Alumno | undefined> {
       DELETE FROM aida.alumnos
       WHERE lu = $1;
     `;
+    const queryDeleteEntidad = `
+      DELETE FROM aida.entidadUniversitaria
+      WHERE lu = $1;
+    `;
     await this.client.query(queryDeleteAlumno, [LU]);
-
-    // No borramos entidadUniversitaria por si lo usan en otras tablas
+    await this.client.query(queryDeleteEntidad, [LU]);
     return true;
   }
 
