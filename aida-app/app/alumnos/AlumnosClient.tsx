@@ -59,7 +59,14 @@ export default function AlumnosClient({
         }),
       });
 
-      setLista((prev) => [...prev, nuevo]);
+      setLista((prev) => [
+        ...prev,
+        {
+          ...nuevo,
+          nombres: nuevo.nombres ?? nombres,
+          apellido: nuevo.apellido ?? apellido,
+        },
+      ]);
       return true;
     } catch (e: any) {
       setActionError(e.message);
