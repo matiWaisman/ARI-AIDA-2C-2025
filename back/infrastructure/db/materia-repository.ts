@@ -86,76 +86,7 @@ export class MateriaRepository {
     const result = await this.client.query(query, [id]);
     return result.rows;
   }
-
-  async getMateriasQueNoParticipa(
-    id: number,
-    participacion: "cursa" | "dicta",
-    rolEnMateria: "Alumno" | "Profesor"
-  ): Promise<any[]> {
-    const columnaLu = rolEnMateria === "Alumno" ? "lualumno" : "luprofesor";
-    const query = `
-      WITH materiasQueNoParticipa AS (
-        SELECT m2.*
-          FROM aida.materias m2
-          WHERE NOT EXISTS (
-            SELECT p.codigomateria
-              FROM aida.${participacion} p
-              INNER JOIN aida.usuarios u ON p.${columnaLu} = u.lu
-              WHERE u.id = $1
-              AND p.codigomateria = m2.codigomateria
-          )		
-      )
-
-
-      SELECT 
-            m.nombremateria AS "nombreMateria", 
-            m.codigomateria AS "codigoMateria", 
-            string_agg(DISTINCT e.nombres || ' ' || e.apellido, ' / ') AS "nombres",
-            ''::text AS "apellido",
-            '2C2025' AS cuatrimestre
-      FROM materiasQueNoParticipa m
-      LEFT JOIN aida.dicta d ON m.codigomateria = d.codigomateria
-      LEFT JOIN aida.entidadUniversitaria e ON d.luprofesor = e.lu
-      GROUP BY m.nombremateria, m.codigomateria
-    `;
-    const result = await this.client.query(query, [id]);
-    return result.rows;
-  }
-
-  async getMateriasQueSiParticipa(
-    id: number,
-    participacion: "cursa" | "dicta",
-    rolEnMateria: "Alumno" | "Profesor"
-  ): Promise<any[]> {
-    const columnaLu = rolEnMateria === "Alumno" ? "lualumno" : "luprofesor";
-    const query = `
-        WITH materiasQueSiParticipa AS (
-          SELECT m2.*
-            FROM aida.materias m2
-            WHERE EXISTS (
-              SELECT p.codigomateria
-                FROM aida.${participacion} p
-                INNER JOIN aida.usuarios u ON p.${columnaLu} = u.lu
-                WHERE u.id = $1
-                AND p.codigomateria = m2.codigomateria
-            )
-        )
-
-        SELECT 
-              m.nombremateria AS "nombreMateria", 
-              m.codigomateria AS "codigoMateria", 
-              string_agg(DISTINCT e.nombres || ' ' || e.apellido, ' / ') AS "nombres",
-              ''::text AS "apellido",
-              '2C2025' AS cuatrimestre
-        FROM materiasQueSiParticipa m
-        LEFT JOIN aida.dicta d ON m.codigomateria = d.codigomateria
-        LEFT JOIN aida.entidadUniversitaria e ON d.luprofesor = e.lu
-        GROUP BY m.nombremateria, m.codigomateria
-    `;
-
-    const result = await this.client.query(query, [id]);
-    return result.rows;
-  }
+  
 
   async inscribirConId(
     codigoMateria: string,
@@ -212,20 +143,6 @@ export class MateriaRepository {
     INSERT INTO aida.${tabla} (${columnaLu}, codigomateria, cuatrimestre)
       VALUES ($2, $1, '2C2025');`;
     await this.client.query(query, [codigoMateria, lu]);
-  }
-
-  async materiasCursadasPorAlumno(lu: string): Promise<any[]> {
-    const query = `
-      SELECT 
-        m.nombreMateria, 
-        m.codigoMateria, 
-        c.cuatrimestre
-      FROM aida.materias m
-      JOIN aida.cursa c ON m.codigoMateria = c.codigoMateria
-      WHERE c.luAlumno = $1;
-    `;
-    const result = await this.client.query(query, [lu]);
-    return result.rows;
   }
 
   async obtenerAlumnosDeMateria(

@@ -179,18 +179,6 @@ export class MateriaController {
     await client.end();
   }
 
-
-  static async ponerNotaAAlumno(req: Request, res: Response) {
-    const { codigoMateria, cuatrimestre, luAlumno, nota } = req.body;
-    const { client, business } =
-      await MateriaController._createDbClientAndInitializeBusiness();
-
-    await business.ponerNotaAAlumno(codigoMateria, cuatrimestre, luAlumno, nota);
-    
-    res.status(200).json({ message: "Nota actualizada correctamente" });
-    await client.end();
-  }
-
   static async getAlumnosDeMateriaConNota(req: Request, res: Response) {
     const {codigoMateria, cuatrimestre} = req.params;
     const { client, business } =

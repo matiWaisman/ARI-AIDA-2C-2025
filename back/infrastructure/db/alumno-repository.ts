@@ -123,7 +123,6 @@ export class AlumnoRepository {
       return undefined;
     }
 
-    // Se actualiza entidadUniversitaria, NO alumnos
     const queryUpdateEntidad = `
       UPDATE aida.entidadUniversitaria
       SET apellido = $2, nombres = $3
@@ -217,28 +216,6 @@ export class AlumnoRepository {
     return result.rows[0].completo;
   }
 
-  async getAllAsDict(): Promise<AlumnosDict> {
-    const query = `
-      SELECT a.lu, a.titulo, a.titulo_en_tramite, a.egreso,
-             eu.apellido, eu.nombres
-      FROM aida.alumnos a
-      INNER JOIN aida.entidadUniversitaria eu ON a.lu = eu.lu
-    `;
-
-    const result = await this.client.query<Alumno>(query);
-    const dict: AlumnosDict = {};
-
-    for (const row of result.rows) {
-      dict[row.lu] = row;
-    }
-
-    return dict;
-  }
-
-  async deleteAll(): Promise<void> {
-    await this.client.query("DELETE FROM aida.alumnos");
-  }
-
   async bulkInsertOrUpdateFromCSV(filePath: string): Promise<void> {
     const alumnos = await readCsv(filePath);
     const listaDeLus = alumnos.map((a) => a.lu);
@@ -250,7 +227,6 @@ export class AlumnoRepository {
     );
     const lusExistentes = existentes.rows.map((a) => a.lu);
 
-    // CORREGIDO: los datos personales van a entidadUniversitaria
     const queryUpsertEntidad = `
       INSERT INTO aida.entidadUniversitaria (lu, apellido, nombres)
       VALUES ($1, $2, $3)
@@ -271,7 +247,6 @@ export class AlumnoRepository {
     `;
 
     for (const alumno of alumnos) {
-      // apellido y nombres → entidadUniversitaria
       await this.client.query(queryUpsertEntidad, [
         alumno.lu,
         alumno.apellido,

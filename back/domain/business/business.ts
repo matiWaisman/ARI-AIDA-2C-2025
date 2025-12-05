@@ -8,7 +8,6 @@ import { CertificadoGenerator } from "../../infrastructure/files/generador-certi
 import { MateriaRepository } from "../../infrastructure/db/materia-repository.ts";
 import { EncuestasRepository } from "../../infrastructure/db/encuestas-repository.ts";
 import { CursaRepository } from "../../infrastructure/db/cursa-repository.ts";
-import { DictaRepository } from "../../infrastructure/db/dicta-repository.ts";
 import type { Materia } from "../entity/materia.ts";
 
 export class Business {
@@ -20,7 +19,6 @@ export class Business {
     private certificadoGenerator: CertificadoGenerator;
     private encuestasRepo: EncuestasRepository;
     private cursaRepo: CursaRepository;
-    private dictaRepo: DictaRepository;
 
     constructor(client: Client) {
         this.userRepo = new UserRepository(client);
@@ -31,7 +29,6 @@ export class Business {
         this.encuestasRepo = new EncuestasRepository(client)
         this.certificadoGenerator = new CertificadoGenerator();
         this.cursaRepo = new CursaRepository(client);
-        this.dictaRepo = new DictaRepository(client);
     }
 
     async crearUsuario({username, password, nombre, apellido, lu, email, esProfesor, esAlumno}: {
@@ -98,14 +95,6 @@ export class Business {
     return this.userRepo.autenticarUsuario(username, password);
     }
 
-    async hashPassword(password: string) {
-    return this.userRepo.hashPassword(password);
-    }
-
-    async verifyPassword(password: string, hash: string) {
-    return this.userRepo.verifyPassword(password, hash);
-    }
-
     async esAlumno(id: number | undefined): Promise<boolean> {
     return this.userRepo.esAlumno(id);
     }
@@ -116,10 +105,6 @@ export class Business {
 
     async getLuFromUserId(id: number): Promise<string | null> {
     return this.userRepo.getLuFromUserId(id);
-    }
-
-    async crearUsuarioSimple(username: string, password: string, nombre: string, apellido: string, lu: string, email: string) {
-    return this.userRepo.crearUsuario(username, password, nombre, apellido, lu, email);
     }
 
     async obtenerAlumnosDeMateria(codigoMateria: string, cuatrimestre: string) {
@@ -160,15 +145,7 @@ export class Business {
 
     async crearEncuestaAProfesor(e: {luEvaluado: string; luEncuestado: string; codigoMateria: string; cuatrimestre: string; respuestas: number[];comentario?: string;}) {
     return this.encuestasRepo.crearEncuestaAProfesor(e);     
-    }   
-
-    async materiasQueCursoAlumno(lu: string) {
-    return this.cursaRepo.materiasQueCursoAlumno(lu);
-    }
-
-    async materiasQueDictoProfesor(lu: string) {
-    return this.dictaRepo.materiasQueDictoProfesor(lu);
-    }   
+    }    
 
     async obtenerEncuestasNoRespondidas(lu: string) {
     return this.encuestasRepo.obtenerEncuestasNoRespondidas(lu);

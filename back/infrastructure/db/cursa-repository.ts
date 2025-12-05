@@ -40,7 +40,6 @@ export class CursaRepository {
           AND cuatrimestre = $3;
     `;
     const params = [luAlumno, codigoMateria, cuatrimestre, nota];
-    const result = await this.client.query(query, params);
   }
 }
 
