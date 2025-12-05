@@ -10,7 +10,6 @@ export type TableName =
   | 'encuestaAProfesor'
   | 'usuarios';
 
-  // Capaz hay que cambiar todos los nombres repetidos, its joever
 export type ColumnName =
   // entidadUniversitaria
   | 'luEntidad'
@@ -116,6 +115,7 @@ export interface TableDef {
     title?: string
     orderBy?: ColumnName[]
     elementName?: string
+    requiereRuta: boolean
 }
 
 const tableDefinitions: TableDef[] = [
@@ -129,7 +129,8 @@ const tableDefinitions: TableDef[] = [
     pk: ['luEntidad'],
     fks: [],
     elementName: 'entidadUniversitaria',
-    orderBy: ['apellidoEntidad', 'nombresEntidad']
+    orderBy: ['apellidoEntidad', 'nombresEntidad'],
+    requiereRuta: false
   },
 
   {
@@ -150,7 +151,8 @@ const tableDefinitions: TableDef[] = [
       }
     ],
     elementName: 'alumno',
-    orderBy: ['luAlumno'] 
+    orderBy: ['luAlumno'],
+    requiereRuta: true 
   },
 
   {
@@ -169,7 +171,8 @@ const tableDefinitions: TableDef[] = [
       }
     ],
     elementName: 'profesor',
-    orderBy: ['idProfesor']
+    orderBy: ['idProfesor'],
+    requiereRuta: false 
   },
 
   {
@@ -181,7 +184,8 @@ const tableDefinitions: TableDef[] = [
     pk: ['codigoMateria'],
     fks: [],
     elementName: 'materia',
-    orderBy: ['nombreMateria']
+    orderBy: ['nombreMateria'],
+    requiereRuta: true
   },
 
   {
@@ -208,7 +212,8 @@ const tableDefinitions: TableDef[] = [
       }
     ],
     elementName: 'cursa',
-    orderBy: ['luAlumnoCursa', 'codigoMateriaCursa', 'cuatrimestreCursa']
+    orderBy: ['luAlumnoCursa', 'codigoMateriaCursa', 'cuatrimestreCursa'],
+    requiereRuta: true 
   },
 
   {
@@ -234,7 +239,8 @@ const tableDefinitions: TableDef[] = [
       }
     ],
     elementName: 'dicta',
-    orderBy: ['codigoMateriaDicta', 'cuatrimestreDicta', 'luProfesorDicta']
+    orderBy: ['codigoMateriaDicta', 'cuatrimestreDicta', 'luProfesorDicta'],
+    requiereRuta: false 
   },
 
   {
@@ -278,7 +284,8 @@ const tableDefinitions: TableDef[] = [
       }
     ],
     elementName: 'Encuesta a alumno',
-    orderBy: ['codigoMateriaEncuestaAlumno', 'cuatrimestreEncuestaAlumno', 'luAlumnoEvaluado']
+    orderBy: ['codigoMateriaEncuestaAlumno', 'cuatrimestreEncuestaAlumno', 'luAlumnoEvaluado'],
+    requiereRuta: true
   },
 
   {
@@ -313,7 +320,8 @@ const tableDefinitions: TableDef[] = [
       }
     ],
     elementName: 'Encuesta a materia',
-    orderBy: ['codigoMateriaEncuestada', 'cuatrimestreEncuestaMateria']
+    orderBy: ['codigoMateriaEncuestada', 'cuatrimestreEncuestaMateria'],
+    requiereRuta: true 
   },
 
   {
@@ -356,7 +364,8 @@ const tableDefinitions: TableDef[] = [
       }
     ],
     elementName: 'Encuesta a profesor',
-    orderBy: ['codigoMateriaEncuestaProfesor', 'cuatrimestreEncuestaProfesor', 'luAlumnoEncuestado']
+    orderBy: ['codigoMateriaEncuestaProfesor', 'cuatrimestreEncuestaProfesor', 'luAlumnoEncuestado'],
+    requiereRuta: true 
   },
 
   {
@@ -381,7 +390,8 @@ const tableDefinitions: TableDef[] = [
       }
     ],
     elementName: 'Usuario',
-    orderBy: ['apellidoUsuario', 'nombresUsuario']
+    orderBy: ['apellidoUsuario', 'nombresUsuario'],
+    requiereRuta: false 
   }
 ];
 
