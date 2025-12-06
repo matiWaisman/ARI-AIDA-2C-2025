@@ -247,23 +247,18 @@ export function genericController(tableDef: TableDef) {
     try {
         await client.query("BEGIN");
 
-        // Mezclamos params + query (vos usás query en tu front)
         const input = { ...req.params, ...req.query };
 
-        // La PK debe estar aquí
         const pkValues = pkParams(input);
 
-        // DEBUG (dejalo un rato para ver qué llega)
         console.log("DELETE PK VALUES:", pkValues, "INPUT:", input);
 
-        // Si la PK viene undefined, avisamos
         if (pkValues.some(v => v === undefined || v === null)) {
             await client.query("ROLLBACK");
             res.status(400).json({ error: "PK no recibida" });
             return
         }
 
-        // Buscar tablas que referencian a esta
         const childTables = tableDefs
             .filter(t =>
                 t.fks.some(fk => fk.referencesTable === tableDef.name)
@@ -273,7 +268,6 @@ export function genericController(tableDef: TableDef) {
                 fks: t.fks.filter(fk => fk.referencesTable === tableDef.name)
             }));
 
-        // Borrar hijos
         for (const child of childTables) {
             for (const fk of child.fks) {
                 const sql = `
@@ -284,7 +278,6 @@ export function genericController(tableDef: TableDef) {
             }
         }
 
-        // Borrar principal
         const deleteSQL = `
             DELETE FROM ${tablename}
             WHERE ${pkDolarCondition(1)}
