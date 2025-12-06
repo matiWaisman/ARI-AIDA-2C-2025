@@ -30,7 +30,7 @@ export function useRegisterFeature() {
     }
 
     try {
-      await apiClient("/create/user", {
+      await apiClient("/register", {
         method: "POST",
         body: JSON.stringify({ 
           username, 
@@ -43,34 +43,7 @@ export function useRegisterFeature() {
           esProfesor 
         }),
       });
-      await apiClient("/create/entidadUniversitaria", {
-        method: "POST",
-        body: JSON.stringify({ 
-          nombre,
-          apellido, 
-          lu, 
-        }),
-      });
-      if (esProfesor) { 
-      await apiClient("/create/profesor", {
-        method: "POST",
-        body: JSON.stringify({ 
-          nombre,
-          apellido, 
-          lu,
-        }),
-      });
-      }
-      if (esAlumno) {
-      await apiClient("/create/alumno", {
-        method: "POST",
-        body: JSON.stringify({ 
-          nombre,
-          apellido, 
-          lu, 
-        }),
-      });
-      }
+
       router.push("/login");
     } catch (err) {
       if (err instanceof Error) setError(err.message);
