@@ -3,6 +3,8 @@ import multer from "multer";
 import fs from "fs";
 import path from "path";
 import { AlumnoController } from "../../../application/controllers/controller-alumno.ts";
+import { genericController } from "../../../application/controllers/genericController.ts";
+import { tableDefs } from "../../../src/tableDefs.ts";
 
 const uploadsDir = path.resolve(process.cwd(), "uploads");
 fs.mkdirSync(uploadsDir, { recursive: true });
@@ -35,7 +37,8 @@ alumnoRouter.post(
 alumnoRouter.post("/alumnos/update", AlumnoController.updateAlumno);
 alumnoRouter.post("/alumnos/delete", AlumnoController.deleteAlumno);
 alumnoRouter.get("/alumnos/all", AlumnoController.getAlumnos);
-alumnoRouter.post("/alumnos/insert", AlumnoController.insertAlumno);
+alumnoRouter.post("/alumnos/insert", genericController(tableDefs[1]!).createRecord2);
+alumnoRouter.post("/entidadUniversitaria/insert", genericController(tableDefs[0]!).createRecord2);
 alumnoRouter.get(
   "/alumnos/profesor/:luProfe/:codigoMateria/:cuatrimestre",
   AlumnoController.getAlumnosDeProfesorPorMateriaYCuatrimestre

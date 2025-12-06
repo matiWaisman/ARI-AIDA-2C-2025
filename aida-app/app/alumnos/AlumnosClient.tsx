@@ -47,18 +47,27 @@ export default function AlumnosClient({
     egreso: string
   ) => {
     try {
-      const nuevo = await apiClient(`/alumnos/insert`, {
+      console.log("Insertando alumno...");
+      await apiClient(`/entidadUniversitaria/insert`, {
         method: "POST",
         body: JSON.stringify({
           lu,
           nombres,
+          apellido,
+        }),
+      });
+      const nuevo = await apiClient(`/alumnos/insert`, {
+        method: "POST",
+        body: JSON.stringify({
+          lu,
+          nombres, 
           apellido,
           titulo,
           titulo_en_tramite,
           egreso,
         }),
       });
-
+      console.log("Alumno insertado:", nuevo);
       setLista((prev) => [
         ...prev,
         {
