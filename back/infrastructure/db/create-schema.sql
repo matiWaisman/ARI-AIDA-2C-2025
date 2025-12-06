@@ -2,144 +2,145 @@ set role to aida_owner;
 create schema aida;
 grant usage on schema aida to aida_admin;
 
+-- Create base entity first
 CREATE TABLE aida.entidadUniversitaria (
-luEntidad TEXT PRIMARY KEY,
-apellidoEntidad TEXT NOT NULL,
-nombresEntidad TEXT NOT NULL
+    lu TEXT PRIMARY KEY,
+    apellido TEXT NOT NULL,
+    nombres TEXT NOT NULL
 );
 
+-- Then create dependent tables
 CREATE TABLE aida.alumnos (
-luAlumno TEXT PRIMARY KEY REFERENCES aida.entidadUniversitaria(luEntidad),
-titulo TEXT,
-titulo_en_tramite DATE,
-egreso DATE
+    lu TEXT PRIMARY KEY REFERENCES aida.entidadUniversitaria(lu),
+    titulo text,
+    titulo_en_tramite date,
+    egreso date
 );
 
 CREATE TABLE aida.usuarios (
-idUsuario SERIAL PRIMARY KEY,
-username TEXT NOT NULL UNIQUE,
-password_hash TEXT NOT NULL,
-apellidoUsuario TEXT NOT NULL,
-nombresUsuario TEXT NOT NULL,
-email TEXT NOT NULL UNIQUE,
-activo BOOL NOT NULL DEFAULT TRUE,
-luUsuario TEXT REFERENCES aida.entidadUniversitaria(luEntidad)
+    id serial primary key,
+    username text not null unique,
+    password_hash text not null,
+    apellido text not null,
+    nombres text not null, 
+    email text not null unique,
+    activo bool not null default true,
+    lu TEXT REFERENCES aida.entidadUniversitaria(lu)
 );
 
+
 CREATE TABLE aida.profesor (
-luProfesor TEXT PRIMARY KEY REFERENCES aida.entidadUniversitaria(luEntidad),
-idProfesor INTEGER REFERENCES aida.usuarios(idUsuario)
+    lu TEXT PRIMARY KEY REFERENCES aida.entidadUniversitaria(lu),
+    id INTEGER REFERENCES aida.usuarios(id)
 );
 
 CREATE TABLE aida.materias (
-codigoMateria VARCHAR PRIMARY KEY,
-nombreMateria VARCHAR NOT NULL
+    codigoMateria VARCHAR PRIMARY KEY, 
+    nombreMateria VARCHAR NOT NULL
 );
 
 CREATE TABLE aida.dicta (
-luProfesorDicta TEXT REFERENCES aida.profesor(luProfesor),
-codigoMateriaDicta VARCHAR REFERENCES aida.materias(codigoMateria),
-cuatrimestreDicta VARCHAR,
-PRIMARY KEY (luProfesorDicta, codigoMateriaDicta, cuatrimestreDicta)
+    luProfesor TEXT REFERENCES aida.profesor(lu), 
+    codigoMateria VARCHAR REFERENCES aida.materias(codigoMateria),
+    cuatrimestre VARCHAR,
+    PRIMARY KEY (luProfesor, codigoMateria, cuatrimestre)
 );
 
 CREATE TABLE aida.cursa (
-luAlumnoCursa TEXT REFERENCES aida.alumnos(luAlumno),
-codigoMateriaCursa VARCHAR REFERENCES aida.materias(codigoMateria),
-cuatrimestreCursa VARCHAR,
-nota NUMERIC,
-PRIMARY KEY (luAlumnoCursa, codigoMateriaCursa, cuatrimestreCursa)
+    luAlumno TEXT REFERENCES aida.alumnos(lu), 
+    codigoMateria VARCHAR REFERENCES aida.materias(codigoMateria),
+    cuatrimestre VARCHAR,
+    nota NUMERIC,
+    PRIMARY KEY (luAlumno, codigoMateria, cuatrimestre)
 );
-
-CREATE TABLE aida.encuestaAProfesor (
-luAlumnoEncuestado TEXT REFERENCES aida.entidadUniversitaria(luEntidad),
-luProfesor TEXT REFERENCES aida.entidadUniversitaria(luEntidad),
-codigoMateriaEncuestaProfesor TEXT REFERENCES aida.materias(codigoMateria),
-cuatrimestreEncuestaProfesor TEXT,
-respuesta1EncuestaProfesor NUMERIC,
-respuesta2EncuestaProfesor NUMERIC,
-respuesta3EncuestaProfesor NUMERIC,
-respuesta4EncuestaProfesor NUMERIC,
-respuesta5EncuestaProfesor NUMERIC,
-respuesta6EncuestaProfesor NUMERIC,
-respuesta7EncuestaProfesor NUMERIC,
-respuesta8EncuestaProfesor NUMERIC,
-respuesta9EncuestaProfesor NUMERIC,
-respuesta10EncuestaProfesor NUMERIC,
-respuesta11EncuestaProfesor NUMERIC,
-respuesta12EncuestaProfesor NUMERIC,
-comentario TEXT,
-PRIMARY KEY (luAlumnoEncuestado, luProfesor, codigoMateriaEncuestaProfesor, cuatrimestreEncuestaProfesor)
+CREATE TABLE aida.encuestaAProfesor(
+    luEncuestado TEXT REFERENCES aida.entidadUniversitaria(lu),
+    luEvaluado   TEXT REFERENCES aida.entidadUniversitaria(lu),
+    codigoMateria TEXT REFERENCES aida.materias(codigoMateria),
+    cuatrimestre TEXT,
+    respuesta1 NUMERIC,
+    respuesta2 NUMERIC,
+    respuesta3 NUMERIC,
+    respuesta4 NUMERIC,
+    respuesta5 NUMERIC,
+    respuesta6 NUMERIC,
+    respuesta7 NUMERIC,
+    respuesta8 NUMERIC,
+    respuesta9 NUMERIC,
+    respuesta10 NUMERIC,
+    respuesta11 NUMERIC,
+    respuesta12 NUMERIC,
+    comentario TEXT,
+    PRIMARY KEY (luEncuestado, luEvaluado, codigoMateria, cuatrimestre)
 );
-
-CREATE TABLE aida.encuestaAMateria (
-luUsuarioEncuestado TEXT REFERENCES aida.entidadUniversitaria(luEntidad),
-codigoMateriaEncuestada TEXT REFERENCES aida.materias(codigoMateria),
-cuatrimestreEncuestaMateria TEXT,
-respuesta1EncuestaMateria NUMERIC,
-respuesta2EncuestaMateria NUMERIC,
-respuesta3EncuestaMateria NUMERIC,
-respuesta4EncuestaMateria NUMERIC,
-respuesta5EncuestaMateria NUMERIC,
-respuesta6EncuestaMateria NUMERIC,
-respuesta7EncuestaMateria NUMERIC,
-respuesta8EncuestaMateria NUMERIC,
-respuesta9EncuestaMateria NUMERIC,
-respuesta10EncuestaMateria NUMERIC,
-respuesta11EncuestaMateria NUMERIC,
-respuesta12EncuestaMateria NUMERIC,
-respuesta13EncuestaMateria NUMERIC,
-respuesta14EncuestaMateria NUMERIC,
-respuesta15EncuestaMateria NUMERIC,
-respuesta16EncuestaMateria NUMERIC,
-comentarioEncuestaMateria TEXT,
-PRIMARY KEY (luUsuarioEncuestado, codigoMateriaEncuestada, cuatrimestreEncuestaMateria)
+CREATE TABLE aida.encuestaAMateria(
+    luEncuestado TEXT REFERENCES aida.entidadUniversitaria(lu),
+    codigoMateria TEXT REFERENCES aida.materias(codigoMateria),
+    cuatrimestre TEXT,
+    respuesta1 NUMERIC,
+    respuesta2 NUMERIC,
+    respuesta3 NUMERIC,
+    respuesta4 NUMERIC,
+    respuesta5 NUMERIC,
+    respuesta6 NUMERIC,
+    respuesta7 NUMERIC,
+    respuesta8 NUMERIC,
+    respuesta9 NUMERIC,
+    respuesta10 NUMERIC,
+    respuesta11 NUMERIC,
+    respuesta12 NUMERIC,
+    respuesta13 NUMERIC,
+    respuesta14 NUMERIC,
+    respuesta15 NUMERIC,
+    respuesta16 NUMERIC,
+    comentario TEXT,
+    PRIMARY KEY (luEncuestado, codigoMateria, cuatrimestre)
 );
-
-CREATE TABLE aida.encuestaAAlumno (
-luUsuarioEncuestado TEXT REFERENCES aida.entidadUniversitaria(luEntidad),
-luAlumnoEvaluado TEXT REFERENCES aida.entidadUniversitaria(luEntidad),
-codigoMateriaEncuestaAlumno TEXT REFERENCES aida.materias(codigoMateria),
-cuatrimestreEncuestaAlumno TEXT,
-respuesta1EncuestaAlumno NUMERIC,
-respuesta2EncuestaAlumno NUMERIC,
-respuesta3EncuestaAlumno NUMERIC,
-respuesta4EncuestaAlumno NUMERIC,
-respuesta5EncuestaAlumno NUMERIC,
-comentarioEncuestaAlumno TEXT,
-PRIMARY KEY (luUsuarioEncuestado, luAlumnoEvaluado, codigoMateriaEncuestaAlumno, cuatrimestreEncuestaAlumno)
+CREATE TABLE aida.encuestaAAlumno(
+    luEncuestado TEXT REFERENCES aida.entidadUniversitaria(lu),
+    luEvaluado   TEXT REFERENCES aida.entidadUniversitaria(lu),
+    codigoMateria TEXT REFERENCES aida.materias(codigoMateria),
+    cuatrimestre TEXT,
+    respuesta1 NUMERIC,
+    respuesta2 NUMERIC,
+    respuesta3 NUMERIC,
+    respuesta4 NUMERIC,
+    respuesta5 NUMERIC,
+    comentario TEXT,    
+    PRIMARY KEY (luEncuestado, luEvaluado, codigoMateria, cuatrimestre)
 );
 
 grant select, insert, update, delete on all tables in schema aida to aida_admin;
 
-INSERT INTO aida.entidadUniversitaria (luEntidad, apellidoEntidad, nombresEntidad)
+INSERT INTO aida.entidadUniversitaria (lu, apellido, nombres)
 VALUES ('25/18', 'Bocaccio', 'Sebastian');
 
-INSERT INTO aida.usuarios (username, password_hash, apellidoUsuario, nombresUsuario, email, luUsuario)
+INSERT INTO aida.usuarios (username, password_hash, apellido, nombres, email, lu)
 VALUES ('sbocaccio', 'hash123', 'Bocaccio', 'Sebastian', 'sebastian@uni.edu', '25/18');
 
-INSERT INTO aida.profesor (luProfesor, idProfesor)
-SELECT '25/18', idUsuario
+INSERT INTO aida.profesor (lu, id)
+SELECT '25/18', id
 FROM aida.usuarios
 WHERE username = 'sbocaccio';
 
 INSERT INTO aida.materias (codigoMateria, nombreMateria)
 VALUES ('BD101', 'Bases de Datos');
 
-INSERT INTO aida.dicta (luProfesorDicta, codigoMateriaDicta, cuatrimestreDicta)
+INSERT INTO aida.dicta (luProfesor, codigoMateria, cuatrimestre)
 VALUES ('25/18', 'BD101', '2C2025');
 
-INSERT INTO aida.entidadUniversitaria (luEntidad, apellidoEntidad, nombresEntidad)
+INSERT INTO aida.entidadUniversitaria (lu, apellido, nombres)
 VALUES ('30/22', 'García', 'Lucía');
 
-INSERT INTO aida.alumnos (luAlumno, titulo, titulo_en_tramite, egreso)
+INSERT INTO aida.alumnos (lu, titulo, titulo_en_tramite, egreso)
 VALUES ('30/22', NULL, NULL, NULL);
 
-INSERT INTO aida.cursa (luAlumnoCursa, codigoMateriaCursa, cuatrimestreCursa, nota)
+INSERT INTO aida.cursa (luAlumno, codigoMateria, cuatrimestre, nota)
 VALUES ('30/22', 'BD101', '2C2025', NULL);
 
-SELECT m.nombreMateria, m.codigoMateria, e.nombresEntidad, e.apellidoEntidad, d.cuatrimestreDicta
-FROM aida.materias m 
-INNER JOIN aida.dicta d ON m.codigoMateria = d.codigoMateriaDicta
-INNER JOIN aida.profesor p ON d.luProfesorDicta = p.luProfesor
-INNER JOIN aida.entidadUniversitaria e ON p.luProfesor = e.luEntidad;
+SELECT m.nombreMateria, m.codigoMateria, e.nombres, e.apellido, d.cuatrimestre
+	FROM aida.materias m 
+	INNER JOIN aida.dicta d ON m.codigoMateria = d.codigoMateria 
+	INNER JOIN aida.profesor p ON d.luProfesor = p.lu
+	INNER JOIN aida.entidadUniversitaria e ON p.lu = e.lu
+	

@@ -35,8 +35,9 @@ alumnoRouter.post(
   AlumnoController.cargarDatosEnAlumnos
 );
 alumnoRouter.post("/alumnos/update", AlumnoController.updateAlumno);
-alumnoRouter.post("/alumnos/delete", AlumnoController.deleteAlumno);
+alumnoRouter.post("/alumnos/delete", genericController(tableDefs[1]!).deleteRow);
 alumnoRouter.get("/alumnos/all", genericController(tableDefs[1]!).getAllRows);
 alumnoRouter.post("/alumnos/insert", genericController(tableDefs[1]!).createRow);
 alumnoRouter.post("/entidadUniversitaria/insert", genericController(tableDefs[0]!).createRow);
+alumnoRouter.post("/entidadUniversitaria/delete", genericController(tableDefs[0]!).deleteRow);
 alumnoRouter.get("/alumnos/profesor/:luProfe/:codigoMateria/:cuatrimestre",AlumnoController.getAlumnosDeProfesorPorMateriaYCuatrimestre);

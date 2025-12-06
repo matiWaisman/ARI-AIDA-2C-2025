@@ -17,11 +17,6 @@ export function genericController(tableDef: TableDef) {
     const allParams = (params:Record<string, any>) => allColnames.map(col => params[col]);
     const allDefs = tableDefs;
 
-    //
-    // ===========================================================
-    // TABLAS PARA DETECTAR PREFIJOS VÁLIDOS
-    // ===========================================================
-    //
     const tableNames = new Set<TableName>([
         'entidadUniversitaria',
         'alumnos',
@@ -35,28 +30,20 @@ export function genericController(tableDef: TableDef) {
         'usuarios'
     ]);
 
-    //
-    // ===========================================================
-    // LIMPIAR PREFIJOS "tabla_columna" SOLO SI tabla ES VÁLIDA
-    // ===========================================================
-    //
     function stripPrefixes(row: any): any {
         const clean: any = {};
 
         for (const key of Object.keys(row)) {
             let newKey = key;
-
             const idx = key.indexOf("_");
+
             if (idx !== -1) {
                 const possibleTable = key.substring(0, idx);
-
-                // quitar prefijo SI corresponde a tabla real
                 if (tableNames.has(possibleTable as TableName)) {
                     newKey = key.substring(idx + 1);
                 }
             }
 
-            // Evitar pisar columnas principales
             if (clean[newKey] === undefined) {
                 clean[newKey] = row[key];
             }
@@ -65,11 +52,6 @@ export function genericController(tableDef: TableDef) {
         return clean;
     }
 
-    //
-    // ===========================================================
-    // ALIAS INTERNOS (ÚNICOS)
-    // ===========================================================
-    //
     function alias(table: string, col: string): string {
         if (table === tableDef.name) {
             return `aida.${table}.${col} AS "${col}"`;
@@ -77,40 +59,30 @@ export function genericController(tableDef: TableDef) {
         return `aida.${table}.${col} AS "${table}_${col}"`;
     }
 
-    //
-    // ===========================================================
-    // MAPEO DE COLUMNAS (INCLUYE LAS TABLAS REFERENCIADAS)
-    // ===========================================================
-    //
-function mapColumnGenerico(colname: ColumnName, tableName: TableName): {table: string, col: string}[] {
-    const table = allDefs.find(t => t.name === tableName);
-    if (!table) return [{ table: tableName, col: colname }];
+    function mapColumnGenerico(colname: ColumnName, tableName: TableName): {table: string, col: string}[] {
+        const table = allDefs.find(t => t.name === tableName);
+        if (!table) return [{ table: tableName, col: colname }];
 
-    const fk = table.fks.find(f => f.column === colname);
+        const fk = table.fks.find(f => f.column === colname);
 
-    if (!fk) {
-        return [{ table: table.name, col: colname }];
+        if (!fk) {
+            return [{ table: table.name, col: colname }];
+        }
+
+        const refTable = allDefs.find(t => t.name === fk.referencesTable)!;
+
+        return [
+            { table: tableName, col: colname },
+            ...refTable.columns.map(c => ({ table: fk.referencesTable, col: c.name }))
+        ];
     }
 
-    const refTable = allDefs.find(t => t.name === fk.referencesTable)!;
-
-    return [
-        { table: tableName, col: colname },
-        ...refTable.columns.map(c => ({ table: fk.referencesTable, col: c.name }))
-    ];
-}
-
-    //
-    // ===========================================================
-    // JOINS RECURSIVOS
-    // ===========================================================
-    //
     function recursiveJoin(fk: ForeignKeyDef, fromTable: TableName): string {
         if (!fk) return '';
 
         const refTable = allDefs.find(t => t.name === fk.referencesTable)!;
-
         let nextFk: ForeignKeyDef | undefined;
+
         for (const col of fk.referencesColumns) {
             nextFk = refTable.fks.find(x => x.column === col);
         }
@@ -121,17 +93,11 @@ function mapColumnGenerico(colname: ColumnName, tableName: TableName): {table: s
         );
     }
 
-    //
-    // ===========================================================
-    // GET ALL
-    // ===========================================================
-    //
     const getAllRows = async (req: Request, res: Response): Promise<void> => {
         const client = createDbClient();
         await client.connect();
 
         try {
-
             const selectFields = allColnames
                 .map(col =>
                     mapColumnGenerico(col, tableDef.name)
@@ -186,17 +152,11 @@ function mapColumnGenerico(colname: ColumnName, tableName: TableName): {table: s
         }
     };
 
-    //
-    // ===========================================================
-    // GET ONE
-    // ===========================================================
-    //
     const getRow = async (req: Request, res: Response): Promise<void> => {
         const client = createDbClient();
         await client.connect();
 
         try {
-
             const selectFields = allColnames
                 .map(col =>
                     mapColumnGenerico(col, tableDef.name)
@@ -234,11 +194,6 @@ function mapColumnGenerico(colname: ColumnName, tableName: TableName): {table: s
         }
     };
 
-    //
-    // ===========================================================
-    // CREATE
-    // ===========================================================
-    //
     const createRow = async (req: Request, res: Response): Promise<void> => {
         const client = createDbClient();
         await client.connect();
@@ -259,11 +214,6 @@ function mapColumnGenerico(colname: ColumnName, tableName: TableName): {table: s
         }
     };
 
-    //
-    // ===========================================================
-    // UPDATE
-    // ===========================================================
-    //
     const updateRow = async (req: Request, res: Response): Promise<void> => {
         const client = createDbClient();
         await client.connect();
@@ -290,35 +240,76 @@ function mapColumnGenerico(colname: ColumnName, tableName: TableName): {table: s
         }
     };
 
-    //
-    // ===========================================================
-    // DELETE
-    // ===========================================================
-    //
     const deleteRow = async (req: Request, res: Response): Promise<void> => {
-        const client = createDbClient();
-        await client.connect();
+    const client = createDbClient();
+    await client.connect();
 
-        try {
-            const result = await client.query(
-                `DELETE FROM ${tablename}
-                 WHERE ${pkDolarCondition(1)}
-                 RETURNING *`,
-                pkParams(req.params)
-            );
+    try {
+        await client.query("BEGIN");
 
-            if (result.rows.length === 0) {
-                res.status(404).json({ error: `${elementName} no encontrado` });
-                return;
-            }
+        // Mezclamos params + query (vos usás query en tu front)
+        const input = { ...req.params, ...req.query };
 
-            res.json({ message: `${elementName} eliminado correctamente` });
+        // La PK debe estar aquí
+        const pkValues = pkParams(input);
 
-        } catch (error) {
-            console.error(`Error al eliminar ${elementName}:`, error);
-            res.status(500).json({ error: 'Error interno del servidor' });
+        // DEBUG (dejalo un rato para ver qué llega)
+        console.log("DELETE PK VALUES:", pkValues, "INPUT:", input);
+
+        // Si la PK viene undefined, avisamos
+        if (pkValues.some(v => v === undefined || v === null)) {
+            await client.query("ROLLBACK");
+            res.status(400).json({ error: "PK no recibida" });
+            return
         }
-    };
+
+        // Buscar tablas que referencian a esta
+        const childTables = tableDefs
+            .filter(t =>
+                t.fks.some(fk => fk.referencesTable === tableDef.name)
+            )
+            .map(t => ({
+                table: t.name,
+                fks: t.fks.filter(fk => fk.referencesTable === tableDef.name)
+            }));
+
+        // Borrar hijos
+        for (const child of childTables) {
+            for (const fk of child.fks) {
+                const sql = `
+                    DELETE FROM aida.${child.table}
+                    WHERE ${fk.column} = $1
+                `;
+                await client.query(sql, pkValues);
+            }
+        }
+
+        // Borrar principal
+        const deleteSQL = `
+            DELETE FROM ${tablename}
+            WHERE ${pkDolarCondition(1)}
+            RETURNING *
+        `;
+
+        const result = await client.query(deleteSQL, pkValues);
+
+        if (result.rows.length === 0) {
+            await client.query("ROLLBACK");
+            res.status(404).json({ error: `${elementName} no encontrado` });
+            return
+        }
+
+        await client.query("COMMIT");
+        res.json({ message: `${elementName} eliminado correctamente` });
+
+    } catch (error) {
+        await client.query("ROLLBACK");
+        console.error(`Error al eliminar ${elementName}:`, error);
+        res.status(500).json({ error: "Error interno del servidor" });
+    }
+};
+
+
 
     return {
         getRow,

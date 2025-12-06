@@ -29,14 +29,15 @@ export default function AlumnosClient({
 
   const eliminarAlumno = async (lu: string) => {
     try {
-      await apiClient(`/alumnos/delete?LU=${lu}`, { method: "POST" });
-      setLista((prev) => prev.filter((a) => a.lu !== lu));
-      return true;
+        await apiClient(`/entidadUniversitaria/delete?lu=${lu}`, { method: "POST" });
+        setLista((prev) => prev.filter((a) => a.lu !== lu));
+        return true;
     } catch (e: any) {
-      setActionError(e.message);
-      return false;
+        setActionError(e.message);
+        return false;
     }
-  };
+};
+
 
   const insertarAlumno = async (
     lu: string,
