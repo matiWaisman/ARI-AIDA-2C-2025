@@ -5,6 +5,5 @@ import { tableDefs } from "../../../src/tableDefs.ts";
 
 export const cursaRouter = Router();
 
-cursaRouter.post("/create/cursada", genericController(tableDefs[3]!).createRow);
-cursaRouter.get("/get/cursada", genericController(tableDefs[3]!).getRow);
+//rutas con logica de business
 cursaRouter.post("/materia/update", CursaController.ponerNotaAAlumno);

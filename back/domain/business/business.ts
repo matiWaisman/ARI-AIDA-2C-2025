@@ -135,18 +135,6 @@ export class Business {
     return this.encuestasRepo.obtenerEncuestasSobreMiComoProfesor(miLU);
     }
 
-    async crearEncuestaAMateria(e: {luEncuestado: string; codigoMateria: string; cuatrimestre: string; respuestas: number[];comentario?: string;}) {
-    return this.encuestasRepo.crearEncuestaAMateria(e);     
-    }
-
-    async crearEncuestaAAlumno(e: {luEvaluado: string; luEncuestado: string; codigoMateria: string; cuatrimestre: string; respuestas: number[];comentario?: string;}) {
-    return this.encuestasRepo.crearEncuestaAAlumno(e);     
-    }
-
-    async crearEncuestaAProfesor(e: {luEvaluado: string; luEncuestado: string; codigoMateria: string; cuatrimestre: string; respuestas: number[];comentario?: string;}) {
-    return this.encuestasRepo.crearEncuestaAProfesor(e);     
-    }    
-
     async obtenerEncuestasNoRespondidas(lu: string) {
     return this.encuestasRepo.obtenerEncuestasNoRespondidas(lu);
     }
@@ -174,18 +162,6 @@ export class Business {
             throw new Error(`El ${luProfe} no pertenece a un profesor de la materia: ${codigoMateria}`);
         }
         return await this.materiaRepo.obtenerAlumnosDeMateria(codigoMateria, cuatrimestre);
-    }
-
-    async crearMateria(nombreMateria: string, codigoMateria: string) {
-    const existeMateria = await this.existeMateria(nombreMateria);
-    if (existeMateria) {
-        throw new Error();
-    }
-    return await this.materiaRepo.crearMateria(nombreMateria, codigoMateria);
-    }
-
-    async getAllMaterias() {
-    return await this.materiaRepo.getAllMaterias();
     }
 
     async getAllMateriasQueNoParticipa(id: number | undefined, participacion: "cursa" | "dicta", rolEnMateria: "Alumno" | "Profesor") {

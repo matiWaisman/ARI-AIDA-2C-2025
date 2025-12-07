@@ -26,18 +26,17 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 export const alumnoRouter = Router();
 
+// rutas con logica de business
 alumnoRouter.get("/alumnos/lu", AlumnoController.getAlumnoPorLU);
 alumnoRouter.get("/alumnos/fecha", AlumnoController.getAlumnoPorFecha);
 alumnoRouter.post("/alumnos/generar", AlumnoController.generarCertificado);
-alumnoRouter.post(
-  "/alumnos/cargarCSV",
-  upload.single("archivo"),
-  AlumnoController.cargarDatosEnAlumnos
-);
+alumnoRouter.post("/alumnos/cargarCSV",upload.single("archivo"),AlumnoController.cargarDatosEnAlumnos);
+alumnoRouter.get("/alumnos/profesor/:luProfe/:codigoMateria/:cuatrimestre",AlumnoController.getAlumnosDeProfesorPorMateriaYCuatrimestre);
+
+// rutas para operaciones CRUD genéricas
 alumnoRouter.post("/alumnos/update", genericController(tableDefs[1]!).updateRow);
 alumnoRouter.post("/alumnos/delete", genericController(tableDefs[1]!).deleteRow);
 alumnoRouter.get("/alumnos/all", genericController(tableDefs[1]!).getAllRows);
 alumnoRouter.post("/alumnos/insert", genericController(tableDefs[1]!).createRow);
 alumnoRouter.post("/entidadUniversitaria/insert", genericController(tableDefs[0]!).createRow);
 alumnoRouter.post("/entidadUniversitaria/delete", genericController(tableDefs[0]!).deleteRow);
-alumnoRouter.get("/alumnos/profesor/:luProfe/:codigoMateria/:cuatrimestre",AlumnoController.getAlumnosDeProfesorPorMateriaYCuatrimestre);

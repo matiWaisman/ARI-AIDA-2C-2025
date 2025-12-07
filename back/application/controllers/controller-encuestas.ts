@@ -10,28 +10,6 @@ export class EncuestasController {
     return { client, business };
   }
 
-
-  static async crearEncuestaAAlumno(req: Request, res: Response) {
-    const { client, business } = await EncuestasController._createDbClientAndInitializeBusiness();
-      const encuesta = await business.crearEncuestaAAlumno(req.body);
-      res.status(201).json(encuesta);
-      await client.end();
-  }
-
-  static async crearEncuestaAMateria(req: Request, res: Response) {
-    const { client, business } = await EncuestasController._createDbClientAndInitializeBusiness();
-      const encuesta = await business.crearEncuestaAMateria(req.body);
-      res.status(201).json(encuesta);
-      await client.end();
-  }
-
-  static async crearEncuestaAProfesor(req: Request, res: Response) {
-    const { client, business } = await EncuestasController._createDbClientAndInitializeBusiness();
-      const encuesta = await business.crearEncuestaAProfesor(req.body);
-      res.status(201).json(encuesta);
-      await client.end();
-  }
-
   static async obtenerEncuestasNoRespondidas(req: Request, res: Response) {
     const { client, business } = await EncuestasController._createDbClientAndInitializeBusiness();
     const lu = req.session?.usuario?.id 
