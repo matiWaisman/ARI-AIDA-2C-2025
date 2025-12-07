@@ -34,7 +34,7 @@ alumnoRouter.post("/alumnos/cargarCSV",upload.single("archivo"),AlumnoController
 alumnoRouter.get("/alumnos/profesor/:luProfe/:codigoMateria/:cuatrimestre",AlumnoController.getAlumnosDeProfesorPorMateriaYCuatrimestre);
 
 // rutas para operaciones CRUD genéricas
-alumnoRouter.post("/alumnos/update", genericController(tableDefs[1]!).updateRow);
+alumnoRouter.post("/entidadUniversitaria/update/:lu", genericController(tableDefs[0]!).updateRow);
 alumnoRouter.post("/alumnos/delete", genericController(tableDefs[1]!).deleteRow);
 alumnoRouter.get("/alumnos/all", genericController(tableDefs[1]!).getAllRows);
 alumnoRouter.post("/alumnos/insert", genericController(tableDefs[1]!).createRow);
