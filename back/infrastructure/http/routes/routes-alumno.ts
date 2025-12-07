@@ -34,7 +34,7 @@ alumnoRouter.post(
   upload.single("archivo"),
   AlumnoController.cargarDatosEnAlumnos
 );
-alumnoRouter.post("/alumnos/update", AlumnoController.updateAlumno);
+alumnoRouter.post("/alumnos/update", genericController(tableDefs[1]!).updateRow);
 alumnoRouter.post("/alumnos/delete", genericController(tableDefs[1]!).deleteRow);
 alumnoRouter.get("/alumnos/all", genericController(tableDefs[1]!).getAllRows);
 alumnoRouter.post("/alumnos/insert", genericController(tableDefs[1]!).createRow);

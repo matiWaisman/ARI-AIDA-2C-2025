@@ -5,7 +5,7 @@ import { tableDefs } from "../../../src/tableDefs.ts";
 
 export const materiaRouter = Router();
 
-materiaRouter.get("/materias",MateriaController.getAllMateriasConProfesorYCuatri);
+materiaRouter.get("/materias",genericController(tableDefs[5]!).getAllRows);
 materiaRouter.get("/materiasQueCursa",MateriaController.getAllMateriasQueCursa);
 materiaRouter.get("/materiasqueDicta",MateriaController.getAllMateriasQueDicta);
 materiaRouter.get("/materiasQueNoCursa",MateriaController.getAllMateriasQueNoCursa);
