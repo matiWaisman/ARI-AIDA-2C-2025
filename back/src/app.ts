@@ -9,6 +9,7 @@ import { userRouter } from "../infrastructure/http/routes/routes-user.js";
 import { cursaRouter } from "../infrastructure/http/routes/routes-cursa.js";
 import { materiaRouter } from "../infrastructure/http/routes/routes-materia.js";
 import { encuestasRouter } from "../infrastructure/http/routes/routes-encuestas.js";
+import { genericRouter } from "../infrastructure/http/routes/routes-generico.js";
 
 dotenv.config({ path: "./local-sets.env" });
 
@@ -102,6 +103,7 @@ function requireLogin(req: Request, res: Response, next: NextFunction) {
 }
 
 app.use("/app", userRouter);
+app.use("/app", requireLogin, genericRouter);
 app.use("/app", requireLogin, materiaRouter);
 app.use("/app", requireLogin, alumnoRouter);
 app.use("/app", requireLogin, cursaRouter);

@@ -7,9 +7,9 @@ export const encuestasRouter = Router();
 
 
 // Rutas CRUD generico
-encuestasRouter.post("/encuestas/create/materia", genericController(tableDefs[8]!).createRow);
-encuestasRouter.post("/encuestas/create/alumno", genericController(tableDefs[7]!).createRow);
-encuestasRouter.post("/encuestas/create/profesor", genericController(tableDefs[9]!).createRow);
+encuestasRouter.post("/encuestaAMateria/create", genericController(tableDefs[8]!).createRow);
+encuestasRouter.post("/encuestaAAlumno/create", genericController(tableDefs[7]!).createRow);
+encuestasRouter.post("/encuestaAProfesor/create", genericController(tableDefs[9]!).createRow);
 
 // Rutas con logica de business
 encuestasRouter.get("/encuestas/get/alumno", EncuestasController.obtenerEncuestasSobreMiComoAlumno);

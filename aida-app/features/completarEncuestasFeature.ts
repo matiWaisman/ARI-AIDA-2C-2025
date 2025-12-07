@@ -2,7 +2,6 @@
 
 import { useState, useCallback } from "react";
 import { apiClient } from "@/apiClient/apiClient";
-import { Alumno } from "@/types/alumno";
 
 export type RespuestaEncuesta = {
   respuestas: number[];
@@ -16,19 +15,24 @@ export type RespuestaEncuestaConLu = RespuestaEncuesta & {
 type UseEncuestasPersonasOptions = {
   evaluados: Array<{ lu: string; nombres?: string; apellido?: string }>;
   numPreguntas: number;
-  endpoint: string;
   tipoEncuesta: "alumno" | "profesor";
 };
 
 type UseEncuestaMateriaOptions = {
   numPreguntas: number;
-  endpoint: string;
 };
+
+function mapearRespuestas(respuestas: number[]) {
+  const obj: Record<string, number> = {};
+  respuestas.forEach((valor, i) => {
+    obj[`respuesta${i + 1}`] = valor;
+  });
+  return obj;
+}
 
 export function useEncuestasPersonas({
   evaluados,
   numPreguntas,
-  endpoint,
   tipoEncuesta,
 }: UseEncuestasPersonasOptions) {
   const [respuestas, setRespuestas] = useState<
@@ -69,17 +73,24 @@ export function useEncuestasPersonas({
       codigoMateria: string,
       cuatrimestre: string
     ): Promise<void> => {
+      const endpoint =
+        tipoEncuesta === "alumno"
+          ? "/encuestaAAlumno/create"
+          : "/encuestaAProfesor/create";
+
       for (const [lu, respuesta] of respuestas.entries()) {
         if (respuesta.respuestas.some((r) => r > 0)) {
-          await apiClient(`/encuestas/create/${tipoEncuesta}`, {
+          const respuestasSeparadas = mapearRespuestas(respuesta.respuestas);
+
+          await apiClient(endpoint, {
             method: "POST",
             body: JSON.stringify({
               luEncuestado,
               luEvaluado: lu,
               codigoMateria,
               cuatrimestre,
-              respuestas: respuesta.respuestas,
               comentario: respuesta.comentario || undefined,
+              ...respuestasSeparadas,
             }),
           });
         }
@@ -98,7 +109,6 @@ export function useEncuestasPersonas({
 
 export function useEncuestaMateria({
   numPreguntas,
-  endpoint,
 }: UseEncuestaMateriaOptions) {
   const [respuesta, setRespuesta] = useState<RespuestaEncuesta | null>(null);
 
@@ -125,19 +135,21 @@ export function useEncuestaMateria({
       cuatrimestre: string
     ): Promise<void> => {
       if (respuesta && respuesta.respuestas.some((r) => r > 0)) {
-        await apiClient(endpoint, {
+        const respuestasSeparadas = mapearRespuestas(respuesta.respuestas);
+
+        await apiClient("/encuestaAMateria/create", {
           method: "POST",
           body: JSON.stringify({
             luEncuestado,
             codigoMateria,
             cuatrimestre,
-            respuestas: respuesta.respuestas,
             comentario: respuesta.comentario,
+            ...respuestasSeparadas,
           }),
         });
       }
     },
-    [respuesta, endpoint]
+    [respuesta]
   );
 
   return {

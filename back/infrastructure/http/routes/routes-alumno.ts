@@ -35,8 +35,8 @@ alumnoRouter.get("/alumnos/profesor/:luProfe/:codigoMateria/:cuatrimestre",Alumn
 
 // rutas para operaciones CRUD genéricas
 alumnoRouter.post("/alumnos/update", genericController(tableDefs[1]!).updateRow);
-alumnoRouter.post("/alumnos/delete", genericController(tableDefs[1]!).deleteRow);
-alumnoRouter.get("/alumnos/all", genericController(tableDefs[1]!).getAllRows);
-alumnoRouter.post("/alumnos/insert", genericController(tableDefs[1]!).createRow);
-alumnoRouter.post("/entidadUniversitaria/insert", genericController(tableDefs[0]!).createRow);
+//alumnoRouter.delete("/alumnos/delete", genericController(tableDefs[1]!).deleteRow);
+//alumnoRouter.get("/alumnos/all", genericController(tableDefs[1]!).getAllRows);
+//alumnoRouter.post("/alumnos/create", genericController(tableDefs[1]!).createRow);
+//alumnoRouter.post("/entidadUniversitaria/create", genericController(tableDefs[0]!).createRow);
 alumnoRouter.post("/entidadUniversitaria/delete", genericController(tableDefs[0]!).deleteRow);

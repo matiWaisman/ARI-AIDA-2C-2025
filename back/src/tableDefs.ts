@@ -94,7 +94,7 @@ const tableDefinitions: TableDef[] = [
     fks: [],
     elementName: 'entidadUniversitaria',
     orderBy: ['apellido', 'nombres'],
-    requiereRuta: false
+    requiereRuta: true
   },
 
   {
