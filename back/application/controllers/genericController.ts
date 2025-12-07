@@ -7,8 +7,7 @@ export function genericController(tableDef: TableDef) {
 
     const tablename = 'aida.' + tableDef.name;
     const allColnames = tableDef.columns.map(def => def.name);
-    const { pk } = tableDef;
-    const { fks } = tableDef;
+    const { pk, fks } = tableDef;
     const orderBy = tableDef.orderBy ?? pk;
     const elementName = tableDef.elementName ?? ('row de ' + tableDef.name);
     const pkDolarCondition = (startingOn:number) =>
@@ -32,42 +31,34 @@ export function genericController(tableDef: TableDef) {
 
     function stripPrefixes(row: any): any {
         const clean: any = {};
-
         for (const key of Object.keys(row)) {
             let newKey = key;
             const idx = key.indexOf("_");
-
             if (idx !== -1) {
                 const possibleTable = key.substring(0, idx);
                 if (tableNames.has(possibleTable as TableName)) {
                     newKey = key.substring(idx + 1);
                 }
             }
-
             if (clean[newKey] === undefined) {
                 clean[newKey] = row[key];
             }
         }
-
         return clean;
     }
 
     function alias(table: string, col: string): string {
-        if (table === tableDef.name) {
-            return `aida.${table}.${col} AS "${col}"`;
-        }
-        return `aida.${table}.${col} AS "${table}_${col}"`;
+        return table === tableDef.name
+            ? `aida.${table}.${col} AS "${col}"`
+            : `aida.${table}.${col} AS "${table}_${col}"`;
     }
 
-    function mapColumnGenerico(colname: ColumnName, tableName: TableName): {table: string, col: string}[] {
+    function mapColumnGenerico(colname: ColumnName, tableName: TableName) {
         const table = allDefs.find(t => t.name === tableName);
         if (!table) return [{ table: tableName, col: colname }];
 
         const fk = table.fks.find(f => f.column === colname);
-
-        if (!fk) {
-            return [{ table: table.name, col: colname }];
-        }
+        if (!fk) return [{ table: table.name, col: colname }];
 
         const refTable = allDefs.find(t => t.name === fk.referencesTable)!;
 
@@ -79,10 +70,9 @@ export function genericController(tableDef: TableDef) {
 
     function recursiveJoin(fk: ForeignKeyDef, fromTable: TableName): string {
         if (!fk) return '';
-
         const refTable = allDefs.find(t => t.name === fk.referencesTable)!;
-        let nextFk: ForeignKeyDef | undefined;
 
+        let nextFk: ForeignKeyDef | undefined;
         for (const col of fk.referencesColumns) {
             nextFk = refTable.fks.find(x => x.column === col);
         }
@@ -92,104 +82,69 @@ export function genericController(tableDef: TableDef) {
             recursiveJoin(nextFk!, fk.referencesTable)
         );
     }
- const findOne = async (req: Request, res: Response): Promise<void> => {
-    const client = createDbClient();
-    await client.connect();
 
-    console.log("\n================ FINDONE DEBUG ================");
-    console.log("TABLE:", tableDef.name);
-    console.log("REQ QUERY:", req.query);
-
-    try {
-        const filters = Object.entries(req.query);
-
-        if (filters.length === 0) {
-            console.log("❌ No filters provided");
-            res.status(400).json({ error: "Se necesita al menos un filtro" });
-            return;
-        }
-
-        const conditions = filters
-            .map(([key], i) => `aida.${tableDef.name}."${key}" = $${i + 1}`)
-            .join(" AND ");
-
-        const values = filters.map(([_, value]) => 
-    typeof value === "string" ? decodeURIComponent(value).trim() : value
-);
-
-
-        console.log("FILTERS:", filters);
-        console.log("WHERE CONDITIONS:", conditions);
-        console.log("VALUES:", values);
-
-        const selectFields = allColnames.flatMap(col =>
-            mapColumnGenerico(col, tableDef.name).map(({ table, col }) =>
-                alias(table, col)
-            )
+    function buildSelectFields() {
+        return allColnames.flatMap(col =>
+            mapColumnGenerico(col, tableDef.name).map(({ table, col }) => alias(table, col))
         );
-
-        console.log("SELECT FIELDS:", selectFields);
-
-        const joins = fks.map(fk => recursiveJoin(fk, tableDef.name)).join(" ");
-        const tablesClause =
-            fks.length > 0 ? `${tablename} ${joins}` : tablename;
-
-        console.log("JOINS:", joins || "(none)");
-        console.log("TABLES CLAUSE:", tablesClause);
-
-        const sql = `
-            SELECT ${selectFields.join(", ")}
-            FROM ${tablesClause}
-            WHERE ${conditions}
-            LIMIT 1
-        `;
-
-        console.log("\n--------- SQL GENERATED ---------");
-        console.log(sql);
-        console.log("PARAM VALUES:", values);
-        console.log("---------------------------------\n");
-
-        const result = await client.query(sql, values);
-
-        console.log("DB RESULT ROWS:", result.rows);
-
-        if (result.rows.length === 0) {
-            console.log("❌ NO ROWS FOUND");
-            res.status(404).json({ error: `${elementName} no encontrado` });
-            return;
-        }
-
-        console.log("✔ ROW FOUND (raw):", result.rows[0]);
-        const cleaned = stripPrefixes(result.rows[0]);
-        console.log("✔ ROW CLEANED:", cleaned);
-
-        res.json(cleaned);
-
-    } catch (error) {
-        console.error("🔥 ERROR EN FINDONE:", error);
-        res.status(500).json({ error: "Error interno del servidor" });
-    } finally {
-        console.log("=============== END FINDONE DEBUG ===============\n");
     }
-};
+
+    function buildJoins() {
+        return fks.map(fk => recursiveJoin(fk, tableDef.name)).join(" ");
+    }
+
+    const findOne = async (req: Request, res: Response): Promise<void> => {
+        const client = createDbClient();
+        await client.connect();
+
+        try {
+            const filters = Object.entries(req.query);
+            if (filters.length === 0) {
+                res.status(400).json({ error: "Se necesita al menos un filtro" });
+                return;
+            }
+
+            const conditions = filters
+                .map(([key], i) => `aida.${tableDef.name}."${key}" = $${i + 1}`)
+                .join(" AND ");
+
+            const values = filters.map(([_, value]) =>
+                typeof value === "string" ? decodeURIComponent(value).trim() : value
+            );
+
+            const selectFields = buildSelectFields();
+            const joins = buildJoins();
+            const tablesClause = fks.length > 0 ? `${tablename} ${joins}` : tablename;
+
+            const sql = `
+                SELECT ${selectFields.join(", ")}
+                FROM ${tablesClause}
+                WHERE ${conditions}
+                LIMIT 1
+            `;
+
+            const result = await client.query(sql, values);
+
+            if (result.rows.length === 0) {
+                res.status(404).json({ error: `${elementName} no encontrado` });
+                return;
+            }
+
+            res.json(stripPrefixes(result.rows[0]));
+
+        } catch {
+            res.status(500).json({ error: "Error interno del servidor" });
+        }
+    };
 
     const getAllRows = async (req: Request, res: Response): Promise<void> => {
         const client = createDbClient();
         await client.connect();
 
         try {
-            const selectFields = allColnames
-                .map(col =>
-                    mapColumnGenerico(col, tableDef.name)
-                        .map(({ table, col }) => alias(table, col))
-                )
-                .flat();
-
-            const joins = fks.map(fk => recursiveJoin(fk, tableDef.name)).join(' ');
-
-            const tablesClause = fks.length > 0
-                ? `${tablename} ${joins}`
-                : tablename;
+            const selectFields = buildSelectFields();
+            const joins = buildJoins();
+            const tablesClause = fks.length > 0 ? `${tablename} ${joins}` : tablename;
 
             const filters = Object.entries(req.query);
             const activeConditions: string[] = [];
@@ -198,12 +153,10 @@ export function genericController(tableDef: TableDef) {
                 const exists = allDefs.some(t =>
                     t.columns.some(c => c.name === colName)
                 );
-
                 if (!exists) {
                     res.status(400).json({ error: `Columna ${colName} no es válida` });
                     return;
                 }
-
                 activeConditions.push(`"${colName}" = '${colValue}'`);
             }
 
@@ -212,8 +165,7 @@ export function genericController(tableDef: TableDef) {
                     ? `WHERE ${activeConditions.join(' AND ')}`
                     : '';
 
-            const orderByClause =
-                orderBy.map(col => `"${col}"`).join(', ');
+            const orderByClause = orderBy.map(col => `"${col}"`).join(', ');
 
             const sql = `
                 SELECT ${selectFields.join(', ')}
@@ -226,8 +178,7 @@ export function genericController(tableDef: TableDef) {
 
             res.json(rows.map(stripPrefixes));
 
-        } catch (err) {
-            console.error(`Error al obtener ${tablename}:`, err);
+        } catch {
             res.status(500).json({ error: 'Error interno del servidor' });
         }
     };
@@ -237,20 +188,19 @@ export function genericController(tableDef: TableDef) {
         await client.connect();
 
         try {
-            const selectFields = allColnames
-                .map(col =>
-                    mapColumnGenerico(col, tableDef.name)
-                        .map(({ table, col }) => alias(table, col))
-                )
-                .flat();
+            const selectFields = buildSelectFields();
 
             let fromClause = tablename;
             if (fks.length > 0) {
-                fromClause += ' ' + fks
-                    .map(fk =>
-                        `JOIN aida.${fk.referencesTable} 
-                         ON ${tablename}.${fk.column} = aida.${fk.referencesTable}.${fk.referencedColumn}`)
-                    .join(' ');
+                fromClause +=
+                    ' ' +
+                    fks
+                        .map(
+                            fk =>
+                                `JOIN aida.${fk.referencesTable}
+                                 ON ${tablename}.${fk.column} = aida.${fk.referencesTable}.${fk.referencedColumn}`
+                        )
+                        .join(' ');
             }
 
             const sql = `
@@ -268,8 +218,7 @@ export function genericController(tableDef: TableDef) {
 
             res.json(stripPrefixes(result.rows[0]));
 
-        } catch (error) {
-            console.error(`Error al obtener ${elementName}:`, error);
+        } catch {
             res.status(500).json({ error: 'Error interno del servidor' });
         }
     };
@@ -288,139 +237,104 @@ export function genericController(tableDef: TableDef) {
 
             res.status(201).json(result.rows[0]);
 
-        } catch (error) {
-            console.error(`Error al crear ${elementName}:`, error);
+        } catch {
             res.status(500).json({ error: 'Error interno del servidor' });
         }
     };
 
-const updateRow = async (req: Request, res: Response): Promise<void> => {
-    console.log("FULL URL:", req.originalUrl);
-    const client = createDbClient();
-    await client.connect();
+    const updateRow = async (req: Request, res: Response): Promise<void> => {
+        const client = createDbClient();
+        await client.connect();
 
-    try {
+        try {
+            const bodyParams = allParams(req.body);
+            const pkValues = pkParams(req.params);
 
-        console.log("=== UPDATE DEBUG START ===");
+            const updateSQL = `
+                UPDATE ${tablename}
+                SET ${allColnames.map((col, i) => `${col}=\$${i + 1}`).join(', ')}
+                WHERE ${pkDolarCondition(allColnames.length + 1)}
+                RETURNING *
+            `;
 
-        console.log("Tabla:", tablename);
-        console.log("Columnas:", allColnames);
+            const result = await client.query(updateSQL, [...bodyParams, ...pkValues]);
 
-        console.log("REQ BODY:", req.body);
-        console.log("REQ PARAMS:", req.params);
+            if (result.rows.length === 0) {
+                res.status(404).json({ error: `${elementName} no encontrado` });
+                return;
+            }
 
-        const bodyParams = allParams(req.body);
-        const pkValues = pkParams(req.params);
+            res.json(result.rows[0]);
 
-        console.log("Body Params (allParams):", bodyParams);
-        console.log("PK Params (pkParams):", pkValues);
-
-        const updateSQL = `
-            UPDATE ${tablename}
-            SET ${allColnames.map((col, i) => `${col}=\$${i + 1}`).join(', ')}
-            WHERE ${pkDolarCondition(allColnames.length + 1)}
-            RETURNING *
-        `;
-
-        console.log("SQL GENERATED:");
-        console.log(updateSQL);
-
-        console.log("FINAL PARAM ARRAY:", [...bodyParams, ...pkValues]);
-
-        console.log("==== EXECUTING UPDATE ====");
-
-        const result = await client.query(
-            updateSQL,
-            [...bodyParams, ...pkValues]
-        );
-
-        console.log("SQL RESULT:", result.rows);
-
-        console.log("=== UPDATE DEBUG END ===");
-
-        if (result.rows.length === 0) {
-            console.warn("NO ROW MATCHED PK → elemento no encontrado");
-            res.status(404).json({ error: `${elementName} no encontrado` });
-            return;
+        } catch {
+            res.status(500).json({ error: 'Error interno del servidor' });
         }
-
-        res.json(result.rows[0]);
-
-    } catch (error) {
-        console.error(`Error al actualizar ${elementName}:`, error);
-        res.status(500).json({ error: 'Error interno del servidor' });
-    }
-};
+    };
 
     const deleteRow = async (req: Request, res: Response): Promise<void> => {
-    const client = createDbClient();
-    await client.connect();
+        const client = createDbClient();
+        await client.connect();
 
-    try {
-        await client.query("BEGIN");
+        try {
+            await client.query("BEGIN");
 
-        const input = { ...req.params, ...req.query };
+            const input = { ...req.params, ...req.query };
+            const pkValues = pkParams(input);
 
-        const pkValues = pkParams(input);
-
-        console.log("DELETE PK VALUES:", pkValues, "INPUT:", input);
-
-        if (pkValues.some(v => v === undefined || v === null)) {
-            await client.query("ROLLBACK");
-            res.status(400).json({ error: "PK no recibida" });
-            return
-        }
-
-        const childTables = tableDefs
-            .filter(t =>
-                t.fks.some(fk => fk.referencesTable === tableDef.name)
-            )
-            .map(t => ({
-                table: t.name,
-                fks: t.fks.filter(fk => fk.referencesTable === tableDef.name)
-            }));
-
-        for (const child of childTables) {
-            for (const fk of child.fks) {
-                const sql = `
-                    DELETE FROM aida.${child.table}
-                    WHERE ${fk.column} = $1
-                `;
-                await client.query(sql, pkValues);
+            if (pkValues.some(v => v === undefined || v === null)) {
+                await client.query("ROLLBACK");
+                res.status(400).json({ error: "PK no recibida" });
+                return;
             }
-        }
 
-        const deleteSQL = `
-            DELETE FROM ${tablename}
-            WHERE ${pkDolarCondition(1)}
-            RETURNING *
-        `;
+            const childTables = tableDefs
+                .filter(t =>
+                    t.fks.some(fk => fk.referencesTable === tableDef.name)
+                )
+                .map(t => ({
+                    table: t.name,
+                    fks: t.fks.filter(fk => fk.referencesTable === tableDef.name)
+                }));
 
-        const result = await client.query(deleteSQL, pkValues);
+            for (const child of childTables) {
+                for (const fk of child.fks) {
+                    const sql = `
+                        DELETE FROM aida.${child.table}
+                        WHERE ${fk.column} = $1
+                    `;
+                    await client.query(sql, pkValues);
+                }
+            }
 
-        if (result.rows.length === 0) {
+            const deleteSQL = `
+                DELETE FROM ${tablename}
+                WHERE ${pkDolarCondition(1)}
+                RETURNING *
+            `;
+
+            const result = await client.query(deleteSQL, pkValues);
+
+            if (result.rows.length === 0) {
+                await client.query("ROLLBACK");
+                res.status(404).json({ error: `${elementName} no encontrado` });
+                return;
+            }
+
+            await client.query("COMMIT");
+            res.json({ message: `${elementName} eliminado correctamente` });
+
+        } catch {
             await client.query("ROLLBACK");
-            res.status(404).json({ error: `${elementName} no encontrado` });
-            return
+            res.status(500).json({ error: "Error interno del servidor" });
         }
+    };
 
-        await client.query("COMMIT");
-        res.json({ message: `${elementName} eliminado correctamente` });
-
-    } catch (error) {
-        await client.query("ROLLBACK");
-        console.error(`Error al eliminar ${elementName}:`, error);
-        res.status(500).json({ error: "Error interno del servidor" });
-    }
-};
-
-  return {
-    getRow,
-    getAllRows,
-    createRow,
-    updateRow,
-    deleteRow,
-    findOne
-};
-
+    return {
+        getRow,
+        getAllRows,
+        createRow,
+        updateRow,
+        deleteRow,
+        findOne,
+    };
 }

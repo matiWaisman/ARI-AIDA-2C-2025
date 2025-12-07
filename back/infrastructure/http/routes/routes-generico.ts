@@ -20,3 +20,4 @@ for (const tableDef of tableDefs) {
         genericRouter.delete('/'+tableDef.name+'/delete', deleteRow);
     }
 }
+
