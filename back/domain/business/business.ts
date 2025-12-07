@@ -191,11 +191,6 @@ export class Business {
         return materiasNoParticipa;
     }
 
-    async existeMateria(nombreMateria: string) {
-    const materia = await this.materiaRepo.getMateria(nombreMateria);
-    return !!materia;
-    }
-
     async inscribirAlumnoConIdDeUsuario(codigoMateria:string, id: number|undefined) {
     return await this.materiaRepo.inscribirConId(codigoMateria, id, "cursa", "Alumno");
     }

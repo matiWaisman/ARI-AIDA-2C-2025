@@ -10,11 +10,12 @@ type Props = {
 export default function CertificadoPage({ params }: Props) {
   const resolved = React.use(params);
 return (
-  <CargarCertificado
-    endpointPath="alumnos/fecha"
-    paramName="fecha"
-    paramValue={resolved.fecha}
-  />
+<CargarCertificado
+  endpointPath="alumnos/findOne"
+  paramName="titulo_en_tramite"
+  paramValue={resolved.fecha}
+/>
+
 );
 
 }

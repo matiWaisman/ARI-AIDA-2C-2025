@@ -92,6 +92,86 @@ export function genericController(tableDef: TableDef) {
             recursiveJoin(nextFk!, fk.referencesTable)
         );
     }
+ const findOne = async (req: Request, res: Response): Promise<void> => {
+    const client = createDbClient();
+    await client.connect();
+
+    console.log("\n================ FINDONE DEBUG ================");
+    console.log("TABLE:", tableDef.name);
+    console.log("REQ QUERY:", req.query);
+
+    try {
+        const filters = Object.entries(req.query);
+
+        if (filters.length === 0) {
+            console.log("❌ No filters provided");
+            res.status(400).json({ error: "Se necesita al menos un filtro" });
+            return;
+        }
+
+        const conditions = filters
+            .map(([key], i) => `aida.${tableDef.name}."${key}" = $${i + 1}`)
+            .join(" AND ");
+
+        const values = filters.map(([_, value]) => 
+    typeof value === "string" ? decodeURIComponent(value).trim() : value
+);
+
+
+        console.log("FILTERS:", filters);
+        console.log("WHERE CONDITIONS:", conditions);
+        console.log("VALUES:", values);
+
+        const selectFields = allColnames.flatMap(col =>
+            mapColumnGenerico(col, tableDef.name).map(({ table, col }) =>
+                alias(table, col)
+            )
+        );
+
+        console.log("SELECT FIELDS:", selectFields);
+
+        const joins = fks.map(fk => recursiveJoin(fk, tableDef.name)).join(" ");
+        const tablesClause =
+            fks.length > 0 ? `${tablename} ${joins}` : tablename;
+
+        console.log("JOINS:", joins || "(none)");
+        console.log("TABLES CLAUSE:", tablesClause);
+
+        const sql = `
+            SELECT ${selectFields.join(", ")}
+            FROM ${tablesClause}
+            WHERE ${conditions}
+            LIMIT 1
+        `;
+
+        console.log("\n--------- SQL GENERATED ---------");
+        console.log(sql);
+        console.log("PARAM VALUES:", values);
+        console.log("---------------------------------\n");
+
+        const result = await client.query(sql, values);
+
+        console.log("DB RESULT ROWS:", result.rows);
+
+        if (result.rows.length === 0) {
+            console.log("❌ NO ROWS FOUND");
+            res.status(404).json({ error: `${elementName} no encontrado` });
+            return;
+        }
+
+        console.log("✔ ROW FOUND (raw):", result.rows[0]);
+        const cleaned = stripPrefixes(result.rows[0]);
+        console.log("✔ ROW CLEANED:", cleaned);
+
+        res.json(cleaned);
+
+    } catch (error) {
+        console.error("🔥 ERROR EN FINDONE:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
+    } finally {
+        console.log("=============== END FINDONE DEBUG ===============\n");
+    }
+};
 
     const getAllRows = async (req: Request, res: Response): Promise<void> => {
         const client = createDbClient();
@@ -214,31 +294,63 @@ export function genericController(tableDef: TableDef) {
         }
     };
 
-    const updateRow = async (req: Request, res: Response): Promise<void> => {
-        const client = createDbClient();
-        await client.connect();
+const updateRow = async (req: Request, res: Response): Promise<void> => {
+    console.log("FULL URL:", req.originalUrl);
+    const client = createDbClient();
+    await client.connect();
 
-        try {
-            const result = await client.query(
-                `UPDATE ${tablename}
-                 SET ${allColnames.map((col, i) => `${col}=\$${i + 1}`).join(', ')}
-                 WHERE ${pkDolarCondition(allColnames.length + 1)}
-                 RETURNING *`,
-                [...allParams(req.body), ...pkParams(req.params)]
-            );
+    try {
 
-            if (result.rows.length === 0) {
-                res.status(404).json({ error: `${elementName} no encontrado` });
-                return;
-            }
+        console.log("=== UPDATE DEBUG START ===");
 
-            res.json(result.rows[0]);
+        console.log("Tabla:", tablename);
+        console.log("Columnas:", allColnames);
 
-        } catch (error) {
-            console.error(`Error al actualizar ${elementName}:`, error);
-            res.status(500).json({ error: 'Error interno del servidor' });
+        console.log("REQ BODY:", req.body);
+        console.log("REQ PARAMS:", req.params);
+
+        const bodyParams = allParams(req.body);
+        const pkValues = pkParams(req.params);
+
+        console.log("Body Params (allParams):", bodyParams);
+        console.log("PK Params (pkParams):", pkValues);
+
+        const updateSQL = `
+            UPDATE ${tablename}
+            SET ${allColnames.map((col, i) => `${col}=\$${i + 1}`).join(', ')}
+            WHERE ${pkDolarCondition(allColnames.length + 1)}
+            RETURNING *
+        `;
+
+        console.log("SQL GENERATED:");
+        console.log(updateSQL);
+
+        console.log("FINAL PARAM ARRAY:", [...bodyParams, ...pkValues]);
+
+        console.log("==== EXECUTING UPDATE ====");
+
+        const result = await client.query(
+            updateSQL,
+            [...bodyParams, ...pkValues]
+        );
+
+        console.log("SQL RESULT:", result.rows);
+
+        console.log("=== UPDATE DEBUG END ===");
+
+        if (result.rows.length === 0) {
+            console.warn("NO ROW MATCHED PK → elemento no encontrado");
+            res.status(404).json({ error: `${elementName} no encontrado` });
+            return;
         }
-    };
+
+        res.json(result.rows[0]);
+
+    } catch (error) {
+        console.error(`Error al actualizar ${elementName}:`, error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+};
 
     const deleteRow = async (req: Request, res: Response): Promise<void> => {
     const client = createDbClient();
@@ -302,13 +414,13 @@ export function genericController(tableDef: TableDef) {
     }
 };
 
+  return {
+    getRow,
+    getAllRows,
+    createRow,
+    updateRow,
+    deleteRow,
+    findOne
+};
 
-
-    return {
-        getRow,
-        getAllRows,
-        createRow,
-        updateRow,
-        deleteRow
-    };
 }

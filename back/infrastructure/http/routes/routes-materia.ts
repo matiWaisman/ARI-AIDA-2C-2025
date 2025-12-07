@@ -10,6 +10,7 @@ materiaRouter.get("/materias",genericController(tableDefs[5]!).getAllRows);
 materiaRouter.post("/materias/create", genericController(tableDefs[5]!).createRow);
 
 // rutas con logica de business
+materiaRouter.post("/materia/update", MateriaController.ponerNotaAAlumno);
 materiaRouter.get("/materiasQueCursa",MateriaController.getAllMateriasQueCursa);
 materiaRouter.get("/materiasqueDicta",MateriaController.getAllMateriasQueDicta);
 materiaRouter.get("/materiasQueNoCursa",MateriaController.getAllMateriasQueNoCursa);

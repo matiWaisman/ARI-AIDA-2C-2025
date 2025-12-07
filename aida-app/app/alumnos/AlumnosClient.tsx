@@ -84,27 +84,28 @@ export default function AlumnosClient({
     }
   };
 
-  const actualizarAlumno = async (
-    lu: string,
-    nombres: string,
-    apellido: string
-  ) => {
-    try {
-      await apiClient(`/alumnos/update`, {
-        method: "POST",
-        body: JSON.stringify({ lu, nombres, apellido }),
-      });
+ const actualizarAlumno = async (
+  lu: string,
+  nombres: string,
+  apellido: string
+) => {
+  try {
+await apiClient(`/entidadUniversitaria/update/${encodeURIComponent(lu)}`, {
+  method: "POST",
+  body: JSON.stringify({ lu, nombres, apellido }),
+});
 
-      setLista((prev) =>
-        prev.map((a) => (a.lu === lu ? { ...a, nombres, apellido } : a))
-      );
 
-      return true;
-    } catch (e: any) {
-      setActionError(e.message);
-      return false;
-    }
-  };
+    setLista((prev) =>
+      prev.map((a) => (a.lu === lu ? { ...a, nombres, apellido } : a))
+    );
+
+    return true;
+  } catch (e: any) {
+    setActionError(e.message);
+    return false;
+  }
+};
 
   if (loading) return <LoadingScreen mensaje="Cargando alumnos..." />;
   if (error) return <ErrorScreen error={error} />;
