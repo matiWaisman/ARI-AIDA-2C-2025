@@ -27,8 +27,7 @@ const upload = multer({ storage });
 export const alumnoRouter = Router();
 
 // rutas con logica de business
-alumnoRouter.get("/alumnos/lu", AlumnoController.getAlumnoPorLU);
-alumnoRouter.get("/alumnos/fecha", AlumnoController.getAlumnoPorFecha);
+alumnoRouter.get("/alumnos/findOne", genericController(tableDefs[1]!).findOne);
 alumnoRouter.post("/alumnos/generar", AlumnoController.generarCertificado);
 alumnoRouter.post("/alumnos/cargarCSV",upload.single("archivo"),AlumnoController.cargarDatosEnAlumnos);
 alumnoRouter.get("/alumnos/profesor/:luProfe/:codigoMateria/:cuatrimestre",AlumnoController.getAlumnosDeProfesorPorMateriaYCuatrimestre);

@@ -92,6 +92,102 @@ export function genericController(tableDef: TableDef) {
             recursiveJoin(nextFk!, fk.referencesTable)
         );
     }
+ const findOne = async (req: Request, res: Response): Promise<void> => {
+    const client = createDbClient();
+    await client.connect();
+
+    console.log("\n================ FINDONE DEBUG ================");
+    console.log("TABLE:", tableDef.name);
+    console.log("REQ QUERY:", req.query);
+
+    try {
+        const filters = Object.entries(req.query);
+
+        if (filters.length === 0) {
+            console.log("❌ No filters provided");
+            res.status(400).json({ error: "Se necesita al menos un filtro" });
+            return;
+        }
+
+        // ----------------------------------------------------------
+        // WHERE
+        // ----------------------------------------------------------
+        
+        const conditions = filters
+            .map(([key], i) => `aida.${tableDef.name}."${key}" = $${i + 1}`)
+            .join(" AND ");
+
+        const values = filters.map(([_, value]) => 
+    typeof value === "string" ? decodeURIComponent(value).trim() : value
+);
+
+
+        console.log("FILTERS:", filters);
+        console.log("WHERE CONDITIONS:", conditions);
+        console.log("VALUES:", values);
+
+        // ----------------------------------------------------------
+        // SELECT
+        // ----------------------------------------------------------
+        const selectFields = allColnames.flatMap(col =>
+            mapColumnGenerico(col, tableDef.name).map(({ table, col }) =>
+                alias(table, col)
+            )
+        );
+
+        console.log("SELECT FIELDS:", selectFields);
+
+        // ----------------------------------------------------------
+        // JOINS
+        // ----------------------------------------------------------
+        const joins = fks.map(fk => recursiveJoin(fk, tableDef.name)).join(" ");
+        const tablesClause =
+            fks.length > 0 ? `${tablename} ${joins}` : tablename;
+
+        console.log("JOINS:", joins || "(none)");
+        console.log("TABLES CLAUSE:", tablesClause);
+
+        // ----------------------------------------------------------
+        // SQL FINAL
+        // ----------------------------------------------------------
+        const sql = `
+            SELECT ${selectFields.join(", ")}
+            FROM ${tablesClause}
+            WHERE ${conditions}
+            LIMIT 1
+        `;
+
+        console.log("\n--------- SQL GENERATED ---------");
+        console.log(sql);
+        console.log("PARAM VALUES:", values);
+        console.log("---------------------------------\n");
+
+        // ----------------------------------------------------------
+        // EXECUTE
+        // ----------------------------------------------------------
+        const result = await client.query(sql, values);
+
+        console.log("DB RESULT ROWS:", result.rows);
+
+        if (result.rows.length === 0) {
+            console.log("❌ NO ROWS FOUND");
+            res.status(404).json({ error: `${elementName} no encontrado` });
+            return;
+        }
+
+        console.log("✔ ROW FOUND (raw):", result.rows[0]);
+        const cleaned = stripPrefixes(result.rows[0]);
+        console.log("✔ ROW CLEANED:", cleaned);
+
+        res.json(cleaned);
+
+    } catch (error) {
+        console.error("🔥 ERROR EN FINDONE:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
+    } finally {
+        console.log("=============== END FINDONE DEBUG ===============\n");
+    }
+};
 
     const getAllRows = async (req: Request, res: Response): Promise<void> => {
         const client = createDbClient();
@@ -334,13 +430,13 @@ const updateRow = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
+  return {
+    getRow,
+    getAllRows,
+    createRow,
+    updateRow,
+    deleteRow,
+    findOne
+};
 
-
-    return {
-        getRow,
-        getAllRows,
-        createRow,
-        updateRow,
-        deleteRow
-    };
 }
