@@ -102,9 +102,9 @@ function requireLogin(req: Request, res: Response, next: NextFunction) {
 }
 
 app.use("/app", userRouter);
+app.use("/app", requireLogin, alumnoRouter);
 app.use("/app", requireLogin, genericRouter);
 app.use("/app", requireLogin, materiaRouter);
-app.use("/app", requireLogin, alumnoRouter);
 app.use("/app", requireLogin, encuestasRouter);
 
 app.listen(port, () => {
