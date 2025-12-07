@@ -3,17 +3,6 @@ import { Client } from "pg";
 export class MateriaRepository {
   constructor(private client: Client) {}
 
-  async getMateria(nombreMateria: string): Promise<boolean> {
-    const query = `
-    SELECT 1 
-    FROM aida.materias 
-    WHERE nombreMateria = $1 
-    LIMIT 1
-  `;
-    const result = await this.client.query(query, [nombreMateria]);
-    return result.rows.length > 0;
-  }
-
   async getAllMaterias(): Promise<any[]> {
     const query = `
       SELECT

@@ -6,7 +6,6 @@ import dotenv from "dotenv";
 
 import { alumnoRouter } from "../infrastructure/http/routes/routes-alumno.js";
 import { userRouter } from "../infrastructure/http/routes/routes-user.js";
-import { cursaRouter } from "../infrastructure/http/routes/routes-cursa.js";
 import { materiaRouter } from "../infrastructure/http/routes/routes-materia.js";
 import { encuestasRouter } from "../infrastructure/http/routes/routes-encuestas.js";
 
@@ -104,7 +103,6 @@ function requireLogin(req: Request, res: Response, next: NextFunction) {
 app.use("/app", userRouter);
 app.use("/app", requireLogin, materiaRouter);
 app.use("/app", requireLogin, alumnoRouter);
-app.use("/app", requireLogin, cursaRouter);
 app.use("/app", requireLogin, encuestasRouter);
 
 app.listen(port, () => {

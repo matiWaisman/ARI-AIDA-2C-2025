@@ -109,10 +109,6 @@ export function genericController(tableDef: TableDef) {
             return;
         }
 
-        // ----------------------------------------------------------
-        // WHERE
-        // ----------------------------------------------------------
-        
         const conditions = filters
             .map(([key], i) => `aida.${tableDef.name}."${key}" = $${i + 1}`)
             .join(" AND ");
@@ -126,9 +122,6 @@ export function genericController(tableDef: TableDef) {
         console.log("WHERE CONDITIONS:", conditions);
         console.log("VALUES:", values);
 
-        // ----------------------------------------------------------
-        // SELECT
-        // ----------------------------------------------------------
         const selectFields = allColnames.flatMap(col =>
             mapColumnGenerico(col, tableDef.name).map(({ table, col }) =>
                 alias(table, col)
@@ -137,9 +130,6 @@ export function genericController(tableDef: TableDef) {
 
         console.log("SELECT FIELDS:", selectFields);
 
-        // ----------------------------------------------------------
-        // JOINS
-        // ----------------------------------------------------------
         const joins = fks.map(fk => recursiveJoin(fk, tableDef.name)).join(" ");
         const tablesClause =
             fks.length > 0 ? `${tablename} ${joins}` : tablename;
@@ -147,9 +137,6 @@ export function genericController(tableDef: TableDef) {
         console.log("JOINS:", joins || "(none)");
         console.log("TABLES CLAUSE:", tablesClause);
 
-        // ----------------------------------------------------------
-        // SQL FINAL
-        // ----------------------------------------------------------
         const sql = `
             SELECT ${selectFields.join(", ")}
             FROM ${tablesClause}
@@ -162,9 +149,6 @@ export function genericController(tableDef: TableDef) {
         console.log("PARAM VALUES:", values);
         console.log("---------------------------------\n");
 
-        // ----------------------------------------------------------
-        // EXECUTE
-        // ----------------------------------------------------------
         const result = await client.query(sql, values);
 
         console.log("DB RESULT ROWS:", result.rows);
