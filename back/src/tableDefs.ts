@@ -208,7 +208,7 @@ const tableDefinitions: TableDef[] = [
     ],
     elementName: 'dicta',
     orderBy: ['codigoMateria', 'cuatrimestre', 'luProfesor'],
-    requiereRuta: false 
+    requiereRuta: true 
   },
 
   {
