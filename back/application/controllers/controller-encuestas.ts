@@ -20,22 +20,6 @@ export class EncuestasController {
     await client.end();
   }
 
-  static async obtenerEncuestasSobreMiComoProfesor(req: Request, res: Response) {
-    const { client, business } = await EncuestasController._createDbClientAndInitializeBusiness();
-    const lu = req.params.LU? req.params.LU : "";
-      const encuestas = await business.obtenerEncuestasSobreMiComoProfesor(lu);
-      res.status(200).json(encuestas);
-      await client.end();
-  }
-
-  static async obtenerEncuestasSobreMiComoAlumno(req: Request, res: Response) {
-    const { client, business } = await EncuestasController._createDbClientAndInitializeBusiness();
-    const lu = req.params.LU? req.params.LU : "";
-    const encuestas = await business.obtenerEncuestasSobreMiComoAlumno(lu);
-    res.status(200).json(encuestas);
-    await client.end();
-  }
-
   static async obtenerEncuestasDeMateriaDeCuatri(req: Request, res: Response) {
     const { client, business } = await EncuestasController._createDbClientAndInitializeBusiness();
     const {codigoMateria, cuatrimestre} = req.params;

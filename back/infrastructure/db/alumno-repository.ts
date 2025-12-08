@@ -78,24 +78,6 @@ export class AlumnoRepository {
     );
   }
 
-  async crearAlumnoCompleto(
-    lu: string,
-    titulo: string,
-    titulo_en_tramite: string,
-    egreso: string
-  ) {
-    const result = await this.client.query(
-      `
-        INSERT INTO aida.alumnos (lu, titulo, titulo_en_tramite, egreso)
-        VALUES ($1, $2, $3, $4)
-        RETURNING *;
-      `,
-      [lu, titulo, titulo_en_tramite, egreso]
-    );
-
-    return result.rows[0];
-  }
-
   async crearAlumno(lu: string): Promise<Alumno | undefined> {
     const existeAlumno = await this.hayAlumnoConLu(lu);
     if (existeAlumno) {

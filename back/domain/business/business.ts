@@ -45,12 +45,6 @@ export class Business {
         return await this.userRepo.crearUsuario(username, password, nombre, apellido, lu, email);
     }
 
-    async crearAlumnoCompleto({ lu, nombres, apellido, titulo, titulo_en_tramite, egreso } : { 
-    lu: string; nombres: string; apellido: string; titulo: string; titulo_en_tramite: string; egreso: string;}) {
-        await this.entidadUniversitariaRepo.crearEntidadUniversitaria(lu, apellido, nombres);
-        return await this.alumnoRepo.crearAlumnoCompleto(lu, titulo, titulo_en_tramite, egreso);
-    }
-
     async cargarDatosEnAlumnos(filePath: string) {
         return this.alumnoRepo.cargarAlumnosFromCSV(filePath);
     }
@@ -107,13 +101,7 @@ export class Business {
     return this.materiaRepo.obtenerProfesoresDeMateria(codigoMateria, cuatrimestre, luAExcluir);
     }
 
-    async obtenerEncuestasSobreMiComoAlumno(miLU: string) {
-    return this.encuestasRepo.obtenerEncuestasSobreMiComoAlumno(miLU);
-    }
-
-    async obtenerEncuestasSobreMiComoProfesor(miLU: string) {
-    return this.encuestasRepo.obtenerEncuestasSobreMiComoProfesor(miLU);
-    }
+    
 
     async obtenerEncuestasNoRespondidas(lu: string) {
     return this.encuestasRepo.obtenerEncuestasNoRespondidas(lu);

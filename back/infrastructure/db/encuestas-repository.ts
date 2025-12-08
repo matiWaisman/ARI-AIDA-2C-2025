@@ -3,28 +3,6 @@ import { Client } from "pg";
 export class EncuestasRepository {
   constructor(private client: Client) {}
 
-  async obtenerEncuestasSobreMiComoProfesor(miLU: string) {
-    const query = `
-      SELECT *
-      FROM aida.encuestaAAlumno
-      WHERE luEvaluado = $1;
-    `;
-
-    const r = await this.client.query(query, [miLU]);
-    return r.rows;
-  }
-
-  async obtenerEncuestasSobreMiComoAlumno(miLU: string) {
-    const query = `
-    SELECT *
-    FROM aida.encuestaAProfesor
-    WHERE luEvaluado = $1;
-  `;
-
-    const r = await this.client.query(query, [miLU]);
-    return r.rows;
-  }
-
   async crearEncuestaAProfesor(e: {
     luEncuestado: string;
     luEvaluado: string;
