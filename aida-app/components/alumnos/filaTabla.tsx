@@ -171,7 +171,7 @@ export default function FilaTabla({
   return (
     <tr className="hover:bg-blue-50 transition-colors duration-150">
       <td className="px-1 py-3 text-xs font-medium text-gray-900 whitespace-nowrap">
-        {renderCeldaEditable("lu", valores.lu, "text-xs")}
+        {valores.lu}
       </td>
       <td className="px-2 py-3 text-sm text-gray-700">
         {renderCeldaEditable("nombres", valores.nombres, "text-sm")}

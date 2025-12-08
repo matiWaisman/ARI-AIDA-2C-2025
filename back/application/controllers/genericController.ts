@@ -301,6 +301,7 @@ export function genericController(tableDef: TableDef) {
 
         try {
             const bodyParams = allParams(req.body);
+            console.log("Datos al update del back: ", bodyParams);
             const pkValues = pkParams(req.params);
 
             const updateSQL = `
