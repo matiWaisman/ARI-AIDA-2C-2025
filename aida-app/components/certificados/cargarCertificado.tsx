@@ -46,7 +46,6 @@ export default function CargarCertificado({
               ? `${endpointPath}/get/${paramName}?${paramName}=${encodedValue}`
               : `${endpointPath}/get/${paramName}/${encodedValue}`
             : endpointPath;
-
         const alumnoData: Alumno = await apiClient(url);
         setAlumno(alumnoData);
       } catch (err) {

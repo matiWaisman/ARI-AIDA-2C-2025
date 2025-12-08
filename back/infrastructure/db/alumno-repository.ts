@@ -43,7 +43,7 @@ export class AlumnoRepository {
              eu.apellido, eu.nombres
       FROM aida.alumnos a
       INNER JOIN aida.entidadUniversitaria eu ON a.lu = eu.lu
-      WHERE a.titulo IS NOT NULL AND a.lu = $1
+      WHERE a.titulo_en_tramite IS NOT NULL AND a.lu = $1
     `;
     const result = await this.client.query(query, [lu]);
     return result.rows[0];

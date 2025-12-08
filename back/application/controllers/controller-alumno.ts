@@ -14,7 +14,7 @@ export class AlumnoController {
   }
 
   static async generarCertificado(req: Request, res: Response) {
-    const LU = req.query.LU as string;
+    const LU = req.query.lu as string;
     const {client, business} = await AlumnoController._createDbClientAndInitializeBusiness()
     const ruta = await business.generarCertificadoSiAplica(LU);
     res.json({ message: "Certificado generado", path: ruta });
