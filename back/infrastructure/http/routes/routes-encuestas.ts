@@ -6,11 +6,6 @@ import { tableDefs } from "../../../src/tableDefs.ts";
 export const encuestasRouter = Router();
 
 
-// Rutas CRUD generico
-encuestasRouter.post("/encuestaAMateria/create", genericController(tableDefs[8]!).createRow);
-encuestasRouter.post("/encuestaAAlumno/create", genericController(tableDefs[7]!).createRow);
-encuestasRouter.post("/encuestaAProfesor/create", genericController(tableDefs[9]!).createRow);
-
 // Rutas con logica de business
 encuestasRouter.get("/encuestas/get/alumno", EncuestasController.obtenerEncuestasSobreMiComoAlumno);
 encuestasRouter.get("/encuestas/get/materia/:codigoMateria/:cuatrimestre", EncuestasController.obtenerEncuestasDeMateriaDeCuatri);

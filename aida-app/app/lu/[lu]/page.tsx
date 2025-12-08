@@ -11,11 +11,10 @@ export default function CertificadoPage({ params }: Props) {
   const resolved = React.use(params);
 
   return (
-<CargarCertificado
-  endpointPath="alumnos/findOne"
-  paramName="lu"
-  paramValue={resolved.lu}
-/>
-
+    <CargarCertificado
+      endpointPath="alumnos"
+      paramName="lu"
+      paramValue={resolved.lu}
+    />
   );
 }

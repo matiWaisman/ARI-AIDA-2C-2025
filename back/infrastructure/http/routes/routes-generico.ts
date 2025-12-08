@@ -10,6 +10,7 @@ for (const tableDef of tableDefs) {
             getAllRows,
             createRow,
             getRow,
+            getBy,
             updateRow,
             deleteRow
         } = genericController(tableDef);
@@ -25,7 +26,7 @@ for (const tableDef of tableDefs) {
             genericRouter.post(`/${tableDef.name}/delete/${pk}/:${pk}`, deleteRow);
             genericRouter.get(`/${tableDef.name}/get/${pk}/:${pk}`, getRow);
         }
+
+        genericRouter.get(`/${tableDef.name}/getBy/:column/:value`, getBy);
     }
 }
-
-

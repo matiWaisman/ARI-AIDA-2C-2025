@@ -30,11 +30,3 @@ export const alumnoRouter = Router();
 alumnoRouter.post("/alumnos/generar", AlumnoController.generarCertificado);
 alumnoRouter.post("/alumnos/cargarCSV",upload.single("archivo"),AlumnoController.cargarDatosEnAlumnos);
 alumnoRouter.get("/alumnos/profesor/:luProfe/:codigoMateria/:cuatrimestre",AlumnoController.getAlumnosDeProfesorPorMateriaYCuatrimestre);
-
-// rutas para operaciones CRUD genéricas
-//alumnoRouter.post("/alumnos/update", genericController(tableDefs[1]!).updateRow);
-//alumnoRouter.delete("/alumnos/delete", genericController(tableDefs[1]!).deleteRow);
-//alumnoRouter.get("/alumnos/all", genericController(tableDefs[1]!).getAllRows);
-//alumnoRouter.post("/alumnos/create", genericController(tableDefs[1]!).createRow);
-//alumnoRouter.post("/entidadUniversitaria/create", genericController(tableDefs[0]!).createRow);
-//alumnoRouter.delete("/entidadUniversitaria/delete", genericController(tableDefs[0]!).deleteRow);

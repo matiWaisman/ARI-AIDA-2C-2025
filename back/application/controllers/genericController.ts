@@ -203,13 +203,27 @@ export function genericController(tableDef: TableDef) {
                         .join(' ');
             }
 
+            // Combinar params y query, dando prioridad a params pero usando query como fallback
+            const combinedParams = { ...req.query, ...req.params };
+            
+            // Decodificar valores de query parameters si vienen codificados
+            for (const key in combinedParams) {
+                if (typeof combinedParams[key] === 'string') {
+                    try {
+                        combinedParams[key] = decodeURIComponent(combinedParams[key] as string);
+                    } catch {
+                        // Si falla la decodificación, mantener el valor original
+                    }
+                }
+            }
+
             const sql = `
                 SELECT ${selectFields.join(', ')}
                 FROM ${fromClause}
                 WHERE ${pkDolarCondition(1)}
             `;
 
-            const result = await client.query(sql, pkParams(req.params));
+            const result = await client.query(sql, pkParams(combinedParams));
 
             if (result.rows.length === 0) {
                 res.status(404).json({ error: `${elementName} no encontrado` });
@@ -222,6 +236,45 @@ export function genericController(tableDef: TableDef) {
             res.status(500).json({ error: 'Error interno del servidor' });
         }
     };
+
+    const getBy = async (req: Request, res: Response): Promise<void> => {
+        const client = createDbClient();
+        await client.connect();
+        try {
+            const { column, value } = req.params;
+
+            const exists = tableDef.columns.some(c => c.name === column);
+            if (!exists) {
+                res.status(400).json({ error: `Columna ${column} no existe en ${tableDef.name}` });
+                return;
+            }
+
+            const selectFields = buildSelectFields();
+            const joins = buildJoins();
+            const tablesClause = fks.length > 0 ? `${tablename} ${joins}` : tablename;
+
+            const sql = `
+                SELECT ${selectFields.join(", ")}
+                FROM ${tablesClause}
+                WHERE aida.${tableDef.name}."${column}" = $1
+                LIMIT 1
+            `;
+
+            const result = await client.query(sql, [value]);
+
+            if (result.rows.length === 0) {
+                res.status(404).json({ error: `${elementName} no encontrado` });
+                return;
+            }
+
+            res.json(stripPrefixes(result.rows[0]));
+
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: "Error interno en getBy" });
+        }
+    };
+
 
     const createRow = async (req: Request, res: Response): Promise<void> => {
         const client = createDbClient();
@@ -331,6 +384,7 @@ export function genericController(tableDef: TableDef) {
 
     return {
         getRow,
+        getBy,
         getAllRows,
         createRow,
         updateRow,

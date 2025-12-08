@@ -2,6 +2,8 @@ import type { Client } from 'pg';
 import type { Alumno, AlumnosDict } from '../../domain/entity/alumno.ts';
 import { readCsv } from '../files/read-csv.ts';
 
+// ===== GET ALUMNOS FUNCTIONS =====
+
 export async function getAlumnos(client: Client): Promise<AlumnosDict> {
     const query = "SELECT * FROM aida.alumnos"
     const listaAlumnos = await client.query<Alumno>(query);
@@ -14,6 +16,8 @@ export async function getAlumnos(client: Client): Promise<AlumnosDict> {
     return dict;
 }
 
+// ===== DELETE ALUMNOS FUNCTIONS =====
+
 export async function deleteAlumnos(client: Client): Promise<void> {
     console.log("Datos eliminados de la tabla alumnos");
     let queryActual = "DELETE FROM aida.alumnos"
@@ -22,7 +26,9 @@ export async function deleteAlumnos(client: Client): Promise<void> {
     console.log(res.command, res.rowCount);
 }
 
+// ===== QUERIES =====
 
+// Solo existen estas columnas en alumnos:
 const queryUpdateAlumno = `
   UPDATE aida.alumnos
     SET titulo = $2, titulo_en_tramite = $3, egreso = $4
@@ -34,6 +40,7 @@ const queryInsertAlumno = `
   VALUES ($1, $2, $3, $4);
 `;
 
+// apellido y nombres van en entidadUniversitaria
 const queryUpsertEntidadUniversitaria = `
   INSERT INTO aida.entidadUniversitaria (lu, apellido, nombres)
   VALUES ($1, $2, $3)

@@ -51,26 +51,6 @@ export class Business {
         return await this.alumnoRepo.crearAlumnoCompleto(lu, titulo, titulo_en_tramite, egreso);
     }
 
-    async getAlumnos() {
-        return await this.alumnoRepo.getAlumnos('', []);
-    }
-
-    async getAlumnoConLU(lu: string) {
-        const alumno = await this.alumnoRepo.getAlumnoConLU(lu);
-        if (!alumno) throw new Error("Alumno no encontrado");
-        return alumno;
-    }
-
-    async updateAlumno(lu: string, nombres: string, apellido: string) {
-        return this.alumnoRepo.updateAlumno(lu, nombres, apellido);
-    }
-
-    async deleteAlumno(lu: string) {
-        const deleted = await this.alumnoRepo.deleteAlumno(lu);
-        if (!deleted) throw new Error("No existe el alumno a eliminar");
-        return deleted;
-    }
-
     async cargarDatosEnAlumnos(filePath: string) {
         return this.alumnoRepo.cargarAlumnosFromCSV(filePath);
     }

@@ -2,16 +2,15 @@ set role to aida_owner;
 create schema aida;
 grant usage on schema aida to aida_admin;
 
--- Create base entity first
 CREATE TABLE aida.entidadUniversitaria (
     lu TEXT PRIMARY KEY,
     apellido TEXT NOT NULL,
     nombres TEXT NOT NULL
 );
 
--- Then create dependent tables
 CREATE TABLE aida.alumnos (
-    lu TEXT PRIMARY KEY REFERENCES aida.entidadUniversitaria(lu),
+    lu TEXT PRIMARY KEY 
+        REFERENCES aida.entidadUniversitaria(lu) ON DELETE CASCADE,
     titulo text,
     titulo_en_tramite date,
     egreso date
@@ -25,13 +24,13 @@ CREATE TABLE aida.usuarios (
     nombres text not null, 
     email text not null unique,
     activo bool not null default true,
-    lu TEXT REFERENCES aida.entidadUniversitaria(lu)
+    lu TEXT REFERENCES aida.entidadUniversitaria(lu) ON DELETE CASCADE
 );
 
-
 CREATE TABLE aida.profesor (
-    lu TEXT PRIMARY KEY REFERENCES aida.entidadUniversitaria(lu),
-    id INTEGER REFERENCES aida.usuarios(id)
+    lu TEXT PRIMARY KEY 
+        REFERENCES aida.entidadUniversitaria(lu) ON DELETE CASCADE,
+    id INTEGER REFERENCES aida.usuarios(id) ON DELETE CASCADE
 );
 
 CREATE TABLE aida.materias (
@@ -40,23 +39,24 @@ CREATE TABLE aida.materias (
 );
 
 CREATE TABLE aida.dicta (
-    luProfesor TEXT REFERENCES aida.profesor(lu), 
-    codigoMateria VARCHAR REFERENCES aida.materias(codigoMateria),
+    luProfesor TEXT REFERENCES aida.profesor(lu) ON DELETE CASCADE, 
+    codigoMateria VARCHAR REFERENCES aida.materias(codigoMateria) ON DELETE CASCADE,
     cuatrimestre VARCHAR,
     PRIMARY KEY (luProfesor, codigoMateria, cuatrimestre)
 );
 
 CREATE TABLE aida.cursa (
-    luAlumno TEXT REFERENCES aida.alumnos(lu), 
-    codigoMateria VARCHAR REFERENCES aida.materias(codigoMateria),
+    luAlumno TEXT REFERENCES aida.alumnos(lu) ON DELETE CASCADE, 
+    codigoMateria VARCHAR REFERENCES aida.materias(codigoMateria) ON DELETE CASCADE,
     cuatrimestre VARCHAR,
     nota NUMERIC,
     PRIMARY KEY (luAlumno, codigoMateria, cuatrimestre)
 );
+
 CREATE TABLE aida.encuestaAProfesor(
-    luEncuestado TEXT REFERENCES aida.entidadUniversitaria(lu),
-    luEvaluado   TEXT REFERENCES aida.entidadUniversitaria(lu),
-    codigoMateria TEXT REFERENCES aida.materias(codigoMateria),
+    luEncuestado TEXT REFERENCES aida.entidadUniversitaria(lu) ON DELETE CASCADE,
+    luEvaluado   TEXT REFERENCES aida.entidadUniversitaria(lu) ON DELETE CASCADE,
+    codigoMateria TEXT REFERENCES aida.materias(codigoMateria) ON DELETE CASCADE,
     cuatrimestre TEXT,
     respuesta1 NUMERIC,
     respuesta2 NUMERIC,
@@ -73,9 +73,10 @@ CREATE TABLE aida.encuestaAProfesor(
     comentario TEXT,
     PRIMARY KEY (luEncuestado, luEvaluado, codigoMateria, cuatrimestre)
 );
+
 CREATE TABLE aida.encuestaAMateria(
-    luEncuestado TEXT REFERENCES aida.entidadUniversitaria(lu),
-    codigoMateria TEXT REFERENCES aida.materias(codigoMateria),
+    luEncuestado TEXT REFERENCES aida.entidadUniversitaria(lu) ON DELETE CASCADE,
+    codigoMateria TEXT REFERENCES aida.materias(codigoMateria) ON DELETE CASCADE,
     cuatrimestre TEXT,
     respuesta1 NUMERIC,
     respuesta2 NUMERIC,
@@ -96,10 +97,11 @@ CREATE TABLE aida.encuestaAMateria(
     comentario TEXT,
     PRIMARY KEY (luEncuestado, codigoMateria, cuatrimestre)
 );
+
 CREATE TABLE aida.encuestaAAlumno(
-    luEncuestado TEXT REFERENCES aida.entidadUniversitaria(lu),
-    luEvaluado   TEXT REFERENCES aida.entidadUniversitaria(lu),
-    codigoMateria TEXT REFERENCES aida.materias(codigoMateria),
+    luEncuestado TEXT REFERENCES aida.entidadUniversitaria(lu) ON DELETE CASCADE,
+    luEvaluado   TEXT REFERENCES aida.entidadUniversitaria(lu) ON DELETE CASCADE,
+    codigoMateria TEXT REFERENCES aida.materias(codigoMateria) ON DELETE CASCADE,
     cuatrimestre TEXT,
     respuesta1 NUMERIC,
     respuesta2 NUMERIC,
@@ -139,8 +141,7 @@ INSERT INTO aida.cursa (luAlumno, codigoMateria, cuatrimestre, nota)
 VALUES ('30/22', 'BD101', '2C2025', NULL);
 
 SELECT m.nombreMateria, m.codigoMateria, e.nombres, e.apellido, d.cuatrimestre
-	FROM aida.materias m 
-	INNER JOIN aida.dicta d ON m.codigoMateria = d.codigoMateria 
-	INNER JOIN aida.profesor p ON d.luProfesor = p.lu
-	INNER JOIN aida.entidadUniversitaria e ON p.lu = e.lu
-	
+FROM aida.materias m 
+INNER JOIN aida.dicta d ON m.codigoMateria = d.codigoMateria 
+INNER JOIN aida.profesor p ON d.luProfesor = p.lu
+INNER JOIN aida.entidadUniversitaria e ON p.lu = e.lu;
