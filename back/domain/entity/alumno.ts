@@ -11,7 +11,3 @@ export interface Alumno {
 export type AlumnosDict = {
   [key: string]: Alumno;
 };
-
-export function alumnoToJSON(alumno: Alumno): string {
-  return JSON.stringify(alumno);
-}

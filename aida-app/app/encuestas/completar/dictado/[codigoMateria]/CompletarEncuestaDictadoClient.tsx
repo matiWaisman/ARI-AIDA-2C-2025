@@ -33,7 +33,6 @@ export default function CompletarEncuestaDictadoClient({
   const encuestasAlumnos = useEncuestasPersonas({
     evaluados: alumnos,
     numPreguntas: preguntasCompañeros.length,
-    endpoint: "/encuestas/create/alumno",
     tipoEncuesta: "alumno",
   });
 

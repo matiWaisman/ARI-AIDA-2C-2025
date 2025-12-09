@@ -40,6 +40,7 @@ export default function AlumnosDeMateriaClient({
     setActionError(null);
 
     try {
+      console.log("Datos que manda el front: ", { codigoMateria, cuatrimestre, lu, nota });
       const res = await apiClient("/materia/update", {
         method: "POST",
         body: JSON.stringify({ codigoMateria, cuatrimestre, lu, nota }),

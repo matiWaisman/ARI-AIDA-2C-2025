@@ -3,9 +3,10 @@ import path from "path";
 import type { Alumno } from "../../domain/entity/alumno.ts";
 
 export class CertificadoGenerator {
-  private templatePath = path.join(process.cwd(), "src", "templates", "ongoingDegreeCertificate.html");
+  private templatePath = path.join(process.cwd(), "src", "certificates", "ongoingDegreeCertificate.html");
 
   async generarCertificadoHtml(alumno: Alumno): Promise<string> {
+    console.log("Alumno en generarCertificadoHtml: ", alumno);
     const fecha = new Date().toLocaleDateString("es-AR", {
       year: "numeric",
       month: "long",
@@ -14,11 +15,15 @@ export class CertificadoGenerator {
 
     const template = await fs.promises.readFile(this.templatePath, "utf-8");
 
+    const pending = template.match(/\[[^\]]+\]/g);
+    console.log("Placeholders encontrados en el template:", pending);
+
+
     return template
-      .replace(/\[Número de libreta\]/g, alumno.lu.toString())
-      .replace(/\[Nombre y Apellido del estudiante\]/g, `${alumno.nombres} ${alumno.apellido}`)
-      .replace(/\[Título obtenido\]/g, alumno.titulo)
-      .replace(/\[Fecha de emisión\]/g, fecha);
+      .replace(/\[Número de libreta\]/gi, alumno.lu.toString())
+      .replace(/\[Nombre y Apellido del estudiante\]/gi, `${alumno.nombres} ${alumno.apellido}`)
+      .replace(/\[Título obtenido\]/gi, alumno.titulo)
+      .replace(/\[Fecha de emisión\]/gi, fecha);
   }
 
   private generarNombreArchivo(alumno: Alumno): string {

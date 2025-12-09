@@ -29,7 +29,7 @@ export default function AlumnosClient({
 
   const eliminarAlumno = async (lu: string) => {
     try {
-      await apiClient(`/alumnos/delete?LU=${lu}`, { method: "POST" });
+      await apiClient(`/entidadUniversitaria/delete?lu=${lu}`, { method: "DELETE" });
       setLista((prev) => prev.filter((a) => a.lu !== lu));
       return true;
     } catch (e: any) {
@@ -47,7 +47,16 @@ export default function AlumnosClient({
     egreso: string
   ) => {
     try {
-      const nuevo = await apiClient(`/alumnos/insert`, {
+      console.log("Insertando alumno...");
+      await apiClient(`/entidadUniversitaria/create`, {
+        method: "POST",
+        body: JSON.stringify({
+          lu,
+          nombres,
+          apellido,
+        }),
+      });
+      const nuevo = await apiClient(`/alumnos/create`, {
         method: "POST",
         body: JSON.stringify({
           lu,
@@ -58,7 +67,7 @@ export default function AlumnosClient({
           egreso,
         }),
       });
-
+      console.log("Alumno insertado:", nuevo);
       setLista((prev) => [
         ...prev,
         {
@@ -80,7 +89,7 @@ export default function AlumnosClient({
     apellido: string
   ) => {
     try {
-      await apiClient(`/alumnos/update`, {
+      await apiClient(`/entidadUniversitaria/update/lu/${encodeURIComponent(lu)}`, {
         method: "POST",
         body: JSON.stringify({ lu, nombres, apellido }),
       });

@@ -18,7 +18,7 @@ export default function VerEncuestasClient() {
         async function cargarDatos() {
         try {
             const materias = await apiClient(
-            "/materias",
+            "/dicta/all",
             { method: "GET" }
             );
 

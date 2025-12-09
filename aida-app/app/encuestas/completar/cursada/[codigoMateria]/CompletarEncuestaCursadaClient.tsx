@@ -41,20 +41,17 @@ export default function CompletarEncuestaCursadaClient({
   const encuestasCompañeros = useEncuestasPersonas({
     evaluados: compañeros,
     numPreguntas: preguntasCompañeros.length,
-    endpoint: "/encuestas/create/alumno",
     tipoEncuesta: "alumno",
   });
 
   const encuestasProfesores = useEncuestasPersonas({
     evaluados: profesores,
     numPreguntas: preguntasProfesores.length,
-    endpoint: "/encuestas/create/profesor",
     tipoEncuesta: "profesor",
   });
 
   const encuestaMateria = useEncuestaMateria({
     numPreguntas: preguntasMateria.length,
-    endpoint: "/encuestas/create/materia",
   });
 
   useEffect(() => {

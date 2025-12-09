@@ -21,10 +21,10 @@ export async function parseAndExecuteCommand(client: Client, input: string): Pro
 }
 
 export function getHelpMessage(): string {
-  return `¿Qué modo querés usar? 
+  return `
 - **Modo carga**  --archivo <ruta_al_archivo_csv>
 - **Modo fecha**  --fecha <YYYY-MM-DD>
-- **Modo LU**  --lu <identificador>`;
+`;
 }
 
 /**
@@ -45,3 +45,4 @@ export async function handleTerminalInput(client: Client): Promise<void> {
     );
   });
 }
+

@@ -28,9 +28,8 @@ export default function CargarCertificado({
       try {
         setLoading(true);
         setError(null);
-        const url = `${endpointPath}?${encodeURIComponent(
-          paramName
-        )}=${encodeURIComponent(paramValue)}`;
+        // El endpoint genérico usa path parameters: /table/getBy/column/value
+        const url = `${endpointPath}/${encodeURIComponent(paramValue)}`;
         const alumnoData: Alumno = await apiClient(url);
         setAlumno(alumnoData);
       } catch (err) {

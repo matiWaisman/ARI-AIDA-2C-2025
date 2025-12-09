@@ -48,3 +48,4 @@ export async function parseCsvAndExecute(client: Client, csvPath: string): Promi
     await handler(client, parametro);
   }
 }
+

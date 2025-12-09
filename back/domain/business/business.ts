@@ -8,7 +8,6 @@ import { CertificadoGenerator } from "../../infrastructure/files/generador-certi
 import { MateriaRepository } from "../../infrastructure/db/materia-repository.ts";
 import { EncuestasRepository } from "../../infrastructure/db/encuestas-repository.ts";
 import { CursaRepository } from "../../infrastructure/db/cursa-repository.ts";
-import { DictaRepository } from "../../infrastructure/db/dicta-repository.ts";
 import type { Materia } from "../entity/materia.ts";
 
 export class Business {
@@ -20,7 +19,6 @@ export class Business {
     private certificadoGenerator: CertificadoGenerator;
     private encuestasRepo: EncuestasRepository;
     private cursaRepo: CursaRepository;
-    private dictaRepo: DictaRepository;
 
     constructor(client: Client) {
         this.userRepo = new UserRepository(client);
@@ -31,7 +29,6 @@ export class Business {
         this.encuestasRepo = new EncuestasRepository(client)
         this.certificadoGenerator = new CertificadoGenerator();
         this.cursaRepo = new CursaRepository(client);
-        this.dictaRepo = new DictaRepository(client);
     }
 
     async crearUsuario({username, password, nombre, apellido, lu, email, esProfesor, esAlumno}: {
@@ -46,32 +43,6 @@ export class Business {
         }
 
         return await this.userRepo.crearUsuario(username, password, nombre, apellido, lu, email);
-    }
-
-    async crearAlumnoCompleto({ lu, nombres, apellido, titulo, titulo_en_tramite, egreso } : { 
-    lu: string; nombres: string; apellido: string; titulo: string; titulo_en_tramite: string; egreso: string;}) {
-        await this.entidadUniversitariaRepo.crearEntidadUniversitaria(lu, apellido, nombres);
-        return await this.alumnoRepo.crearAlumnoCompleto(lu, titulo, titulo_en_tramite, egreso);
-    }
-
-    async getAlumnos() {
-        return await this.alumnoRepo.getAlumnos('', []);
-    }
-
-    async getAlumnoConLU(lu: string) {
-        const alumno = await this.alumnoRepo.getAlumnoConLU(lu);
-        if (!alumno) throw new Error("Alumno no encontrado");
-        return alumno;
-    }
-
-    async updateAlumno(lu: string, nombres: string, apellido: string) {
-        return this.alumnoRepo.updateAlumno(lu, nombres, apellido);
-    }
-
-    async deleteAlumno(lu: string) {
-        const deleted = await this.alumnoRepo.deleteAlumno(lu);
-        if (!deleted) throw new Error("No existe el alumno a eliminar");
-        return deleted;
     }
 
     async cargarDatosEnAlumnos(filePath: string) {
@@ -89,21 +60,9 @@ export class Business {
         return await this.certificadoGenerator.generarYGuardarCertificado(alumno);
     }
 
-    async hayCertificadosPendientes(fecha: string) {
-        return this.alumnoRepo.getAlumnoConFechaDeseada(fecha);
-    }
-
     //  USUARIO 
     async autenticarUsuario(username: string, password: string) {
     return this.userRepo.autenticarUsuario(username, password);
-    }
-
-    async hashPassword(password: string) {
-    return this.userRepo.hashPassword(password);
-    }
-
-    async verifyPassword(password: string, hash: string) {
-    return this.userRepo.verifyPassword(password, hash);
     }
 
     async esAlumno(id: number | undefined): Promise<boolean> {
@@ -116,10 +75,6 @@ export class Business {
 
     async getLuFromUserId(id: number): Promise<string | null> {
     return this.userRepo.getLuFromUserId(id);
-    }
-
-    async crearUsuarioSimple(username: string, password: string, nombre: string, apellido: string, lu: string, email: string) {
-    return this.userRepo.crearUsuario(username, password, nombre, apellido, lu, email);
     }
 
     async obtenerAlumnosDeMateria(codigoMateria: string, cuatrimestre: string) {
@@ -142,33 +97,7 @@ export class Business {
     return this.materiaRepo.obtenerProfesoresDeMateria(codigoMateria, cuatrimestre, luAExcluir);
     }
 
-    async obtenerEncuestasSobreMiComoAlumno(miLU: string) {
-    return this.encuestasRepo.obtenerEncuestasSobreMiComoAlumno(miLU);
-    }
-
-    async obtenerEncuestasSobreMiComoProfesor(miLU: string) {
-    return this.encuestasRepo.obtenerEncuestasSobreMiComoProfesor(miLU);
-    }
-
-    async crearEncuestaAMateria(e: {luEncuestado: string; codigoMateria: string; cuatrimestre: string; respuestas: number[];comentario?: string;}) {
-    return this.encuestasRepo.crearEncuestaAMateria(e);     
-    }
-
-    async crearEncuestaAAlumno(e: {luEvaluado: string; luEncuestado: string; codigoMateria: string; cuatrimestre: string; respuestas: number[];comentario?: string;}) {
-    return this.encuestasRepo.crearEncuestaAAlumno(e);     
-    }
-
-    async crearEncuestaAProfesor(e: {luEvaluado: string; luEncuestado: string; codigoMateria: string; cuatrimestre: string; respuestas: number[];comentario?: string;}) {
-    return this.encuestasRepo.crearEncuestaAProfesor(e);     
-    }   
-
-    async materiasQueCursoAlumno(lu: string) {
-    return this.cursaRepo.materiasQueCursoAlumno(lu);
-    }
-
-    async materiasQueDictoProfesor(lu: string) {
-    return this.dictaRepo.materiasQueDictoProfesor(lu);
-    }   
+    
 
     async obtenerEncuestasNoRespondidas(lu: string) {
     return this.encuestasRepo.obtenerEncuestasNoRespondidas(lu);
@@ -199,18 +128,6 @@ export class Business {
         return await this.materiaRepo.obtenerAlumnosDeMateria(codigoMateria, cuatrimestre);
     }
 
-    async crearMateria(nombreMateria: string, codigoMateria: string) {
-    const existeMateria = await this.existeMateria(nombreMateria);
-    if (existeMateria) {
-        throw new Error();
-    }
-    return await this.materiaRepo.crearMateria(nombreMateria, codigoMateria);
-    }
-
-    async getAllMaterias() {
-    return await this.materiaRepo.getAllMaterias();
-    }
-
     async getAllMateriasQueNoParticipa(id: number | undefined, participacion: "cursa" | "dicta", rolEnMateria: "Alumno" | "Profesor") {
         const todasLasMaterias: Materia[] = await this.materiaRepo.getAllMaterias();
         
@@ -238,11 +155,6 @@ export class Business {
         return materiasNoParticipa;
     }
 
-    async existeMateria(nombreMateria: string) {
-    const materia = await this.materiaRepo.getMateria(nombreMateria);
-    return !!materia;
-    }
-
     async inscribirAlumnoConIdDeUsuario(codigoMateria:string, id: number|undefined) {
     return await this.materiaRepo.inscribirConId(codigoMateria, id, "cursa", "Alumno");
     }
@@ -250,27 +162,6 @@ export class Business {
     async inscribirProfesorConIdDeUsuario(codigoMateria:string, id: number|undefined) {
     return await this.materiaRepo.inscribirConId(codigoMateria, id, "dicta", "Profesor");
     }
-
-    async crearCursa(idAlumno: number, idMateria: number, cuatrimestre: number) {
-    const existeCursa = await this.existeCursa(idAlumno, idMateria, cuatrimestre);
-    if (existeCursa) {
-      throw new Error();
-    }
-    return this.cursaRepo.crearCursa(idAlumno, idMateria, cuatrimestre);
-  }
-
-  async getCursa(idAlumno: number, idMateria: number, cuatrimestre: number) {
-    const existeCursa = await this.existeCursa(idAlumno, idMateria, cuatrimestre);
-    if (existeCursa) {
-      throw new Error();
-    }
-    return this.cursaRepo.getCursa(idAlumno, idMateria, cuatrimestre);
-  }
-
-  async existeCursa(idAlumno: number, idMateria: number, cuatrimestre: number) {
-    const alumno = this.cursaRepo.getCursa(idAlumno, idMateria, cuatrimestre);
-    return !!alumno;
-  }
 
   async getAllMateriasQueParticipa(id: number, participacion: "cursa" | "dicta", rolEnMateria: "Alumno" | "Profesor") {
     return await this.materiaRepo.getMateriasQueParticipa(id, participacion, rolEnMateria);

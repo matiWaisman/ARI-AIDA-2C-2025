@@ -30,6 +30,6 @@ export default function AlumnosPage() {
       <ErrorScreen error="No tenés permisos para acceder a esta página." />
     );
   }
-
+  console.log(alumnos);
   return <AlumnosClient alumnos={alumnos} error={error} />;
 }
