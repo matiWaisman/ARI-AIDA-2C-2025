@@ -15,7 +15,9 @@ export function genericController(tableDef: TableDef) {
   const orderBy = tableDef.orderBy ?? pk;
   const elementName = tableDef.elementName ?? "row de " + tableDef.name;
   const pkDolarCondition = (startingOn: number) =>
-    pk.map((col, i) => `${col} = \$${i + startingOn}`).join(" AND ");
+    pk
+      .map((col, i) => `${tablename}.${col} = \$${i + startingOn}`)
+      .join(" AND ");
   const pkParams = (params: Record<string, any>) =>
     pk.map((col) => params[col]);
   const allParams = (params: Record<string, any>) =>
@@ -154,6 +156,18 @@ export function genericController(tableDef: TableDef) {
     await client.connect();
 
     try {
+      const combinedParams = { ...req.query, ...req.params };
+
+      for (const key in combinedParams) {
+        if (typeof combinedParams[key] === "string") {
+          const originalValue = combinedParams[key] as string;
+          try {
+            combinedParams[key] = decodeURIComponent(originalValue);
+          } catch (e) {
+          }
+        }
+      }
+
       const selectFields = buildSelectFields();
 
       let fromClause = tablename;
@@ -167,20 +181,6 @@ export function genericController(tableDef: TableDef) {
                                  ON ${tablename}.${fk.column} = aida.${fk.referencesTable}.${fk.referencedColumn}`
             )
             .join(" ");
-      }
-
-      const combinedParams = { ...req.query, ...req.params };
-
-      for (const key in combinedParams) {
-        if (typeof combinedParams[key] === "string") {
-          try {
-            combinedParams[key] = decodeURIComponent(
-              combinedParams[key] as string
-            );
-          } catch {
-            // Si falla la decodificación, se mantiene
-          }
-        }
       }
 
       const sql = `
@@ -197,8 +197,19 @@ export function genericController(tableDef: TableDef) {
       }
 
       res.json(stripPrefixes(result.rows[0]));
-    } catch {
-      res.status(500).json({ error: "Error interno del servidor" });
+    } catch (err) {
+      console.error(
+        `[getRow] Error en getRow para tabla ${tableDef.name}:`,
+        err
+      );
+      console.error(
+        `[getRow] Stack trace:`,
+        err instanceof Error ? err.stack : "No stack trace available"
+      );
+      res.status(500).json({
+        error: "Error interno del servidor",
+        details: err instanceof Error ? err.message : String(err),
+      });
     }
   };
 
