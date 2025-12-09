@@ -4,11 +4,11 @@ import type {
   ForeignKeyDef,
   TableDef,
   TableName,
-} from "../../src/tableDefs.js";
-import { tableDefs } from "../../src/tableDefs.js";
-import { createDbClient } from "../../infrastructure/db/db-client.js";
+} from "../../src/tableDefs.ts";
+import { tableDefs } from "../../src/tableDefs.ts";
+import { createDbClient } from "../../infrastructure/db/db-client.ts";
 
-export function genericController(tableDef: TableDef) {
+export function ControllerGenerico(tableDef: TableDef) {
   const tablename = "aida." + tableDef.name;
   const allColnames = tableDef.columns.map((def) => def.name);
   const { pk, fks } = tableDef;
@@ -163,8 +163,7 @@ export function genericController(tableDef: TableDef) {
           const originalValue = combinedParams[key] as string;
           try {
             combinedParams[key] = decodeURIComponent(originalValue);
-          } catch (e) {
-          }
+          } catch (e) {}
         }
       }
 
