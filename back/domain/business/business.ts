@@ -60,10 +60,6 @@ export class Business {
         return await this.certificadoGenerator.generarYGuardarCertificado(alumno);
     }
 
-    async hayCertificadosPendientes(fecha: string) {
-        return this.alumnoRepo.getAlumnoConFechaDeseada(fecha);
-    }
-
     //  USUARIO 
     async autenticarUsuario(username: string, password: string) {
     return this.userRepo.autenticarUsuario(username, password);
@@ -166,27 +162,6 @@ export class Business {
     async inscribirProfesorConIdDeUsuario(codigoMateria:string, id: number|undefined) {
     return await this.materiaRepo.inscribirConId(codigoMateria, id, "dicta", "Profesor");
     }
-
-    async crearCursa(idAlumno: number, idMateria: number, cuatrimestre: number) {
-    const existeCursa = await this.existeCursa(idAlumno, idMateria, cuatrimestre);
-    if (existeCursa) {
-      throw new Error();
-    }
-    return this.cursaRepo.crearCursa(idAlumno, idMateria, cuatrimestre);
-  }
-
-  async getCursa(idAlumno: number, idMateria: number, cuatrimestre: number) {
-    const existeCursa = await this.existeCursa(idAlumno, idMateria, cuatrimestre);
-    if (existeCursa) {
-      throw new Error();
-    }
-    return this.cursaRepo.getCursa(idAlumno, idMateria, cuatrimestre);
-  }
-
-  async existeCursa(idAlumno: number, idMateria: number, cuatrimestre: number) {
-    const alumno = this.cursaRepo.getCursa(idAlumno, idMateria, cuatrimestre);
-    return !!alumno;
-  }
 
   async getAllMateriasQueParticipa(id: number, participacion: "cursa" | "dicta", rolEnMateria: "Alumno" | "Profesor") {
     return await this.materiaRepo.getMateriasQueParticipa(id, participacion, rolEnMateria);

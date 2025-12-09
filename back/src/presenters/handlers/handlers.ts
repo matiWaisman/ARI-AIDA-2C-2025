@@ -32,3 +32,4 @@ export const modoLuHandler: CommandHandler = async (client, LU) => {
   const rutaCertificado = await generator.generarYGuardarCertificado(alumno);
   }
 };
+

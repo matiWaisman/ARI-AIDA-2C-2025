@@ -5,7 +5,3 @@ export interface Usuario {
   email: string,
   activo: boolean,
 }
-
-export function usurioToJSON(usuario: Usuario): string {
-  return JSON.stringify(usuario);
-}

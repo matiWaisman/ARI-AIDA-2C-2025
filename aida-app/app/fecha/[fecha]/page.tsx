@@ -1,20 +1,25 @@
 "use client";
 
-import React from "react";
-import CargarCertificado from "@/components/certificados/cargarCertificado";
+import Formulario from "@/components/formulario";
+import { useUser } from "@/contexts/UserContext";
+import LoadingScreen from "@/components/loadingScreen";
+import ErrorScreen from "@/components/errorScreen";
 
-type Props = {
-  params: Promise<{ fecha: string }>;
-};
+export default function Fecha() {
+  const { usuario, loading } = useUser();
 
-export default function CertificadoPage({ params }: Props) {
-  const resolved = React.use(params);
-return (
-  <CargarCertificado
-    endpointPath={`alumnos/getBy/titulo_en_tramite/${resolved.fecha}`}
-    paramName=""
-    paramValue=""
-  />
-);
+  if (loading) return <LoadingScreen mensaje="Cargando usuario..." />;
+  if (!usuario || usuario.esProfesor !== true) {
+    return <ErrorScreen error="No tenés permisos para acceder a esta página." />;
+  }
 
+  return (
+    <Formulario
+      title="Obtener el certificado de título en trámite"
+      nombreLabel="Fecha del trámite"
+      inputType="date"
+      nombreInput="fecha"
+      hrefCertificado="/fecha"
+    />
+  );
 }

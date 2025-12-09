@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Alumno } from "@/types/alumno";
 import Certificado from "./certificado";
 import { apiClient } from "@/apiClient/apiClient";
+import { apiFetch } from "@/utils/api";
 
 type CargarCertificadoProps = {
   endpointPath: string;
@@ -27,25 +28,9 @@ export default function CargarCertificado({
       try {
         setLoading(true);
         setError(null);
-
-        let decodedValue = paramValue;
-        try {
-          decodedValue = decodeURIComponent(paramValue);
-        } catch {
-          decodedValue = paramValue;
-        }
-
-        const containsSlash = decodedValue.includes("/");
-        const isLuParam = paramName === "lu";
-        const useQueryParams = containsSlash || isLuParam;
-
-        const encodedValue = encodeURIComponent(decodedValue);
-        const url =
-          paramName && paramValue
-            ? useQueryParams
-              ? `${endpointPath}/get/${paramName}?${paramName}=${encodedValue}`
-              : `${endpointPath}/get/${paramName}/${encodedValue}`
-            : endpointPath;
+        const url = `${endpointPath}?${encodeURIComponent(
+          paramName
+        )}=${encodeURIComponent(paramValue)}`;
         const alumnoData: Alumno = await apiClient(url);
         setAlumno(alumnoData);
       } catch (err) {
@@ -56,7 +41,9 @@ export default function CargarCertificado({
       }
     };
 
-    fetchAlumno();
+    if (paramValue) {
+      fetchAlumno();
+    }
   }, [endpointPath, paramName, paramValue]);
 
   if (loading) return <p>Cargando certificado...</p>;

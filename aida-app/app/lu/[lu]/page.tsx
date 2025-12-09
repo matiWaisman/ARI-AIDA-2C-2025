@@ -12,8 +12,8 @@ export default function CertificadoPage({ params }: Props) {
 
   return (
     <CargarCertificado
-      endpointPath="alumnos"
-      paramName="lu"
+      endpointPath="alumnos/lu"
+      paramName="LU"
       paramValue={resolved.lu}
     />
   );
