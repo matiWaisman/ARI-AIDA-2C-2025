@@ -44,12 +44,15 @@ export class UserController {
     const { username, password, nombre, apellido, lu, email, esProfesor, esAlumno } = req.body;
     const { client, business } = await UserController._createBusiness();
 
-    const nuevoUsuario = await business.crearUsuario({username, password, nombre, apellido, lu, email, esProfesor,esAlumno});
-    if (!nuevoUsuario) {
-      return res.status(400).json({ message: "No se pudo crear el usuario" });
-    }
+    try{const nuevoUsuario = await business.crearUsuario({username, password, nombre, apellido, lu, email, esProfesor,esAlumno});
     res.status(201).json({ message: "Usuario creado con éxito", usuario: nuevoUsuario });
+    } catch (err) {
+    const customError = new Error("ErrorCreandoUsuario");
+    customError.name = "ErrorCreandoUsuario";
+    return res.status(500).json({ message: "No se pudo crear el usuario: username, LU o mail estan repetidos" });
+  }
     await client.end();
+  
   }
 
   static async logout(req: Request, res: Response) {

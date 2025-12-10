@@ -213,7 +213,7 @@ export default function Certificado({
           </p>
         </div>
 
-        <img src="" alt="Logo de la facultad" className="watermark" />
+        <img src="../../assets/Logo_de_la_Universidad_de_Buenos_Aires.jpg" alt="Logo de la facultad" className="watermark" />
 
         <div className="signature-area">
           <div className="signature-box">
